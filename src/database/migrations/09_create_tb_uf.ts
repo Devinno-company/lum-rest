@@ -5,7 +5,7 @@ export function up(knex: Knex) {
         table.string('sg_uf', 2).primary();
         table.string('nm_uf', 100).notNullable();
 
-        table.integer('cd_country').notNullable();
+        table.integer('cd_country');
 
         /* FOREIGN KEY */
         table.foreign('cd_country')
