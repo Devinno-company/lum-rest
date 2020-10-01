@@ -18,6 +18,8 @@
     "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env production"
   },
   "dependencies": {
+    "@types/knex": "^0.16.1",
+    "@types/node": "^14.11.2",
     "@types/socket.io": "^2.1.11",
     "knex": "^0.21.6",
     "pg": "^8.3.3",
@@ -26,8 +28,6 @@
     "typescript": "^4.0.3"
   },
   "devDependencies": {
-    "@types/knex": "^0.16.1",
-    "@types/node": "^14.11.2",
     "ts-node-dev": "^1.0.0-pre.63"
   }
 }
