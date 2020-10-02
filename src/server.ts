@@ -1,12 +1,16 @@
-import http from 'http';
-import socketIo from 'socket.io';
+import express from 'express';
+import profileRoutes from './routes/profile.routes';
+import userRoutes from './routes/user.routes';
 
-const server = http.createServer()
-const io = socketIo(server);
+const listen = process.env.PORT || 3000;
 
-io.on('connection', socket => {
-    io.emit('hello', 'DEU BOM');
-    console.log('conectou 1');
+const app = express();
+
+require('dotenv-safe').config();
+app.use(express.json());
+app.use(userRoutes);
+app.use(profileRoutes);
+
+app.listen(3000, () => {
+    console.log(`------RODANDO NA PORTA ${listen}------`);
 });
-
-server.listen(3000);
