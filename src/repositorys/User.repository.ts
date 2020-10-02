@@ -68,6 +68,30 @@ class UserRepository {
         });
     }
 
+    public static addImageById(idUser: number, linkImage: string): Promise<User> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedUser = await trx('tb_user')
+                .update({
+                    im_user: linkImage
+                })
+                .where('cd_user', '=', idUser)
+                .returning('*');
+
+            const user = updatedUser[0];
+
+            try {
+                trx.commit();
+                resolve(user);
+            } catch (err) {
+                trx.rollback();
+                reject(err);
+            }
+        });
+    }
+
     public static deleteUserByEmail(email: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -84,7 +108,7 @@ class UserRepository {
             await trx('tb_user')
                 .delete()
                 .where('cd_user', '=', user[0].cd_user);
-                
+
             trx('tb_login')
                 .delete()
                 .where('cd_login', '=', user[0].cd_login);
