@@ -15,7 +15,6 @@ export function up(knex: Knex) {
         table.integer('cd_login').notNullable();
         table.integer('cd_location_user');
 
-
         /* FOREIGN KEYS */
         table.foreign('cd_login')
             .references('cd_login')

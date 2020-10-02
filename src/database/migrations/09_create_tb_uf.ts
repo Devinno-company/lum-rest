@@ -6,11 +6,6 @@ export function up(knex: Knex) {
         table.string('nm_uf', 100).notNullable();
 
         table.integer('cd_country');
-
-        /* FOREIGN KEY */
-        table.foreign('cd_country')
-            .references('cd_country')
-                .inTable('tb_country');
     });
 }
 
