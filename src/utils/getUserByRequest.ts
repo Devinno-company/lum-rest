@@ -10,11 +10,12 @@ function getUserByRequest(request: Request): Promise<User> {
         if (token) {
             const tokenDecoded: any = jsonwebtoken.decode(token.replace('Bearer ', ''));
             const idUser = tokenDecoded.id;
-            const user = await UserRepository.findUserById(idUser);
-
-            resolve(user);
+            
+            await UserRepository.findUserById(idUser)
+                .then(user => resolve(user))
+                .catch(() => reject({ message: 'Invalid token. Renew it', status: 400 }));
         } else
-            reject('Invalid token. Renew it');
+            reject({ message: 'No token provided', status: 400 });
     });
 }
 

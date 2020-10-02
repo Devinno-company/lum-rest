@@ -6,16 +6,30 @@ import UserResponse from "../interfaces/response/UserResponse";
 import updatePassword from "../interfaces/request/UpdatePasswors";
 import verifyToken from "../middleware/verifyToken.middleware";
 import getUserByRequest from "../utils/getUserByRequest";
+import multer from "multer";
+import validateImage from "../middleware/validationImage.middleware";
 
 const profileRoutes = express.Router();
-
 const controller = new ProfileController();
+const formData = multer();
 
 profileRoutes.get('/profile', verifyToken, (request, response) => {
 
     getUserByRequest(request)
         .then(user => {
             controller.readProfile(user)
+                .then((result: UserResponse) => response.status(200).json(result))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+profileRoutes.post('/profile', formData.single('imageProfile'), validateImage , (request, response) => {
+    const image = request.file;
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.updateImage(user, image)
                 .then((result: UserResponse) => response.status(200).json(result))
                 .catch((err: any) => response.status(err.status || 400).json(err));
         })
