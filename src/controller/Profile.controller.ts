@@ -2,11 +2,13 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import bcrypt from 'bcrypt';
 import s3 from '../aws/S3';
 import Credentials from "../interfaces/request/Credentials";
-import updatePassword from '../interfaces/request/UpdatePasswors';
+import updatePassword from '../interfaces/request/UpdatePassword';
 import UpdateUser from "../interfaces/request/UpdateUser";
 import UserResponse from '../interfaces/response/UserResponse';
-import Login from '../models/Login';
 import User from "../models/User";
+import CityRepository from '../repositorys/City.repository';
+import GeolocationRepository from '../repositorys/Geolocation.repository';
+import LocationUserRepository from '../repositorys/LocationUser.repository';
 import LoginRepository from "../repositorys/Login.repository";
 import UserRepository from "../repositorys/User.repository";
 import genNameFile from '../utils/genNameFile';
@@ -17,33 +19,65 @@ class ProfileController {
 
         return new Promise(async (resolve, reject) => {
             /* VERIFICA QUAIS CAMPOS DEVE ATUALIZAR */
-            if (!updateUser.name_to || updateUser.name_to.replace('\ \g', '').length == 0)
+            if (!updateUser.name_to || updateUser.name_to.replace('\ \g', '').length == 0 && updateUser.name_to != '')
                 updateUser.name_to = user.nm_user
-            if (!updateUser.surname_to || updateUser.surname_to.replace('\ \g', '').length == 0)
+            if (!updateUser.surname_to || updateUser.surname_to.replace('\ \g', '').length == 0 && updateUser.surname_to != '')
                 updateUser.surname_to = user.nm_surname_user;
-            if (!updateUser.biography_to || updateUser.biography_to.replace('\ \g', '').length == 0)
+            if (!updateUser.biography_to || updateUser.biography_to.replace('\ \g', '').length == 0 && updateUser.biography_to != '')
                 updateUser.biography_to = user.ds_biography;
-            if (!updateUser.label_to || updateUser.label_to.replace('\ \g', '').length == 0)
+            if (!updateUser.label_to || updateUser.label_to.replace('\ \g', '').length == 0 && updateUser.label_to != '')
                 updateUser.label_to = user.nm_label;
-            if (!updateUser.website_to || updateUser.website_to.replace('\ \g', '').length == 0)
+            if (!updateUser.website_to || updateUser.website_to.replace('\ \g', '').length == 0 && updateUser.website_to != '')
                 updateUser.website_to = user.ds_website;
-            if (!updateUser.profission_to || updateUser.profission_to.replace('\ \g', '').length == 0)
+            if (!updateUser.profission_to || updateUser.profission_to.replace('\ \g', '').length == 0 && updateUser.profission_to != '')
                 updateUser.profission_to = user.nm_profission;
-            if (!updateUser.company_to || updateUser.company_to.replace('\ \g', '').length == 0)
+            if ((!updateUser.company_to || updateUser.company_to.replace('\ \g', '').length == 0) && updateUser.company_to != '') {
                 updateUser.company_to = user.nm_company;
+                console.log('nao');
+                
+            }
+
+            let location: any = undefined;
+
+            if (!updateUser.location_to && user.cd_location_user) {
+                location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+            } else if (updateUser.location_to && user.cd_location_user) {
+                location = await LocationUserRepository.updateLocationUser(user.cd_location_user, updateUser.location_to);
+            } else if (updateUser.location_to && !user.cd_location_user) {
+                if (!updateUser.location_to.city || !updateUser.location_to.geolocation)
+                    reject({ message: "City and geolocation it's required", status: 400 });
+                else {
+                    location = await LocationUserRepository.insertLocationUser({
+                        geolocation: {
+                            latitude: updateUser.location_to.geolocation.latitude,
+                            longitude: updateUser.location_to.geolocation.longitude
+                        },
+                        city: updateUser.location_to.city
+                    }).catch(err => reject(err));
+                }
+            }
+
+            if (location) {
+                const searchCity = await CityRepository.findCityById(location.cd_city);
+                const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
+
+                // Atualiza a localização do usuário
+                await UserRepository.updateLocationUser(user.cd_user, location.cd_location_user);
+
+                location = {
+                    city: searchCity.nm_city,
+                    uf: searchCity.sg_uf,
+                    geolocation: {
+                        latitude: searchGeolocation.cd_latitude,
+                        longitude: searchGeolocation.cd_longitude
+                    }
+                }
+            }
 
             /* ATUALIZA O USUÁRIO NO BANCO ATRAVÉS DA CLASSE ESTÁTICA */
             UserRepository.updateUser(user.cd_user, updateUser)
-                .then(user =>
-                    resolve({
-                        name: user.nm_user,
-                        surname: user.nm_surname_user,
-                        biography: user.ds_biography,
-                        label: user.nm_label,
-                        website: user.ds_website,
-                        image: user.im_user,
-                        company: user.nm_company
-                    }))
+                .then(async (user) =>
+                    resolve(await this.readProfile(user)))
                 .catch(err => reject(err));
         });
     }
@@ -51,11 +85,13 @@ class ProfileController {
     async deleteUser(user: User, credentials: Credentials) {
 
         return new Promise(async (resolve, reject) => {
-            const login = await LoginRepository.findLoginById(user.cd_login);
 
+            const login = await LoginRepository.findLoginById(user.cd_login);
             let valid = false;
 
-            if (login != undefined) {
+            if (!login)
+                reject({ message: 'Incorrect credentials', status: 409 });
+            else {
                 valid = bcrypt.compareSync(credentials.password, login.nm_password);
 
                 if (!valid)
@@ -81,18 +117,20 @@ class ProfileController {
 
             let valid = false;
 
-            if (login != undefined) {
-                valid = bcrypt.compareSync(password, login.nm_password);
-            }
-
-            if (!valid)
-                reject({ message: 'Invalid password', status: 409 });
+            if (!login)
+                reject({ message: 'Invalid token. Renew it.', status: 401 });
             else {
-                const hash = bcrypt.hashSync(newPassword, bcrypt.genSaltSync());
+                valid = bcrypt.compareSync(password, login.nm_password);
 
-                LoginRepository.updatePassword(user.cd_login, hash)
-                    .then(() => { resolve() })
-                    .catch(err => reject(err))
+                if (!valid)
+                    reject({ message: 'Invalid password', status: 401 });
+                else {
+                    const hash = bcrypt.hashSync(newPassword, bcrypt.genSaltSync());
+
+                    LoginRepository.updatePassword(user.cd_login, hash)
+                        .then(() => { resolve() })
+                        .catch(err => reject(err));
+                }
             }
         });
     }
@@ -129,15 +167,9 @@ class ProfileController {
                 } else {
                     // Persiste o link no banco e retorna o link para o usuário
                     UserRepository.addImageById(user.cd_user, link)
-                        .then((user) => resolve({
-                            name: user.nm_user,
-                            surname: user.nm_surname_user,
-                            biography: user.ds_biography,
-                            label: user.nm_label,
-                            website: user.ds_website,
-                            image: user.im_user,
-                            company: user.nm_company
-                        }))
+                        .then(async (user) => {
+                            resolve(await this.readProfile(user));
+                        })
                         .catch(e => {
                             reject({ message: 'Unknow error. Try again later.', error: e })
                         });
@@ -146,16 +178,41 @@ class ProfileController {
         });
     }
 
-    async readProfile(user: User): UserResponse {
-        return {
-            name: user.nm_user,
-            surname: user.nm_surname_user,
-            biography: user.ds_biography,
-            label: user.nm_label,
-            website: user.ds_website,
-            image: user.im_user,
-            company: user.nm_company
-        }
+    async readProfile(user: User): Promise<UserResponse> {
+        return new Promise(async (resolve) => {
+            let location;
+
+            if (user.cd_location_user)
+                location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+
+            if (location) {
+                const searchCity = await CityRepository.findCityById(location.cd_city);
+                const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
+
+                location = {
+                    city: searchCity.nm_city,
+                    uf: searchCity.sg_uf,
+                    geolocation: {
+                        latitude: searchGeolocation.cd_latitude,
+                        longitude: searchGeolocation.cd_longitude
+                    }
+                }
+            } else {
+                location = null;
+            }
+
+            resolve({
+                id: user.cd_user,
+                name: user.nm_user,
+                surname: user.nm_surname_user,
+                biography: user.ds_biography,
+                label: user.nm_label,
+                website: user.ds_website,
+                image: user.im_user,
+                company: user.nm_company,
+                location
+            });
+        });
     }
 }
 

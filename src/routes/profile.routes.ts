@@ -3,7 +3,7 @@ import express from 'express';
 import UpdateUser from "../interfaces/request/UpdateUser";
 import ProfileController from "../controller/Profile.controller";
 import UserResponse from "../interfaces/response/UserResponse";
-import updatePassword from "../interfaces/request/UpdatePasswors";
+import updatePassword from "../interfaces/request/UpdatePassword";
 import verifyToken from "../middleware/verifyToken.middleware";
 import getUserByRequest from "../utils/getUserByRequest";
 import multer from "multer";
@@ -49,7 +49,7 @@ profileRoutes.put('/profile', validate, (request, response) => {
 
 profileRoutes.delete('/profile', validate, (request, response) => {
     const credentials = request.body;
-
+    
     getUserByRequest(request)
         .then(user => {
             controller.deleteUser(user, credentials)

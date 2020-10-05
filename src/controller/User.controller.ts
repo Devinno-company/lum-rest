@@ -10,7 +10,7 @@ export default class UserController {
 
     async newUser(newUser: NewUser) {
 
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             /* CRIPTOGRAFA A SENHA */
             newUser.password = bcrypt.hashSync(newUser.password, bcrypt.genSaltSync());
             /* TIRA POSSÍVEIS ESPAÇOS QUE SOBRAM NAS EXTREMIDADES */
@@ -18,7 +18,7 @@ export default class UserController {
             newUser.surname = newUser.surname.trim();
             newUser.email = newUser.email.toLowerCase().trim();
             newUser.password = newUser.password.trim();
-
+            
             /* INSERE O USUÁRIO NO BANCO ATRAVÉS DE UMA CLASSE ESTÁTICA */
             UserRepository.insertUser(newUser)
                 .then((result: User) => {
@@ -37,15 +37,15 @@ export default class UserController {
         credentials.email = credentials.email.toLowerCase();
 
         return new Promise(async (resolve, reject) => {
-            const login = await LoginRepository.findLoginByEmail(credentials.email)
-                .catch(() => {
-                    return reject({ message: 'Incorrect credentials', status: 409 });
-                });
+            const login = await LoginRepository.findLoginByEmail(credentials.email);
 
-            if (login) {
+            if (!login) 
+                reject({ message: 'Incorrect credentials', status: 409 });
+            else {
                 /* VERIFICA SE A SENHA É CORRETA */
                 const valid = bcrypt.compareSync(credentials.password, login.nm_password);
-
+                console.log(valid);
+                
                 if (valid) {
                     const user = await UserRepository.findUserByEmail(credentials.email);
                     /* GERA O TOKEN DE AUTENTICAÇÃO */

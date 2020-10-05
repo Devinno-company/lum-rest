@@ -12,8 +12,12 @@ function getUserByRequest(request: Request): Promise<User> {
             const idUser = tokenDecoded.id;
             
             await UserRepository.findUserById(idUser)
-                .then(user => resolve(user))
-                .catch(() => reject({ message: 'Invalid token. Renew it', status: 400 }));
+                .then(user => {
+                    if(!user)
+                        reject({ message: 'Invalid token. Renew it', status: 400 })
+                    else 
+                        resolve(user)
+                });
         } else
             reject({ message: 'No token provided', status: 400 });
     });
