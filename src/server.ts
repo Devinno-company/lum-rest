@@ -1,8 +1,7 @@
 require('dotenv-safe').config();
 import express from 'express';
-import LoginRepository from './repositorys/Login.repository';
-import profileRoutes from './routes/profile.routes';
-import userRoutes from './routes/user.routes';
+import profileRoutes from './routes/profileRoutes';
+import userRoutes from './routes/userRoutes';
 
 const listen = process.env.PORT || 3000;
 

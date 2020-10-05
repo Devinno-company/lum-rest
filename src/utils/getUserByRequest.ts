@@ -1,7 +1,8 @@
 import { Request } from "express";
 import jsonwebtoken from 'jsonwebtoken';
 import User from "../models/User";
-import UserRepository from "../repositorys/User.repository";
+import UserRepository from "../repositorys/UserRepository";
+
 
 function getUserByRequest(request: Request): Promise<User> {
     return new Promise(async (resolve, reject) => {

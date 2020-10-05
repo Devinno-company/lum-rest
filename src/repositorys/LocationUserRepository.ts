@@ -1,8 +1,8 @@
 import db from "../database/connection";
-import UpdateLocationUser from "../interfaces/request/UpdateLocationUser";
+import UpdateLocationUser from "../interfaces/request/UpdateLocationUserRequest";
 import LocationUser from "../models/LocationUser";
-import CityRepository from "./City.repository";
-import GeolocationRepository from "./Geolocation.repository";
+import CityRepository from "./CityRepository";
+import GeolocationRepository from "./GeolocationRepository";
 
 class LocationUserRepository {
 

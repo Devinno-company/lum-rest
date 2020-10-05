@@ -1,13 +1,13 @@
-import validate from "../middleware/validation.middleware";
 import express from 'express';
-import UpdateUser from "../interfaces/request/UpdateUser";
-import ProfileController from "../controller/Profile.controller";
-import UserResponse from "../interfaces/response/UserResponse";
-import updatePassword from "../interfaces/request/UpdatePassword";
-import verifyToken from "../middleware/verifyToken.middleware";
 import getUserByRequest from "../utils/getUserByRequest";
 import multer from "multer";
-import validateImage from "../middleware/validationImage.middleware";
+import ProfileController from '../controller/ProfileController';
+import updatePassword from '../interfaces/request/UpdatePasswordRequest';
+import UpdateUser from '../interfaces/request/UpdateUserRequest';
+import UserResponse from '../interfaces/response/UserResponse';
+import validateImage from '../middleware/imageValidation';
+import validate from '../middleware/inputValidation';
+import verifyToken from '../middleware/verifyToken';
 
 const profileRoutes = express.Router();
 const controller = new ProfileController();

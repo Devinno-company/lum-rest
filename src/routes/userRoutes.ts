@@ -1,8 +1,8 @@
-import validate from "../middleware/validation.middleware";
 import express from 'express';
-import NewUser from "../interfaces/request/NewUser";
-import UserController from "../controller/User.controller";
-import Credentials from "../interfaces/request/Credentials";
+import UserController from "../controller/UserController";
+import Credentials from '../interfaces/request/CredentialsRequest';
+import NewUser from "../interfaces/request/NewUserRequest";
+import validate from "../middleware/inputValidation";
 
 const userRoutes = express.Router();
 

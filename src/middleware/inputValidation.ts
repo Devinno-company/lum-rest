@@ -1,8 +1,8 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
-import credentialsSchema from "../schema/credentials.schema";
-import { newUserSchema, updateUserSchema } from "../schema/user.schema";
-import updatePasswordSchema from "../schema/updatePassword.schema";
+import credentialsSchema from "../schema/credentialsSchema";
+import { newUserSchema, updateUserSchema } from "../schema/userSchema";
+import updatePasswordSchema from "../schema/updatePasswordSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
