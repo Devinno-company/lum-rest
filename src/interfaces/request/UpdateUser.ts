@@ -1,11 +1,14 @@
+import UpdateLocationUser from "./UpdateLocationUser";
+
 interface UpdateUser {
-    name_to: string | undefined,
-    surname_to: string | undefined,
-    biography_to: string | undefined,
-    label_to: string | undefined,
-    profission_to: string | undefined,
-    company_to: string | undefined,
-    website_to: string | undefined
+    name_to?: string,
+    surname_to?: string,
+    biography_to?: string,
+    label_to?: string,
+    profission_to?: string,
+    company_to?: string,
+    website_to?: string,
+    location_to?: UpdateLocationUser
 }
 
 export default UpdateUser;

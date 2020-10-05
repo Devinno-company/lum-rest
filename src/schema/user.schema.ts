@@ -28,37 +28,60 @@ export const updateUserSchema = Joi.object({
     name_to: Joi.string()
         .min(3)
         .max(100)
+        .allow(null, '')
         .optional(),
 
     surname_to: Joi.string()
         .min(3)
         .max(100)
+        .allow(null, '')
         .optional(),
 
     biography_to: Joi.string()
         .min(0)
         .max(255)
+        .allow(null, '')
         .optional(),
 
     label_to: Joi.string()
         .min(0)
         .max(30)
+        .allow(null, '')
         .optional(),
 
     profission_to: Joi.string()
-    .min(0)
-    .max(100)
-    .optional(),
+        .min(0)
+        .max(100)
+        .allow(null, '')
+        .optional(),
 
     company_to: Joi.string()
         .min(0)
         .max(100)
+        .allow(null, '')
         .optional(),
-    
+
     website_to: Joi.string()
         .min(0)
         .max(255)
+        .allow(null, '')
         .optional(),
+
+    location_to: Joi.object({
+        geolocation: Joi.object({
+            latitude: Joi.number()
+                .required(),
+            longitude: Joi.number()
+                .required()
+        })
+        .required(),
+        city: Joi.string()
+            .min(0)
+            .max(100)
+            .required()
+    })
+    .optional()
+    .allow(null)
 })
     .strict()
     .unknown();

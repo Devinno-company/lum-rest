@@ -1,52 +1,55 @@
-import { rejects } from "assert";
 import db from "../database/connection";
 import Login from "../models/Login";
-import User from "../models/User";
 
 class LoginRepository {
 
-    public static insertLogin(email: string, hash: string): Promise<number | null> {
+    public static insertLogin(email: string, hash: string): Promise<Login> {
+        console.log(1);
+
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            // INSERE AS CREDENCIAIS
-            const insertedLogin = await trx('tb_login')
-                .insert({
-                    nm_email: email,
-                    nm_password: hash
-                }).returning('*');
+            const searchLogin = await LoginRepository.findLoginByEmail(email);
+            if (searchLogin)
+                reject({ message: 'This email already register', status: 409 });
+            else {
+                const insertedLogin = await trx('tb_login')
+                    .insert({
+                        nm_email: email,
+                        nm_password: hash
+                    }).returning('*');
 
-            const login_id = insertedLogin[0];
-
-            try {
-                trx.commit();
-                resolve(login_id);
-            } catch (error) {
-                trx.rollback();
-                reject(error);
+                try {
+                    await trx.commit();
+                    resolve(insertedLogin[0]);
+                } catch (err) {
+                    trx.rollback();
+                    reject(err);
+                }
             }
         });
     }
 
-    public static deleteLoginById(idLogin: number): Promise<any> {
+    public static deleteLoginById(idLogin: number): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_login')
+            await trx('tb_login')
                 .delete()
                 .where('cd_login', '=', idLogin);
-
+    
             try {
                 trx.commit();
                 resolve();
-            } catch (error) {
+            } catch (err) {
                 trx.rollback();
-                reject();
+                reject(err);
             }
         });
     }
 
-    public static updatePassword(idLogin: number, newPassword: string) {
+    public static updatePassword(idLogin: number, newPassword: string): Promise<void> {
+
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
@@ -67,26 +70,24 @@ class LoginRepository {
     }
 
     public static findLoginById(idLogin: number): Promise<Login> {
-        return new Promise(async (resolve, reject) => {
+
+        return new Promise(async (resolve) => {
             const login = await db('tb_login as l')
                 .select('*')
                 .where('l.cd_login', '=', idLogin);
 
-            if (login[0])
-                resolve(login[0]);
+            resolve(login[0]);
         });
     }
 
     public static findLoginByEmail(email: string): Promise<Login> {
-        return new Promise(async (resolve, reject) => {
+
+        return new Promise(async (resolve) => {
             const login = await db('tb_login as l')
                 .select('*')
                 .where('l.nm_email', '=', email);
 
-            if (login[0])
-                resolve(login[0]);
-            else
-                reject({ message: 'E-mail não registrado no nosso banco', status: 404 });
+            resolve(login[0]);
         });
     }
 }

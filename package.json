@@ -1,6 +1,6 @@
 {
   "name": "lum_api",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.x",
@@ -13,20 +13,24 @@
   "author": "Devinno-company <company.devinno@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "tsnd --ignore-watch node_modules --respawn src/server.ts",
-    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env development",
-    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env development"
+    "start": "ts-node ./src/server.ts",
+    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env production",
+    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env production"
   },
   "dependencies": {
+    "@types/aws-sdk": "^2.7.0",
     "@types/bcrypt": "^3.0.0",
     "@types/jsonwebtoken": "^8.5.0",
+    "@types/multer": "^1.4.4",
     "@types/request": "^2.48.5",
+    "aws-sdk": "^2.766.0",
     "bcrypt": "^5.0.0",
     "dotenv-safe": "^8.2.0",
     "express": "^4.17.1",
     "joi": "^17.2.1",
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.6",
+    "multer": "^1.4.2",
     "pg": "^8.3.3",
     "request": "^2.88.2"
   },

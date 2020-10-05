@@ -35,7 +35,11 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                 case 'string.email':
                     message = 'This string is invalid for email type';
                     break;
+                case 'string.empty':
+                    message = 'This string is not be empty';
+                    break;
                 default:
+                    console.log(item);
                     message = 'Unknow error';
             }
 

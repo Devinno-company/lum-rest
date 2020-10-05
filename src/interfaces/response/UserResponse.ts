@@ -2,12 +2,20 @@ interface User{
     id: number,
     user: string,
     surname_user: string,
-    biography: string | undefined,
-    label: string | undefined,
-    image: string | undefined,
-    profission: string | undefined,
-    company: string | undefined,
-    website: string | undefined
+    biography?: string,
+    label?: string,
+    image?: string,
+    profission?: string,
+    company?: string,
+    website?: string,
+    location?: {
+        city: string,
+        uf: string,
+        geolocation: {
+            latitude: number,
+            longitude: number
+        }
+    }
 }
 
 export default UserResponse;
