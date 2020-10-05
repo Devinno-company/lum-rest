@@ -1,4 +1,4 @@
-import UpdateLocationUser from "./UpdateLocationUser";
+import UpdateLocationUser from "./UpdateLocationUserRequest";
 
 interface UpdateUser {
     name_to?: string,

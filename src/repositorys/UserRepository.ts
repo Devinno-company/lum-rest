@@ -1,11 +1,10 @@
 import db from "../database/connection";
-import NewUser from "../interfaces/request/NewUser";
-import UpdateUser from "../interfaces/request/UpdateUser";
+import NewUser from "../interfaces/request/NewUserRequest";
+import UpdateUser from "../interfaces/request/UpdateUserRequest";
 import User from "../models/User";
-import GeolocationRepository from "./Geolocation.repository";
-import LocationUserRepository from "./LocationUser.repository";
-import LoginRepository from "./Login.repository";
-
+import GeolocationRepository from "./GeolocationRepository";
+import LocationUserRepository from "./LocationUserRepository";
+import LoginRepository from "./LoginRepository";
 class UserRepository {
 
     public static insertUser(newUser: NewUser): Promise<User> {

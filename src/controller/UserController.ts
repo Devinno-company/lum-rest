@@ -1,10 +1,10 @@
-import UserRepository from "../repositorys/User.repository";
 import jsonwebtoken from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import NewUser from "../interfaces/request/NewUser";
-import User from "../models/User";
-import Credentials from "../interfaces/request/Credentials";
-import LoginRepository from "../repositorys/Login.repository";
+import NewUser from '../interfaces/request/NewUserRequest';
+import UserRepository from '../repositorys/UserRepository';
+import User from '../models/User';
+import Credentials from '../interfaces/request/CredentialsRequest';
+import LoginRepository from '../repositorys/LoginRepository';
 
 export default class UserController {
 

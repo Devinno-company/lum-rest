@@ -1,7 +1,7 @@
-interface User{
+interface UserResponse{
     id: number,
-    user: string,
-    surname_user: string,
+    name: string,
+    surname: string,
     biography?: string,
     label?: string,
     image?: string,

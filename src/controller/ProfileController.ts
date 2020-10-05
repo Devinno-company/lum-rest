@@ -1,16 +1,16 @@
 import { PutObjectRequest } from 'aws-sdk/clients/s3';
 import bcrypt from 'bcrypt';
 import s3 from '../aws/S3';
-import Credentials from "../interfaces/request/Credentials";
-import updatePassword from '../interfaces/request/UpdatePassword';
-import UpdateUser from "../interfaces/request/UpdateUser";
+import Credentials from '../interfaces/request/CredentialsRequest';
+import updatePassword from '../interfaces/request/UpdatePasswordRequest';
+import UpdateUser from '../interfaces/request/UpdateUserRequest';
 import UserResponse from '../interfaces/response/UserResponse';
 import User from "../models/User";
-import CityRepository from '../repositorys/City.repository';
-import GeolocationRepository from '../repositorys/Geolocation.repository';
-import LocationUserRepository from '../repositorys/LocationUser.repository';
-import LoginRepository from "../repositorys/Login.repository";
-import UserRepository from "../repositorys/User.repository";
+import CityRepository from '../repositorys/CityRepository';
+import GeolocationRepository from '../repositorys/GeolocationRepository';
+import LocationUserRepository from '../repositorys/LocationUserRepository';
+import LoginRepository from '../repositorys/LoginRepository';
+import UserRepository from '../repositorys/UserRepository';
 import genNameFile from '../utils/genNameFile';
 
 class ProfileController {
@@ -109,7 +109,7 @@ class ProfileController {
         });
     }
 
-    async updatePassword(user: User, { password, newPassword }: updatePassword) {
+    async updatePassword(user: User, updatePassword: updatePassword) {
 
         return new Promise(async (resolve, reject) => {
 
@@ -120,12 +120,12 @@ class ProfileController {
             if (!login)
                 reject({ message: 'Invalid token. Renew it.', status: 401 });
             else {
-                valid = bcrypt.compareSync(password, login.nm_password);
+                valid = bcrypt.compareSync(updatePassword.password, login.nm_password);
 
                 if (!valid)
                     reject({ message: 'Invalid password', status: 401 });
                 else {
-                    const hash = bcrypt.hashSync(newPassword, bcrypt.genSaltSync());
+                    const hash = bcrypt.hashSync(updatePassword.newPassword, bcrypt.genSaltSync());
 
                     LoginRepository.updatePassword(user.cd_login, hash)
                         .then(() => { resolve() })
@@ -135,7 +135,7 @@ class ProfileController {
         });
     }
 
-    async updateImage(user: User, image: Express.Multer.File) {
+    async updateImage(user: User, image: Express.Multer.File): Promise<UserResponse> {
 
         return new Promise((resolve, reject) => {
             let type = '';
@@ -198,7 +198,7 @@ class ProfileController {
                     }
                 }
             } else {
-                location = null;
+                location = undefined;
             }
 
             resolve({
@@ -210,7 +210,7 @@ class ProfileController {
                 website: user.ds_website,
                 image: user.im_user,
                 company: user.nm_company,
-                location
+                location: location
             });
         });
     }

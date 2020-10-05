@@ -1,13 +1,15 @@
-export default interface {
+interface User {
     cd_user: number;
     nm_user: string;
     nm_surname_user: string;
-    ds_biography: string | undefined;
-    nm_label: string | undefined;
-    im_user: string | undefined;
-    nm_profission: string | undefined;
-    nm_company: string | undefined;
-    ds_website: string | undefined; 
+    ds_biography?: string;
+    nm_label?: string;
+    im_user?: string;
+    nm_profission?: string;
+    nm_company?: string;
+    ds_website?: string; 
     cd_login: number;
-    cd_location_user: number | undefined;
+    cd_location_user?: number;
 }
+
+export default User;
