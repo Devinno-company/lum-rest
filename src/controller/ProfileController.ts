@@ -31,11 +31,8 @@ class ProfileController {
                 updateUser.website_to = user.ds_website;
             if (!updateUser.profission_to || updateUser.profission_to.replace('\ \g', '').length == 0 && updateUser.profission_to != '')
                 updateUser.profission_to = user.nm_profission;
-            if ((!updateUser.company_to || updateUser.company_to.replace('\ \g', '').length == 0) && updateUser.company_to != '') {
+            if ((!updateUser.company_to || updateUser.company_to.replace('\ \g', '').length == 0) && updateUser.company_to != '')
                 updateUser.company_to = user.nm_company;
-                console.log('nao');
-                
-            }
 
             let location: any = undefined;
 

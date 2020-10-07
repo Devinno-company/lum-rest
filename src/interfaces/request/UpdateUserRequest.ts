@@ -1,4 +1,4 @@
-import UpdateLocationUser from "./UpdateLocationUserRequest";
+import UpdateLocationUserRequest from "./UpdateLocationUserRequest";
 
 interface UpdateUser {
     name_to?: string,
@@ -8,7 +8,7 @@ interface UpdateUser {
     profission_to?: string,
     company_to?: string,
     website_to?: string,
-    location_to?: UpdateLocationUser
+    location_to?: UpdateLocationUserRequest
 }
 
-export default UpdateUser;
+export default UpdateUserRequest;
