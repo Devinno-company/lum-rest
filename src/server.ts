@@ -11,6 +11,6 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(profileRoutes);
 
-app.listen(3000, () => {
+app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
 });
