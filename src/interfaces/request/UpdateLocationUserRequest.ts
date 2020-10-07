@@ -1,9 +1,9 @@
-interface UpdateLocationUser {
-    city?: string,
-    geolocation?: {
+interface UpdateLocationUserRequest {
+    city: string,
+    geolocation: {
         latitude: number,
         longitude: number
     }
 }
 
-export default UpdateLocationUser;
+export default UpdateLocationUserRequest;
