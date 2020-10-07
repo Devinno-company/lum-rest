@@ -14,7 +14,7 @@ const controller = new ProfileController();
 const formData = multer();
 
 profileRoutes.get('/profile', verifyToken, (request, response) => {
-
+    
     getUserByRequest(request)
         .then(user => {
             controller.readProfile(user)

@@ -29,13 +29,12 @@ class LocationUserRepository {
                     )
                     .returning('*');
 
-                try {
-                    await trx.commit();
-                    resolve(insertedLocationUser[0]);
-                } catch (err) {
-                    trx.rollback();
-                    reject(err)
-                }
+                await trx.commit()
+                    .then(() => { resolve(insertedLocationUser[0]); })
+                    .catch((err) => {
+                        trx.rollback();
+                        reject(err);
+                    });
             }
         });
     }
@@ -66,13 +65,12 @@ class LocationUserRepository {
 
                 const updatedLocationUser = await this.findLocationUserById(idLocationUser);
 
-                try {
-                    trx.commit();
-                    resolve(updatedLocationUser);
-                } catch (err){
-                    trx.rollback();
-                    reject(err);
-                }
+                trx.commit()
+                    .then(() => { resolve(updatedLocationUser); })
+                    .catch((err) => {
+                        trx.rollback();
+                        reject(err);
+                    });
             }
         });
     }
@@ -85,13 +83,12 @@ class LocationUserRepository {
                 .delete()
                 .where('cd_location_user', '=', idLocationUser);
 
-                try {
-                    trx.commit();
-                    resolve();
-                } catch (err){
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
                     trx.rollback();
                     reject(err);
-                }
+                });
         });
     }
 

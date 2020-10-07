@@ -10,7 +10,7 @@ const controller = new UserController();
 
 userRoutes.post('/users', validate, (request, response) => {
     const newUser: NewUser = request.body
-
+    
     controller.newUser(newUser)
         .then((result: any) => response.status(201).json(result))
         .catch((err: any) => response.status(err.status || 400).json(err));

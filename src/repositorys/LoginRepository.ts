@@ -4,7 +4,6 @@ import Login from "../models/Login";
 class LoginRepository {
 
     public static insertLogin(email: string, hash: string): Promise<Login> {
-        console.log(1);
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -19,13 +18,12 @@ class LoginRepository {
                         nm_password: hash
                     }).returning('*');
 
-                try {
-                    await trx.commit();
-                    resolve(insertedLogin[0]);
-                } catch (err) {
-                    trx.rollback();
-                    reject(err);
-                }
+                await trx.commit()
+                    .then(() => { resolve(insertedLogin[0]); })
+                    .catch((err) => {
+                        trx.rollback();
+                        reject(err);
+                    });
             }
         });
     }
@@ -37,14 +35,13 @@ class LoginRepository {
             await trx('tb_login')
                 .delete()
                 .where('cd_login', '=', idLogin);
-    
-            try {
-                trx.commit();
-                resolve();
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -59,13 +56,12 @@ class LoginRepository {
                 })
                 .where('cd_login', '=', idLogin);
 
-            try {
-                trx.commit();
-                resolve();
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
