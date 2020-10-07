@@ -1,6 +1,6 @@
-interface updatePassword {
+interface updatePasswordRequest {
     password: string,
     newPassword: string
 }
 
-export default updatePassword;
+export default updatePasswordRequest;
