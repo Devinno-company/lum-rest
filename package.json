@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.1.0",
+  "version": "1.4.8",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.x",
@@ -31,9 +31,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.6",
     "multer": "^1.4.2",
-    "pg": "^8.3.3",
-  },
-  
+    "pg": "^8.3.3"
   },
   "devDependencies": {
     "ts-node-dev": "^1.0.0-pre.63"
