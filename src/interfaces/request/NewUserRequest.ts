@@ -1,8 +1,8 @@
-interface NewUser {
+interface NewUserRequest {
     name: string,
     surname: string,
     email: string,
     password: string,
 }
 
-export default NewUser;
+export default NewUserRequest;

@@ -3,7 +3,7 @@ import db from "../database/connection";
 
 class GeolocationRepository {
 
-    public static insertGeolocation(geolocation: {latitude: number, longitude: number}): Promise<Geolocation> {
+    public static insertGeolocation(geolocation: { latitude: number, longitude: number }): Promise<Geolocation> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -14,17 +14,16 @@ class GeolocationRepository {
                     cd_longitude: geolocation.longitude
                 }).returning('*');
 
-            try {
-                await trx.commit();
-                resolve(insertedGeolocation[0]);
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+            await trx.commit()
+                .then(() => { resolve(insertedGeolocation[0]) })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
-    public static updateGeolocation(idGeolocation: number, geolocation: {latitude: number, longitude: number}): Promise<Geolocation> {
+    public static updateGeolocation(idGeolocation: number, geolocation: { latitude: number, longitude: number }): Promise<Geolocation> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -37,18 +36,18 @@ class GeolocationRepository {
                 .where('cd_geolocation', '=', idGeolocation)
                 .returning('*');
 
-            try {
-                trx.commit();
-                resolve(updatedGeolocation[0]);
-            } catch(err) {
-                trx.rollback();
-                reject(err);
-            }
+
+            trx.commit()
+                .then(() => { resolve(updatedGeolocation[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
     public static deleteGeolocation(idGeolocation: number): Promise<void> {
-        
+
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
@@ -56,13 +55,12 @@ class GeolocationRepository {
                 .delete()
                 .where('cd_geolocation', '=', idGeolocation);
 
-            try {
-                trx.commit();
-                resolve();
-            } catch(err) {
-                trx.rollback();
-                reject(err);
-            }
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 

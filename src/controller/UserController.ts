@@ -44,7 +44,6 @@ export default class UserController {
             else {
                 /* VERIFICA SE A SENHA É CORRETA */
                 const valid = bcrypt.compareSync(credentials.password, login.nm_password);
-                console.log(valid);
                 
                 if (valid) {
                     const user = await UserRepository.findUserByEmail(credentials.email);

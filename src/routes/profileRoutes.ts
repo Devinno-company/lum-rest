@@ -3,7 +3,7 @@ import getUserByRequest from "../utils/getUserByRequest";
 import multer from "multer";
 import ProfileController from '../controller/ProfileController';
 import updatePassword from '../interfaces/request/UpdatePasswordRequest';
-import UpdateUser from '../interfaces/request/UpdateUserRequest';
+import UpdateUserRequest from '../interfaces/request/UpdateUserRequest';
 import UserResponse from '../interfaces/response/UserResponse';
 import validateImage from '../middleware/imageValidation';
 import validate from '../middleware/inputValidation';
@@ -14,7 +14,7 @@ const controller = new ProfileController();
 const formData = multer();
 
 profileRoutes.get('/profile', verifyToken, (request, response) => {
-
+    
     getUserByRequest(request)
         .then(user => {
             controller.readProfile(user)
@@ -37,7 +37,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage , 
 });
 
 profileRoutes.put('/profile', validate, (request, response) => {
-    const updateUser: UpdateUser = request.body;
+    const updateUser: UpdateUserRequest = request.body;
 
     getUserByRequest(request).then(user => {
         controller.updateUser({ user, updateUser })

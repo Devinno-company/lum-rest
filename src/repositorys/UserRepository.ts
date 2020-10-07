@@ -24,13 +24,12 @@ class UserRepository {
 
                     const user: User = insertedUsers[0];
 
-                    try {
-                        await trx.commit();
-                        resolve(user);
-                    } catch (err) {
-                        trx.rollback();
-                        reject(err);
-                    }
+                    await trx.commit()
+                        .then(() => { resolve(user); })
+                        .catch((err) => {
+                            trx.rollback();
+                            reject(err);
+                        });
                 })
                 .catch(err => reject(err));
         });
@@ -56,13 +55,12 @@ class UserRepository {
 
             const user = updatedUsers[0];
 
-            try {
-                trx.commit();
-                resolve(user);
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+            trx.commit()
+                .then(() => { resolve(user); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -70,7 +68,6 @@ class UserRepository {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
-            console.log(idLocationUser);
 
             const updatedUsers = await trx('tb_user')
                 .update({
@@ -81,13 +78,12 @@ class UserRepository {
 
             const user = updatedUsers[0];
 
-            try {
-                trx.commit();
-                resolve(user);
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+            trx.commit()
+                .then(() => { resolve(user); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -105,13 +101,12 @@ class UserRepository {
 
             const user = updatedUser[0];
 
-            try {
-                trx.commit();
-                resolve(user);
-            } catch (err) {
-                trx.rollback();
-                reject(err);
-            }
+            trx.commit()
+                .then(() => { resolve(user); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -142,13 +137,12 @@ class UserRepository {
                         .catch((err) => reject(err));
                 }
 
-                try {
-                    trx.commit();
-                    resolve();
-                } catch (err) {
-                    trx.rollback();
-                    reject(err);
-                }
+                trx.commit()
+                    .then(() => { resolve(); })
+                    .catch((err) => {
+                        trx.rollback();
+                        reject(err);
+                    });
             }
         });
     }
