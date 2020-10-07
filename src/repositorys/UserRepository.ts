@@ -70,7 +70,6 @@ class UserRepository {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
-            console.log(idLocationUser);
 
             const updatedUsers = await trx('tb_user')
                 .update({
