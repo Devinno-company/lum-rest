@@ -6,6 +6,10 @@
     "node": "12.x",
     "npm": "6.x"
   },
+  "apidoc": {
+    "title": "Documentation of Lum API",
+    "url" : "https://lum-rest.herokuapp.com/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Devinno-company/lum-rest.git"
