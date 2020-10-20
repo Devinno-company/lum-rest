@@ -48,6 +48,7 @@ const formData = multer();
  *      "id": 5,
  *      "name": "Joao",
  *      "surname": "Silva",
+ *      "email": "joao1980@gmail.com",
  *      "biography": null,
  *      "label": null,
  *      "website": null,
@@ -80,6 +81,7 @@ const formData = multer();
  * @apiSuccess (200) {Number} id User identification code.
  * @apiSuccess (200) {String} name User name.
  * @apiSuccess (200) {String} surname User last name.
+ * @apiSuccess (200) {String} email User email.
  * @apiSuccess (200) {String} biography User biography.
  * @apiSuccess (200) {String} label User characteristic.
  * @apiSuccess (200) {String} website User website.
@@ -184,6 +186,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiSuccess (200) {Number} id User identification code.
  * @apiSuccess (200) {String} name User name.
  * @apiSuccess (200) {String} surname User last name.
+ * @apiSuccess (200) {String} email User email.
  * @apiSuccess (200) {String} biography User biography.
  * @apiSuccess (200) {String} label User characteristic.
  * @apiSuccess (200) {String} website User website.
@@ -202,6 +205,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  *      "id": 5,
  *      "name": "Pedro",
  *      "surname": "Santiago",
+ *      "email": "joao1980@gmail.com",
  *      "biography": "Um jovem que gosta de eventos de jogos.",
  *      "label": "gamer",
  *      "website": "https://www.pedrogames.com",

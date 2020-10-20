@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.4.11",
+  "version": "1.5.0",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.18.3",
@@ -8,7 +8,7 @@
   },
   "apidoc": {
     "title": "Documentation of Lum API",
-    "url" : "https://lum-rest.herokuapp.com/"
+    "url": "https://lum-rest.herokuapp.com/"
   },
   "repository": {
     "type": "git",

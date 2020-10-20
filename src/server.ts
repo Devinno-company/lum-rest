@@ -1,5 +1,6 @@
 require('dotenv-safe').config();
 import express from 'express';
+import eventRoutes from './routes/eventRoutes';
 import profileRoutes from './routes/profileRoutes';
 import userRoutes from './routes/userRoutes';
 
@@ -10,6 +11,7 @@ const app = express();
 app.use(express.json());
 app.use(userRoutes);
 app.use(profileRoutes);
+app.use(eventRoutes);
 
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);

@@ -176,7 +176,9 @@ class ProfileController {
     }
 
     async readProfile(user: User): Promise<UserResponse> {
+        
         return new Promise(async (resolve) => {
+            const login = await LoginRepository.findLoginById(user.cd_login);
             let location;
 
             if (user.cd_location_user)
@@ -202,6 +204,7 @@ class ProfileController {
                 id: user.cd_user,
                 name: user.nm_user,
                 surname: user.nm_surname_user,
+                email: login.nm_email,
                 biography: user.ds_biography,
                 label: user.nm_label,
                 website: user.ds_website,
