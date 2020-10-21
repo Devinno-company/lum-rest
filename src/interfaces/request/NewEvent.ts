@@ -17,6 +17,7 @@ interface NewEvent {
             longitude: number,
         },
         city: string,
+        uf: string
     }
     privacy: string,
     category: string

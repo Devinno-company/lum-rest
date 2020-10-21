@@ -3,12 +3,13 @@ import City from "../models/City";
 
 class CityRepository {
     
-    public static findCityByName(nameCity: string): Promise<City> {
+    public static findCityByNameAndUf(nameCity: string, uf: string): Promise<City> {
 
         return new Promise(async (resolve) => {
             const searchCity = await db('tb_city as c')
                 .select('*')
-                .where('c.nm_city', '=', nameCity);
+                .where('c.nm_city', '=', nameCity)
+                .andWhere('c.sg_uf', '=', uf);
 
             resolve(searchCity[0]);
         });

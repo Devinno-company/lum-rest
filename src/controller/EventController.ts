@@ -15,15 +15,16 @@ import UserRepository from "../repositorys/UserRepository";
 class EventController {
 
     public insertEvent(newEvent: NewEvent, user: User) {
-
+        
         return new Promise(async (resolve, reject) => {
+            
             const insertedGeolocation = await GeolocationRepository.insertGeolocation({
                 latitude: newEvent.location.geolocation.latitude,
                 longitude: newEvent.location.geolocation.longitude
             }).catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
-
-            const city = await CityRepository.findCityByName(newEvent.location.city);
-
+            
+            const city = await CityRepository.findCityByNameAndUf(newEvent.location.city, newEvent.location.uf);
+            
             if (!city) {
                 reject({ status: 400, message: "This city doesn't exists" });
             } else if (insertedGeolocation) {
