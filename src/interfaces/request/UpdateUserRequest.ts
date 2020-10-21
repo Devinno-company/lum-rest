@@ -11,4 +11,4 @@ interface UpdateUser {
     location_to?: UpdateLocationUserRequest
 }
 
-export default UpdateUserRequest;
+export default UpdateUser;

@@ -78,6 +78,12 @@ export const updateUserSchema = Joi.object({
         city: Joi.string()
             .min(0)
             .max(100)
+            .required(),
+        
+        uf: Joi.string()
+            .min(2)
+            .max(2)
+            .case("upper")
             .required()
     })
     .optional()

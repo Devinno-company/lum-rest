@@ -7,7 +7,7 @@ class GeolocationRepository {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
-
+            
             const insertedGeolocation = await trx('tb_geolocation')
                 .insert({
                     cd_latitude: geolocation.latitude,
@@ -23,11 +23,11 @@ class GeolocationRepository {
         });
     }
 
-    public static updateGeolocation(idGeolocation: number, geolocation: { latitude: number, longitude: number }): Promise<Geolocation> {
-
+    public static updateGeolocation(idGeolocation: number, geolocation: { latitude: number, longitude: number }): Promise<Geolocation> {      
+        
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
-
+            
             const updatedGeolocation = await trx('tb_geolocation')
                 .update({
                     cd_latitude: geolocation.latitude,
