@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import credentialsSchema from "../schema/credentialsSchema";
 import { newUserSchema, updateUserSchema } from "../schema/userSchema";
 import updatePasswordSchema from "../schema/updatePasswordSchema";
+import { newEventSchema } from "../schema/eventSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -26,6 +27,9 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                 case 'string.base':
                     message = 'This field is string type';
                     break;
+                case 'number.base':
+                    message = 'This field is number type';
+                    break;
                 case 'string.min':
                     message = `The name must have on minimum ${item.context.limit} characters`;
                     break;
@@ -38,8 +42,21 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                 case 'string.empty':
                     message = 'This string is not be empty';
                     break;
+                case 'string.pattern.base':
+                                        
+                    if(item.context.label == 'cep')
+                        message = 'This format is invalid for cep';
+                    else if(item.context.label.includes('date'))
+                        message = 'This format is invalid for date';
+                    else if(item.context.label.includes('time'))
+                        message = 'This format is invalid for time';
+                    else {
+                        message = 'This value is invalid for this field. See our documentation.';
+                    }
+                    break;
                 default:
                     console.log(item);
+
                     message = 'Unknow error';
             }
 
@@ -62,6 +79,9 @@ function validate(request: Request, response: Response, next: NextFunction) {
             break;
         case '/login':
             schema = credentialsSchema;
+            break;
+        case '/events':
+            schema = newEventSchema;
             break;
         // /profile
         default:

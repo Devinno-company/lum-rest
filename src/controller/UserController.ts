@@ -40,7 +40,7 @@ export default class UserController {
             const login = await LoginRepository.findLoginByEmail(credentials.email);
 
             if (!login) 
-                reject({ message: 'Incorrect credentials', status: 409 });
+                reject({ message: 'Incorrect credentials', status: 401 });
             else {
                 /* VERIFICA SE A SENHA É CORRETA */
                 const valid = bcrypt.compareSync(credentials.password, login.nm_password);
@@ -51,7 +51,7 @@ export default class UserController {
                     const token = jsonwebtoken.sign({ id: user.cd_user }, process.env.SECRET as string);
                     resolve({ token });
                 } else {
-                    reject({ message: 'Incorrect credentials', status: 409 });
+                    reject({ message: 'Incorrect credentials', status: 401 });
                 }
             }
         });
