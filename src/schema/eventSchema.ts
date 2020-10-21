@@ -77,6 +77,12 @@ export const newEventSchema = Joi.object({
             .min(3)
             .max(100)
             .required(),
+
+        uf: Joi.string()
+            .min(2)
+            .max(2)
+            .case("upper")
+            .required()
     }),
 
     privacy: Joi.string()

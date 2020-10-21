@@ -16,7 +16,7 @@ interface UserResponse{
             latitude: number,
             longitude: number
         }
-    }
+    } | null
 }
 
 export default UserResponse;

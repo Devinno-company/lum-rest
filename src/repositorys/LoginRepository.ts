@@ -8,23 +8,18 @@ class LoginRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            const searchLogin = await LoginRepository.findLoginByEmail(email);
-            if (searchLogin)
-                reject({ message: 'This email already register', status: 409 });
-            else {
-                const insertedLogin = await trx('tb_login')
-                    .insert({
-                        nm_email: email,
-                        nm_password: hash
-                    }).returning('*');
+            const insertedLogin = await trx('tb_login')
+                .insert({
+                    nm_email: email,
+                    nm_password: hash
+                }).returning('*');
 
-                await trx.commit()
-                    .then(() => { resolve(insertedLogin[0]); })
-                    .catch((err) => {
-                        trx.rollback();
-                        reject(err);
-                    });
-            }
+            await trx.commit()
+                .then(() => { resolve(insertedLogin[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
