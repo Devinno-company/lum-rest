@@ -42,6 +42,15 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                 case 'string.empty':
                     message = 'This string is not be empty';
                     break;
+                case 'string.uppercase':
+                    message = 'This field only accepts strings in uppercase';
+                    break;
+                case 'object.unknown':
+                    message = 'This field is not accepted at this end point';
+                    break;
+                case 'object.base':
+                    message = "This fiels is a object type. See our documentation";
+                    break;
                 case 'string.pattern.base':
                                         
                     if(item.context.label == 'cep')
@@ -68,6 +77,7 @@ function getErrorsResponse(errors: Joi.ValidationError) {
 }
 
 function validate(request: Request, response: Response, next: NextFunction) {
+    
     const route = request.path.toLowerCase();
     const method = request.method.toLowerCase();
 
@@ -98,11 +108,11 @@ function validate(request: Request, response: Response, next: NextFunction) {
             }
             break;
     }
-
-    /* VALIDA OS DADOS RECEBIDOSS */
+    
+    /* Validate the received data */
     const { error } = schema.validate(request.body, optionsValidation);
-
-    if (!error) {
+    
+    if (!error) {        
         next();
     } else {
         const errorsResponse = getErrorsResponse(error);
