@@ -15,6 +15,11 @@ const formData = multer();
 
 /**
  * @apiDefine noTokenError
+ * @apiError (400) {Object} noneToken None token inserted in header x-access-token
+ */
+
+/**
+ * @apiDefine noTokenErrorExample
  * @apiErrorExample {json} No token error:
  *  HTTPS/1.1 403 Forbidden
  *  {
@@ -22,8 +27,18 @@ const formData = multer();
  *  }
  */
 
+ /**
+  * @apiDefine incorrectFieldsError 
+  * @apiError (400) {Object[]} incorrectFields The fields were not filled in according to our business rule
+  */
+
 /**
  * @apiDefine invalidTokenError
+ * @apiError (403) {Object} invalidToken The token inserted is invalid.
+ */
+
+/**
+ * @apiDefine invalidTokenErrorExample
  * @apiErrorExample {json} Invalid token error:
  *  HTTPS/1.1 403 Forbidden
  *  {
@@ -31,9 +46,9 @@ const formData = multer();
  *  }
  */
 /**
- * @apiDefine incorrectCredentialsError
+ * @apiDefine incorrectCredentialsErrorExample
  * @apiErrorExample {json} Incorrect credentials: 
- *  HTTPS/1.1 403 Unauthorized
+ *  HTTPS/1.1 401 Unauthorized
  *  {
  *      "message": "Incorrect credentials",
  *      "status": 409
@@ -53,8 +68,9 @@ const formData = multer();
  *      "label": null,
  *      "website": null,
  *      "image": null,
- *      "profission": null,rnote
- *      "company": null
+ *      "profission": null,
+ *      "company": null,
+ *      "location": null
  *  }
 */
 
@@ -69,10 +85,10 @@ const formData = multer();
  *  "x-access-token": "Bearer <TOKEN>"
  */
 
-/**
- * @api {get} profile Get profile
+ /**
+ * @api {get} profile 2.1. Get profile
  * 
- * @apiVersion 1.4.11
+ * @apiVersion 1.5.1
  * @apiGroup 2. Profile
  * 
  * @apiUse tokenHeader
@@ -88,11 +104,18 @@ const formData = multer();
  * @apiSuccess (200) {String} image Profile picture link.
  * @apiSuccess (200) {String} profission User profission.
  * @apiSuccess (200) {String} company User company name.
+ * @apiSuccess (200) {Object} location User location.
+ * @apiSuccess (200) {String} location[city] User city.
+ * @apiSuccess (200) {Object} location[geolocation] User geolocation.
+ * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
+ * @apiSuccess (200) {Number} geolocation[longitude] Geolocation longitude.
  * 
  * @apiUse profileExample
  * 
  * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
  */
 profileRoutes.get('/profile', verifyToken, (request, response) => {
 
@@ -106,29 +129,44 @@ profileRoutes.get('/profile', verifyToken, (request, response) => {
 });
 
 /**
- * @api {post} profile Upload profile picture
+ * @api {post} profile 2.3. Upload profile picture
  * 
- * @apiVersion 1.4.11
+ * @apiVersion 1.5.1
  * @apiGroup 2. Profile
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiParam {image} imageProfile Profile picture
+ * @apiParam (Form data params) {image} imageProfile Profile picture
  * 
  * @apiExample {FormData} form-data:
  *  imageProfile: <image>
  * 
  * @apiSuccessExample {json} Success Response:
  *  HTTPS/1.1 200 OK
+ *  {
+ *      "id": 5,
+ *      "name": "Joao",
+ *      "surname": "Silva",
+ *      "email": "joao1980@gmail.com",
+ *      "biography": null,
+ *      "label": null,
+ *      "website": null,
+ *      "image": "https://images.com/1",
+ *      "profission": null,
+ *      "company": null
+ *  }
+ * 
  *  
  * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
- * @apiErrorExample Incorrect password error:
- *  HTTPS/1.1 401 Unauthorized
- *  {
- *      "message": "Invalid password",
- *      "status": 401
+ * @apiUse invalidTokenErrorExample
+ * @apiUse incorrectFieldsError
+ * @apiErrorExample Incorrect Field:
+ *  HTTPS/1.1 400 Bad Request
+ *  { 
+ *      "message": "This file format is not accept here, only .jpg and .png" 
  *  }
  */
 profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (request, response) => {
@@ -145,7 +183,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
 
 
 /**
- * @api {put} profile Update profile
+ * @api {put} profile 2.2. Update profile
  * 
  * @apiVersion 1.4.11
  * @apiGroup 2. Profile
@@ -153,19 +191,19 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiParam {String{3..100}} [name_to] New user name.
- * @apiParam {String{3..100}} [surname_to] New user last name.
- * @apiParam {String{..255}} [biography_to] New user biography.
- * @apiParam {String{..30}} [label_to] New user label.
- * @apiParam {String{..100}} [profission_to] New user profission.
- * @apiParam {String{..100}} [company_to] New user company.
- * @apiParam {String{..255}} [website_to] New user website.
- * @apiParam {Object} [location_to] New user location.
- * @apiParam {String{2}} location_to[uf] New user UF.
- * @apiParam {String{..100}} location_to[city] New user city.
- * @apiParam {Object} location_to[geolocation] New user geolocation.
- * @apiParam {Number} geolocation[latitude] New latitude.
- * @apiParam {Number} geolocation[longitude] New longitude.
+ * @apiParam (Request body params) {String{3..100}} [name_to] New user name.
+ * @apiParam (Request body params) {String{3..100}} [surname_to] New user last name.
+ * @apiParam (Request body params) {String{..255}} [biography_to] New user biography.
+ * @apiParam (Request body params) {String{..30}} [label_to] New user label.
+ * @apiParam (Request body params) {String{..100}} [profission_to] New user profission.
+ * @apiParam (Request body params) {String{..100}} [company_to] New user company.
+ * @apiParam (Request body params) {String{..255}} [website_to] New user website.
+ * @apiParam (Request body params) {Object} [location_to] New user location.
+ * @apiParam (Request body params) {String{2}} location[uf] New user UF.
+ * @apiParam (Request body params) {String{..100}} location[city] New user city.
+ * @apiParam (Request body params) {Object} location[geolocation] New user geolocation.
+ * @apiParam (Request body params) {Number} geolocation[latitude] New latitude.
+ * @apiParam (Request body params) {Number} geolocation[longitude] New longitude.
  * 
  * @apiExample {json} Request body:
  *  {
@@ -195,9 +233,8 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiSuccess (200) {String} image Profile picture link.
  * @apiSuccess (200) {String} company User company name.
  * @apiSuccess (200) {Object} location User location.
- * @apiSuccess (200) {String} location_to[city] User city.
- * 
- * @apiSuccess (200) {Object} location_to[geolocation] User geolocation.
+ * @apiSuccess (200) {String} location[city] User city.
+ * @apiSuccess (200) {Object} location[geolocation] User geolocation.
  * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
  * @apiSuccess (200) {Number} geolocation[longitude] Geolocation longitude.
  * 
@@ -224,7 +261,10 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  *   }
  * 
  * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ * @apiUse incorrectFieldsError
  */
 profileRoutes.put('/profile', validate, (request, response) => {
     const updateUser: UpdateUserRequest = request.body;
@@ -238,7 +278,7 @@ profileRoutes.put('/profile', validate, (request, response) => {
 });
 
 /**
- * @api {delete} profile Delete user
+ * @api {delete} profile 2.5. Delete user
  * 
  * @apiVersion 1.4.11
  * @apiGroup 2. Profile
@@ -246,8 +286,8 @@ profileRoutes.put('/profile', validate, (request, response) => {
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiParam {String} email User email
- * @apiParam {String{8..}} passowrd user password
+ * @apiParam (Request body param) {String} email User email
+ * @apiParam (Request body param) {String{8..}} passowrd user password
  * 
  * @apiExample {json} Request body:
  *  {
@@ -260,8 +300,12 @@ profileRoutes.put('/profile', validate, (request, response) => {
  *  
  * 
  * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
- * @apiUse incorrectCredentialsError
+ * @apiUse invalidTokenErrorExample
+ * @apiError (400) {Object} incorrectCredentials Credentials inserted is incorrects
+ * @apiUse incorrectCredentialsErrorExample
+ * @apiUse incorrectFieldsError
  */
 profileRoutes.delete('/profile', validate, (request, response) => {
     const credentials = request.body;
@@ -276,7 +320,7 @@ profileRoutes.delete('/profile', validate, (request, response) => {
 });
 
 /**
- * @api {patch} profile Update password
+ * @api {patch} profile 2.4. Update password
  * 
  * @apiVersion 1.4.11
  * @apiName PATCH profile
@@ -285,8 +329,8 @@ profileRoutes.delete('/profile', validate, (request, response) => {
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiParam {String} password User password
- * @apiParam {String{8..}} newPassowrd New password
+ * @apiParam (Request body params) {String} password User password
+ * @apiParam (Request body params) {String{8..}} newPassowrd New password
  * 
  * @apiExample {json} Request body:
  *  {
@@ -298,7 +342,10 @@ profileRoutes.delete('/profile', validate, (request, response) => {
  *  HTTPS/1.1 200 OK
  *  
  * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ * @apiError (401) {Object} invalidPassword Password inserted is invalid
  * @apiErrorExample Incorrect password error:
  *  HTTPS/1.1 401 Unauthorized
  *  {

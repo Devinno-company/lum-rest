@@ -9,7 +9,7 @@ const userRoutes = express.Router();
 const controller = new UserController();
 
 /**
- * @api {post} users Register
+ * @api {post} users 1.1. Register
  * 
  * @apiVersion 1.4.11
  * @apiGroup 1. System
@@ -22,10 +22,10 @@ const controller = new UserController();
  *      "password": "joaoPassword" 
  *  }
  * 
- * @apiParam {String{3..100}} name User name.
- * @apiParam {String{3..100}} surname User last name.
- * @apiParam {String} email User email.
- * @apiParam {String{8..}} password User password.
+ * @apiParam (Request body params) {String{3..100}} name User name.
+ * @apiParam (Request body params) {String{3..100}} surname User last name.
+ * @apiParam (Request body params) {String} email User email.
+ * @apiParam (Request body params) {String{8..}} password User password.
  * 
  * @apiSuccess (201) {String} token Token for authentication.
  * 
@@ -35,7 +35,8 @@ const controller = new UserController();
  *      "token": "eyJhbGciOiJIUzI1NiIvInR5cCI6IkpXVCJ4.eyJpZCI6NRwiaWF0IjoxNjAyMTgyNDUyfQ.MR_ehSSQTe9-yVoSe1RAGQZnV6ygLCV4-vcxajBAeaq"
  *  }
  * 
- * @apiErrorExample {json} Fields incorrects:
+ * @apiUse incorrectFieldsError
+ * @apiErrorExample {json} Incorrects fields:
  *  HTTPS/1.1 400 Bad Request
  *  [
  *      {
@@ -66,7 +67,7 @@ userRoutes.post('/users', validate, (request, response) => {
 
 
 /**
- * @api {post} login Log in
+ * @api {post} login 1.2. Log in
  * 
  * @apiVersion 1.4.11
  * @apiGroup 1. System
@@ -77,8 +78,8 @@ userRoutes.post('/users', validate, (request, response) => {
  *      "password": "joaoPassword" 
  *  }
  * 
- * @apiParam {String} email User email.
- * @apiParam {String{8..}} password User password.
+ * @apiParam (Request body params) {String} email User email.
+ * @apiParam (Request body params) {String{8..}} password User password.
  * 
  * @apiSuccess (200) {String} token Token for authentication.
  * 
@@ -87,6 +88,9 @@ userRoutes.post('/users', validate, (request, response) => {
  *  {
  *      "token": "eyJhbGciOiJIUzI1NiIvInR5cCI6IkpXVCJ4.eyJpZCI6NRwiaWF0IjoxNjAyMTgyNDUyfQ.MR_ehSSQTe9-yVoSe1RAGQZnV6ygLCV4-vcxajBAeaq"
  *  }
+ * 
+ * @apiUse incorrectFieldsError
+ * @apiError (401) {Object} incorrectCredentials Invalid credentials
  * 
  * @apiErrorExample {json} Incorrect fields:
  *  HTTPS/1.1 400 Bad Request
@@ -101,7 +105,7 @@ userRoutes.post('/users', validate, (request, response) => {
  *      }
  *  ]
  * 
- * @apiUse incorrectCredentialsError
+ * @apiUse incorrectCredentialsErrorExample
  */
 userRoutes.post('/login', validate, (request, response) => {
     const credentials: Credentials = request.body;
