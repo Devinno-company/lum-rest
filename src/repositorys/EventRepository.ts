@@ -52,8 +52,8 @@ class EventRepository {
             const trx = await db.transaction();
 
             trx('tb_event')
-                .delete()
-                .where('cd_event', '=', idEvent);
+                .where('cd_event', '=', idEvent)
+                .delete();
 
             await trx.commit()
                 .then(() => { resolve(); })

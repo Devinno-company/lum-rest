@@ -41,8 +41,8 @@ class AccessRepository {
             const trx = await db.transaction();
 
             trx('tb_access')
-                .delete()
-                .where('cd_access', '=', idAccess);
+                .where('cd_access', '=', idAccess)
+                .delete();
 
             await trx.commit()
                 .then(() => { resolve(); })

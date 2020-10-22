@@ -51,9 +51,9 @@ class GeolocationRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_geolocation')
-                .delete()
-                .where('cd_geolocation', '=', idGeolocation);
+            await trx('tb_geolocation')
+                .where('cd_geolocation', '=', idGeolocation)
+                .delete();
 
             trx.commit()
                 .then(() => { resolve(); })

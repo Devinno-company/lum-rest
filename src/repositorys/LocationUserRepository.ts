@@ -50,11 +50,11 @@ await trx.commit()
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_location_user')
-                .delete()
-                .where('cd_location_user', '=', idLocationUser);
+            await trx('tb_location_user')
+                .where('cd_location_user', '=', idLocationUser)
+                .del();
 
-            await trx.commit()
+            trx.commit()
                 .then(() => { resolve(); })
                 .catch((err) => {
                     trx.rollback();

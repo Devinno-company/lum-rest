@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 
 function verifyToken(request: Request, response: Response, next: NextFunction) {
 
-    /* CAPTURA O CONTEUDO DO HEADER DE AUTORIZAÇÃO */
+    /* CAPTURA O CONTEÚDO DO HEADER DE AUTORIZAÇÃO */
     const authorizationHeader = request.headers['x-access-token'] as string;
 
     if (!authorizationHeader)
@@ -11,7 +11,7 @@ function verifyToken(request: Request, response: Response, next: NextFunction) {
     else {
         const token = authorizationHeader.replace('Bearer ', '');
 
-        /* VERFIICA SE O TOKEN É VALIDO */
+        /* VERIFICA SE O TOKEN É VALIDO */
         jsonwebtoken.verify(token, process.env.SECRET as string, (err) => {
             if (!err)
                 next();
