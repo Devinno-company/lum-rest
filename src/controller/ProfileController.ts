@@ -18,7 +18,7 @@ class ProfileController {
     async updateUser({ user, updateUser }: { user: User; updateUser: UpdateUser; }): Promise<UserResponse> {
 
         return new Promise(async (resolve, reject) => {
-            /* VERIFICA QUAIS CAMPOS DEVE ATUALIZAR */
+            /* CHECK WHICH FIELDS TO UPDATE */
             if (!updateUser.name_to || updateUser.name_to.replace('\ \g', '').length == 0 && updateUser.name_to != '')
                 updateUser.name_to = user.nm_user
             if (!updateUser.surname_to || updateUser.surname_to.replace('\ \g', '').length == 0 && updateUser.surname_to != '')
@@ -36,21 +36,51 @@ class ProfileController {
 
             let location: any = undefined;
 
+            /* If don't need to make updates to the location */
             if (!updateUser.location_to && user.cd_location_user) {
                 location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+
+            /* If just need to update localization */
             } else if (updateUser.location_to && user.cd_location_user) {
-                location = await LocationUserRepository.updateLocationUser(user.cd_location_user, updateUser.location_to);
+                if (!updateUser.location_to.city || !updateUser.location_to.geolocation || !updateUser.location_to.uf)
+                    reject({ message: "City, uf and geolocation it's required", status: 400 });
+                else {                    
+                    const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                    const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
+
+                    if (!searchCity)
+                        reject({ status: 400, message: 'This city not exists' });
+                    else {
+                        await GeolocationRepository.updateGeolocation(locationUser.cd_geolocation, updateUser.location_to.geolocation)
+                            .catch(err => { reject({ status: 400, message: "Unknown error. Try again later.", error: err})});
+                        
+                        location = await LocationUserRepository.updateCityUser(user.cd_location_user, searchCity.cd_city);
+                    }
+                }
+            /* If need to insert a new localization */
             } else if (updateUser.location_to && !user.cd_location_user) {
-                if (!updateUser.location_to.city || !updateUser.location_to.geolocation)
-                    reject({ message: "City and geolocation it's required", status: 400 });
+
+                if (!updateUser.location_to.city || !updateUser.location_to.geolocation || !updateUser.location_to.uf)
+                    reject({ message: "City, uf and geolocation it's required", status: 400 });
                 else {
-                    location = await LocationUserRepository.insertLocationUser({
-                        geolocation: {
-                            latitude: updateUser.location_to.geolocation.latitude,
-                            longitude: updateUser.location_to.geolocation.longitude
-                        },
-                        city: updateUser.location_to.city
-                    }).catch(err => reject(err));
+                    const insertedGeolocation =
+                        await GeolocationRepository.insertGeolocation(updateUser.location_to.geolocation)
+                            .catch(err => reject({ status: 400, message: 'Unknown error. Try again later', error: err }));
+
+                    const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
+
+                    if (!searchCity)
+                        reject({ status: 400, message: 'This city not exists' });
+                    else if (insertedGeolocation) {
+                        await LocationUserRepository.insertLocationUser(searchCity.cd_city, insertedGeolocation.cd_geolocation)
+                            .then((locationUser) => {
+                                UserRepository.updateLocationUser(user.cd_user, locationUser.cd_location_user);
+                            })
+                            .catch((err) => {
+                                GeolocationRepository.deleteGeolocation(insertedGeolocation.cd_geolocation);
+                                reject({ status: 400, message: 'Unknown error. Try again later', error: err });
+                            });
+                    }
                 }
             }
 
@@ -58,7 +88,7 @@ class ProfileController {
                 const searchCity = await CityRepository.findCityById(location.cd_city);
                 const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
 
-                // Atualiza a localização do usuário
+                // Update location of user
                 await UserRepository.updateLocationUser(user.cd_user, location.cd_location_user);
 
                 location = {
@@ -71,7 +101,6 @@ class ProfileController {
                 }
             }
 
-            /* ATUALIZA O USUÁRIO NO BANCO ATRAVÉS DA CLASSE ESTÁTICA */
             UserRepository.updateUser(user.cd_user, updateUser)
                 .then(async (user) =>
                     resolve(await this.readProfile(user)))
@@ -97,9 +126,19 @@ class ProfileController {
                     if (user.cd_login != login.cd_login)
                         reject({ message: 'Is necessary be logged with user for delete your account' })
                     else {
-                        UserRepository.deleteUserByEmail(credentials.email)
-                            .then(() => resolve())
-                            .catch(err => reject(err))
+                        UserRepository.deleteUserById(user.cd_user)
+                        .then(async () => {
+                            if (user.cd_location_user) {
+                                    const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                                    LocationUserRepository.deleteLocationUserById(user.cd_location_user);
+                                    GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation);
+                                }
+                                await LoginRepository.deleteLoginById(user.cd_login);
+                                resolve();
+                            })
+                            .catch((err) => {
+                                reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
+                            });
                     }
                 }
             }
@@ -176,12 +215,14 @@ class ProfileController {
     }
 
     async readProfile(user: User): Promise<UserResponse> {
+
         return new Promise(async (resolve) => {
+            const login = await LoginRepository.findLoginById(user.cd_login);
             let location;
 
             if (user.cd_location_user)
                 location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
-
+            
             if (location) {
                 const searchCity = await CityRepository.findCityById(location.cd_city);
                 const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
@@ -195,13 +236,14 @@ class ProfileController {
                     }
                 }
             } else {
-                location = undefined;
+                location = null;
             }
 
             resolve({
                 id: user.cd_user,
                 name: user.nm_user,
                 surname: user.nm_surname_user,
+                email: login.nm_email,
                 biography: user.ds_biography,
                 label: user.nm_label,
                 website: user.ds_website,

@@ -1,77 +1,48 @@
 import db from "../database/connection";
-import UpdateLocationUser from "../interfaces/request/UpdateLocationUserRequest";
 import LocationUser from "../models/LocationUser";
-import CityRepository from "./CityRepository";
-import GeolocationRepository from "./GeolocationRepository";
 
 class LocationUserRepository {
 
-    public static insertLocationUser(locationUser: { geolocation: { latitude: number, longitude: number }, city: string }): Promise<LocationUser> {
+    public static insertLocationUser(city_id: number, geolocation_id: number): Promise<LocationUser> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            const insertedGeolocation = await GeolocationRepository.insertGeolocation(locationUser.geolocation);
-            const searchCity = await CityRepository.findCityByName(locationUser.city);
+            const insertedLocationUser = await trx('tb_location_user')
+                .insert({
+                        cd_city: city_id,
+                        cd_geolocation: geolocation_id
+                    })
+                .returning('*');
 
-            if (!searchCity)
-                reject({ message: 'This city not exists', status: 400 });
-            else {
-                const geolocation_id = insertedGeolocation.cd_geolocation;
-                const city_id = searchCity.cd_city;
-
-                const insertedLocationUser = await trx('tb_location_user')
-                    .insert(
-                        {
-                            cd_city: city_id,
-                            cd_geolocation: geolocation_id
-                        }
-                    )
-                    .returning('*');
-
-                await trx.commit()
-                    .then(() => { resolve(insertedLocationUser[0]); })
-                    .catch((err) => {
-                        trx.rollback();
-                        reject(err);
-                    });
-            }
+            await trx.commit()
+                .then(() => { resolve(insertedLocationUser[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
-    public static updateLocationUser(idLocationUser: number, updateLocationUser: UpdateLocationUser): Promise<LocationUser> {
+    public static updateCityUser(idLocationUser: number, city_id: number): Promise<LocationUser> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
-            const locationUser = await this.findLocationUserById(idLocationUser);
 
-            if (!locationUser)
-                reject({ message: 'Location user not found', status: 404 });
-            else {
-                if (updateLocationUser.geolocation) {
-                    GeolocationRepository.updateGeolocation(locationUser.cd_geolocation, updateLocationUser.geolocation)
-                        .catch(err => reject(err));
-                }
-                if (updateLocationUser.city) {
-                    const searchCity = await CityRepository.findCityByName(updateLocationUser.city)
-                        .catch(err => reject(err));
+            const updatedLocationUser =
+                await trx('tb_location_user')
+                    .update({
+                        cd_city: city_id
+                    })
+                    .where('cd_location_user', '=', idLocationUser)
+                    .returning('*');
 
-                    if (searchCity)
-                        await trx('tb_location_user')
-                            .update({
-                                cd_city: searchCity.cd_city
-                            });
-                }
-
-                const updatedLocationUser = await this.findLocationUserById(idLocationUser);
-
-                trx.commit()
-                    .then(() => { resolve(updatedLocationUser); })
-                    .catch((err) => {
-                        trx.rollback();
-                        reject(err);
-                    });
-            }
+await trx.commit()
+                .then(() => { resolve(updatedLocationUser[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -79,9 +50,9 @@ class LocationUserRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_location_user')
-                .delete()
-                .where('cd_location_user', '=', idLocationUser);
+            await trx('tb_location_user')
+                .where('cd_location_user', '=', idLocationUser)
+                .del();
 
             trx.commit()
                 .then(() => { resolve(); })

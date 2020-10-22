@@ -2,36 +2,28 @@ import db from "../database/connection";
 import NewUser from "../interfaces/request/NewUserRequest";
 import UpdateUser from "../interfaces/request/UpdateUserRequest";
 import User from "../models/User";
-import GeolocationRepository from "./GeolocationRepository";
-import LocationUserRepository from "./LocationUserRepository";
-import LoginRepository from "./LoginRepository";
+
 class UserRepository {
 
-    public static insertUser(newUser: NewUser): Promise<User> {
+    public static insertUser(newUser: NewUser, login_id: number): Promise<User> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            // INSERE AS CREDENCIAIS
-            await LoginRepository.insertLogin(newUser.email, newUser.password)
-                .then(async (result) => {
-                    // INSERTE AS INFORMAÇÕES DE USUÁRIO 
-                    const insertedUsers = await trx('tb_user')
-                        .insert({
-                            nm_user: newUser.name,
-                            nm_surname_user: newUser.surname,
-                            cd_login: result.cd_login
-                        }).returning('*');
+            const insertedUsers = await trx('tb_user')
+                .insert({
+                    nm_user: newUser.name,
+                    nm_surname_user: newUser.surname,
+                    cd_login: login_id
+                }).returning('*');
 
-                    const user: User = insertedUsers[0];
+            const user: User = insertedUsers[0];
 
-                    await trx.commit()
-                        .then(() => { resolve(user); })
-                        .catch((err) => {
-                            trx.rollback();
-                            reject(err);
-                        });
-                })
-                .catch(err => reject(err));
+            await trx.commit()
+                .then(() => { resolve(user); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
@@ -110,32 +102,18 @@ class UserRepository {
         });
     }
 
-    public static deleteUserByEmail(email: string): Promise<any> {
+    public static deleteUserByEmail(email: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
             const user = await this.findUserByEmail(email);
 
             if (!user)
-                reject({ message: "E-mail not found.", status: 404 });
+                reject();
             else {
                 await trx('tb_user')
-                    .delete()
-                    .where('cd_user', '=', user.cd_user);
-
-                await trx('tb_login')
-                    .delete()
-                    .where('cd_login', '=', user.cd_login);
-
-                if (user.cd_location_user) {
-                    const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
-
-                    await LocationUserRepository.deleteLocationUserById(user.cd_location_user)
-                        .catch((err) => reject(err));
-
-                    await GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation)
-                        .catch((err) => reject(err));
-                }
+                    .where('cd_user', '=', user.cd_user)
+                    .delete();
 
                 trx.commit()
                     .then(() => { resolve(); })
@@ -147,30 +125,47 @@ class UserRepository {
         });
     }
 
-    public static findUserById(idUser: number): Promise<User> {
+    public static deleteUserById(idUser: number): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
 
-        return new Promise(async (resolve) => {
-            const users = await db('tb_user as u')
-                .select('*')
-                .where('u.cd_user', '=', idUser);
+            await trx('tb_user')
+                .where('cd_user', '=', idUser)
+                .delete();
 
-
-            resolve(users[0]);
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
-    }
+}
 
-    public static findUserByEmail(email: string): Promise<User> {
+public static findUserById(idUser: number): Promise < User > {
 
-        return new Promise(async (resolve) => {
-            const users = await db('tb_user as u')
-                .select('*')
-                .join('tb_login as l', 'l.cd_login', 'u.cd_login')
-                .where('l.nm_email', '=', email);
+    return new Promise(async (resolve) => {
+        const users = await db('tb_user as u')
+            .select('*')
+            .where('u.cd_user', '=', idUser);
 
 
-            resolve(users[0]);
-        });
-    }
+        resolve(users[0]);
+    });
+}
+
+    public static findUserByEmail(email: string): Promise < User > {
+
+    return new Promise(async (resolve) => {
+        const users = await db('tb_user as u')
+            .select('*')
+            .join('tb_login as l', 'l.cd_login', 'u.cd_login')
+            .where('l.nm_email', '=', email);
+
+
+        resolve(users[0]);
+    });
+}
 }
 
 export default UserRepository;

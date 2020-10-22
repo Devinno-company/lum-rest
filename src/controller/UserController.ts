@@ -18,18 +18,29 @@ export default class UserController {
             newUser.surname = newUser.surname.trim();
             newUser.email = newUser.email.toLowerCase().trim();
             newUser.password = newUser.password.trim();
-            
-            /* INSERE O USUÁRIO NO BANCO ATRAVÉS DE UMA CLASSE ESTÁTICA */
-            UserRepository.insertUser(newUser)
-                .then((result: User) => {
-                    // GERA O TOKEN DE AUTENTICAÇÃO
-                    const token = jsonwebtoken.sign({
-                        id: result.cd_user
-                    }, process.env.SECRET as string);
 
-                    resolve({ token });
-                })
-                .catch(err => reject(err));
+            const searchUser = await LoginRepository.findLoginByEmail(newUser.email);
+
+            if (!searchUser) {
+                const insertedLogin =
+                    await LoginRepository.insertLogin(newUser.email, newUser.password)
+                        .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later', err }) });
+
+                if (insertedLogin) {
+                    UserRepository.insertUser(newUser, insertedLogin.cd_login)
+                        .then((result: User) => {
+                            
+                            const token = jsonwebtoken.sign({
+                                id: result.cd_user
+                            }, process.env.SECRET as string);
+
+                            resolve({ token });
+                        })
+                        .catch(err => reject(err));
+                }
+            }
+            else
+                reject({ message: 'This email already register', status: 409 });
         });
     }
 
@@ -39,19 +50,19 @@ export default class UserController {
         return new Promise(async (resolve, reject) => {
             const login = await LoginRepository.findLoginByEmail(credentials.email);
 
-            if (!login) 
-                reject({ message: 'Incorrect credentials', status: 409 });
+            if (!login)
+                reject({ message: 'Incorrect credentials', status: 401 });
             else {
                 /* VERIFICA SE A SENHA É CORRETA */
                 const valid = bcrypt.compareSync(credentials.password, login.nm_password);
-                
+
                 if (valid) {
                     const user = await UserRepository.findUserByEmail(credentials.email);
                     /* GERA O TOKEN DE AUTENTICAÇÃO */
                     const token = jsonwebtoken.sign({ id: user.cd_user }, process.env.SECRET as string);
                     resolve({ token });
                 } else {
-                    reject({ message: 'Incorrect credentials', status: 409 });
+                    reject({ message: 'Incorrect credentials', status: 401 });
                 }
             }
         });

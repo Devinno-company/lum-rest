@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
 function validateImage(request: Request, response: Response, next: NextFunction) {
-    console.log(request.file);
     
     if (!request.file) {
         response.status(400).json({ message: 'Label \'imageProfile\' in FormData is required.' });

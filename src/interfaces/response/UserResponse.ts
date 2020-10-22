@@ -2,6 +2,7 @@ interface UserResponse{
     id: number,
     name: string,
     surname: string,
+    email: string,
     biography?: string,
     label?: string,
     image?: string,
@@ -15,7 +16,7 @@ interface UserResponse{
             latitude: number,
             longitude: number
         }
-    }
+    } | null
 }
 
 export default UserResponse;
