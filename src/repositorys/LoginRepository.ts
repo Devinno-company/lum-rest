@@ -28,8 +28,8 @@ class LoginRepository {
             const trx = await db.transaction();
 
             await trx('tb_login')
-                .delete()
-                .where('cd_login', '=', idLogin);
+                .where('cd_login', '=', idLogin)
+                .delete();
 
             trx.commit()
                 .then(() => { resolve(); })

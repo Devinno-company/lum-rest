@@ -45,8 +45,8 @@ class LocationEventRepository {
             const trx = await db.transaction();
 
             trx('tb_location_event')
-                .delete()
-                .where('cd_location_event', '=', idLocationEvent);
+                .where('cd_location_event', '=', idLocationEvent)
+                .delete();
 
             await trx.commit()
                 .then(() => { resolve(); })

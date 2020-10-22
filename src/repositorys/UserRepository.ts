@@ -112,8 +112,8 @@ class UserRepository {
                 reject();
             else {
                 await trx('tb_user')
-                    .delete()
-                    .where('cd_user', '=', user.cd_user);
+                    .where('cd_user', '=', user.cd_user)
+                    .delete();
 
                 trx.commit()
                     .then(() => { resolve(); })
@@ -130,8 +130,8 @@ class UserRepository {
             const trx = await db.transaction();
 
             await trx('tb_user')
-                .delete()
-                .where('cd_user', '=', idUser);
+                .where('cd_user', '=', idUser)
+                .delete();
 
             trx.commit()
                 .then(() => { resolve(); })

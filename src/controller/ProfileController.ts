@@ -65,7 +65,7 @@ class ProfileController {
                 else {
                     const insertedGeolocation =
                         await GeolocationRepository.insertGeolocation(updateUser.location_to.geolocation)
-                            .catch(err => reject({ status: 400, message: 'Unknow error. Try again later', error: err }));
+                            .catch(err => reject({ status: 400, message: 'Unknown error. Try again later', error: err }));
 
                     const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
 
@@ -78,7 +78,7 @@ class ProfileController {
                             })
                             .catch((err) => {
                                 GeolocationRepository.deleteGeolocation(insertedGeolocation.cd_geolocation);
-                                reject({ status: 400, message: 'Unknow error. Try again later', error: err });
+                                reject({ status: 400, message: 'Unknown error. Try again later', error: err });
                             });
                     }
                 }
@@ -127,16 +127,17 @@ class ProfileController {
                         reject({ message: 'Is necessary be logged with user for delete your account' })
                     else {
                         UserRepository.deleteUserById(user.cd_user)
-                            .then(async () => {
-                                await LoginRepository.deleteLoginById(user.cd_login);
-                                if (user.cd_location_user) {
+                        .then(async () => {
+                            if (user.cd_location_user) {
                                     const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
-                                    LocationUserRepository.deleteLocationUserById(locationUser.cd_location_user);
+                                    LocationUserRepository.deleteLocationUserById(user.cd_location_user);
                                     GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation);
                                 }
+                                await LoginRepository.deleteLoginById(user.cd_login);
+                                resolve();
                             })
                             .catch((err) => {
-                                reject({ status: 400, message: 'Unknow error. Try again later.', error: err });
+                                reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
                             });
                     }
                 }

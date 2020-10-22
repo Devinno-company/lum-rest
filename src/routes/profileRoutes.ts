@@ -161,6 +161,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiParam {String{..100}} [company_to] New user company.
  * @apiParam {String{..255}} [website_to] New user website.
  * @apiParam {Object} [location_to] New user location.
+ * @apiParam {String{2}} location_to[uf] New user UF.
  * @apiParam {String{..100}} location_to[city] New user city.
  * @apiParam {Object} location_to[geolocation] New user geolocation.
  * @apiParam {Number} geolocation[latitude] New latitude.
@@ -175,6 +176,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  *      "profission_to": "Estudante",
  *      "website_to": "https://www.pedrogames.com",
  *      "location_to": {
+ *          "uf": "SP",
  *          "city": "Praia Grande",
  *          "geolocation": {
  *              "latitude": -24.0089,
