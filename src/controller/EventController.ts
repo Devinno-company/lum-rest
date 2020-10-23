@@ -2,8 +2,6 @@ import NewEvent from "../interfaces/request/NewEvent";
 import EventResponse from "../interfaces/response/EventResponse";
 import TeamMember from "../interfaces/response/TeamMember";
 import User from "../models/User";
-import Time from "../models/Time";
-import Credentials from '../interfaces/request/CredentialsRequest';
 import AccessRepository from "../repositorys/AccessRepository";
 import CategoryRepository from "../repositorys/CategoryRepository";
 import CityRepository from "../repositorys/CityRepository";
@@ -18,8 +16,6 @@ import TimeRepository from "../repositorys/TimeRepository";
 import NoticeRepository from "../repositorys/NoticeRepository";
 import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
-import LoginRepository from '../repositorys/LoginRepository';
-import bcrypt from 'bcrypt';
 
 class EventController {
 
@@ -100,6 +96,7 @@ class EventController {
                     reject({ status: 403, message: "You are not allowed to do so" })
                 }
                 else {
+
                     /* Deleta todas tasks relacionadas ao evento */
                     const tasks = await TaskRepository.findTaskByEventId(event.cd_event);
                     if (tasks) {

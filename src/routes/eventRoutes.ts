@@ -279,17 +279,16 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
         .catch((err: any) => response.status(err.status || 400).json(err));
 })
 
-eventRoutes.delete('/events', verifyToken, async (request, response) => {
-    const idEvent = request.body['idEvent'];
-    const credentials:CredentialsRequest = request.body;
+eventRoutes.delete('/events/:idEvent', verifyToken, async (request, response) => {
+    const idEvent = request.params['idEvent'];
 
     if (!Number(idEvent)) {
-        response.status(400).json({ message: 'Id invalid.' });
+        response.status(400).json({ status: 400, message: 'Id invalid.' });
     }
 
     getUserByRequest(request)
         .then(user => {
-            controller.deleteEvent(Number(idEvent), user, credentials)
+            controller.deleteEvent(Number(idEvent), user)
                 .then((result) => response.status(200).json(result))
                 .catch((err: any) => response.status(err.status || 400).json(err));
         })
