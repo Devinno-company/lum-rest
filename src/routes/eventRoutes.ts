@@ -1,6 +1,5 @@
 import express from 'express';
 import EventController from '../controller/EventController';
-import CredentialsRequest from '../interfaces/request/CredentialsRequest';
 import NewEvent from '../interfaces/request/NewEvent';
 import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
@@ -165,7 +164,7 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
 });
 
 /**
- * @api {post} events/:id 3.1. Get event
+ * @api {post} events/:id 3.2. Get event by id
  * 
  * @apiVersion 1.5.2
  * @apiGroup 3. Events

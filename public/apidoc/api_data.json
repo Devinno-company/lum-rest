@@ -241,7 +241,7 @@
             "type": "Object",
             "optional": false,
             "field": "incorrectCredentials",
-            "description": "<p>Credentials inserted is incorrects</p>"
+            "description": "<p>Credentials inserted are incorrect</p>"
           },
           {
             "group": "400",
@@ -343,49 +343,49 @@
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "biography",
             "description": "<p>User biography.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "label",
             "description": "<p>User characteristic.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "website",
             "description": "<p>User website.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "image",
             "description": "<p>Profile picture link.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "profission",
             "description": "<p>User profission.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "company",
             "description": "<p>User company name.</p>"
           },
           {
             "group": "200",
             "type": "Object",
-            "optional": false,
+            "optional": true,
             "field": "location",
             "description": "<p>User location.</p>"
           },
@@ -859,42 +859,42 @@
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "biography",
             "description": "<p>User biography.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "label",
             "description": "<p>User characteristic.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "website",
             "description": "<p>User website.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "image",
             "description": "<p>Profile picture link.</p>"
           },
           {
             "group": "200",
             "type": "String",
-            "optional": false,
+            "optional": true,
             "field": "company",
             "description": "<p>User company name.</p>"
           },
           {
             "group": "200",
             "type": "Object",
-            "optional": false,
+            "optional": true,
             "field": "location",
             "description": "<p>User location.</p>"
           },
@@ -993,6 +993,173 @@
         }
       ]
     }
+  },
+  {
+    "type": "get",
+    "url": "users",
+    "title": "2.1. Get user by email",
+    "version": "1.5.1",
+    "group": "2._Users",
+    "parameter": {
+      "fields": {
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>User email.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n    \"email\": \"joao1980@gmail.com\"\n}",
+        "type": "json"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>User identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "surname",
+            "description": "<p>User last name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "email",
+            "description": "<p>User email.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "biography",
+            "description": "<p>User biography.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "label",
+            "description": "<p>User characteristic.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "website",
+            "description": "<p>User website.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "image",
+            "description": "<p>Profile picture link.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "profission",
+            "description": "<p>User profission.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "company",
+            "description": "<p>User company name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "location",
+            "description": "<p>User location.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "location[city]",
+            "description": "<p>User city.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "location[geolocation]",
+            "description": "<p>User geolocation.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[latitude]",
+            "description": "<p>Geolocation latitude.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[longitude]",
+            "description": "<p>Geolocation longitude.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n{\n    \"id\": 5,\n    \"name\": \"Joao\",\n    \"surname\": \"Silva\",\n    \"email\": \"joao1980@gmail.com\",\n    \"biography\": null,\n    \"label\": null,\n    \"website\": null,\n    \"image\": null,\n    \"profission\": null,\n    \"company\": null,\n    \"location\": null\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "userNotFound",
+            "description": "<p>No registered user with this email</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "HTTPS/1.1 404 Not Found",
+          "content": "HTTPS/1.1 404 Not Found\n    {\n        \"status\": 404,\n        \"message\": \"This user don't exists\"\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/userRoutes.ts",
+    "groupTitle": "2._Users",
+    "name": "GetUsers"
   },
   {
     "type": "post",
@@ -1160,7 +1327,7 @@
     "examples": [
       {
         "title": "Request body",
-        "content": "{\n    \"name\": \"Flores e frutas\",\n    \"start_date\": \"2020-10-22\",\n    \"end_date\": \"2020-10-25\",\n    \"description\": \"Venha participar do maior evento sobre flores e frutas da América Latina.\",\n    \"start_time\": \"15:00\",\n    \"end_time\": \"20:00\",\n    \"privacy\": \"PUB\",\n    \"category\": \"NAT\"\n    \"location\": {\n        \"street\": \"Rua rubi\",\n        \"neighborhood\": \"Cidade da criança\",\n        \"number\": 202,\n        \"cep\": \"11710210\",\n        \"complement\": \"Espaço B\",\n        \"geolocation\": {\n             \"latitude\": 1.534,\n             \"longitude\": 3.123\n        },\n        \"city\": \"Praia Grande\",\n        \"uf\": \"SP\"\n    }\n}",
+        "content": "{\n    \"name\": \"Flores e frutas\",\n    \"start_date\": \"2020-10-22\",\n    \"end_date\": \"2020-10-25\",\n    \"description\": \"Venha participar do maior evento sobre flores e frutas da América Latina.\",\n    \"start_time\": \"15:00\",\n    \"end_time\": \"20:00\",\n    \"privacy\": \"PUB\",\n    \"category\": \"NAT\",\n    \"location\": {\n        \"street\": \"Rua rubi\",\n        \"neighborhood\": \"Cidade da criança\",\n        \"number\": 202,\n        \"cep\": \"11710210\",\n        \"complement\": \"Espaço B\",\n        \"geolocation\": {\n             \"latitude\": 1.534,\n             \"longitude\": 3.123\n        },\n        \"city\": \"Praia Grande\",\n        \"uf\": \"SP\"\n    }\n}",
         "type": "json"
       }
     ],
@@ -1439,7 +1606,7 @@
   {
     "type": "post",
     "url": "events/:id",
-    "title": "3.1. Get event",
+    "title": "3.2. Get event by id",
     "version": "1.5.2",
     "group": "3._Events",
     "parameter": {

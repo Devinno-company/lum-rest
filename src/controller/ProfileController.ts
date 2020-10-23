@@ -15,96 +15,78 @@ import genNameFile from '../utils/genNameFile';
 
 class ProfileController {
 
-    async updateUser({ user, updateUser }: { user: User; updateUser: UpdateUser; }): Promise<UserResponse> {
+    async updateUser(user: User, updateUser: UpdateUser): Promise<UserResponse> {
 
         return new Promise(async (resolve, reject) => {
-            /* CHECK WHICH FIELDS TO UPDATE */
-            if (!updateUser.name_to || updateUser.name_to.replace('\ \g', '').length == 0 && updateUser.name_to != '')
-                updateUser.name_to = user.nm_user
-            if (!updateUser.surname_to || updateUser.surname_to.replace('\ \g', '').length == 0 && updateUser.surname_to != '')
-                updateUser.surname_to = user.nm_surname_user;
-            if (!updateUser.biography_to || updateUser.biography_to.replace('\ \g', '').length == 0 && updateUser.biography_to != '')
-                updateUser.biography_to = user.ds_biography;
-            if (!updateUser.label_to || updateUser.label_to.replace('\ \g', '').length == 0 && updateUser.label_to != '')
-                updateUser.label_to = user.nm_label;
-            if (!updateUser.website_to || updateUser.website_to.replace('\ \g', '').length == 0 && updateUser.website_to != '')
-                updateUser.website_to = user.ds_website;
-            if (!updateUser.profission_to || updateUser.profission_to.replace('\ \g', '').length == 0 && updateUser.profission_to != '')
-                updateUser.profission_to = user.nm_profission;
-            if ((!updateUser.company_to || updateUser.company_to.replace('\ \g', '').length == 0) && updateUser.company_to != '')
-                updateUser.company_to = user.nm_company;
 
-            let location: any = undefined;
+            if (JSON.stringify(updateUser) === '{}') {
+                reject({ status: 400, message: 'No field to update' });
+            } else {
+                let location: any = undefined;
+                /* If don't need to make updates to the location */
+                if ((!updateUser.location_to) && user.cd_location_user) {
+                    location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
 
-            /* If don't need to make updates to the location */
-            if (!updateUser.location_to && user.cd_location_user) {
-                location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                    /* If just need to update localization */
+                } else if (updateUser.location_to && user.cd_location_user) {
 
-            /* If just need to update localization */
-            } else if (updateUser.location_to && user.cd_location_user) {
-                if (!updateUser.location_to.city || !updateUser.location_to.geolocation || !updateUser.location_to.uf)
-                    reject({ message: "City, uf and geolocation it's required", status: 400 });
-                else {                    
                     const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
                     const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
 
                     if (!searchCity)
-                        reject({ status: 400, message: 'This city not exists' });
+                        reject({ status: 400, message: "This city don't exists" });
                     else {
                         await GeolocationRepository.updateGeolocation(locationUser.cd_geolocation, updateUser.location_to.geolocation)
-                            .catch(err => { reject({ status: 400, message: "Unknown error. Try again later.", error: err})});
-                        
+                            .catch(err => { reject({ status: 400, message: "Unknown error. Try again later.", error: err }) });
+
                         location = await LocationUserRepository.updateCityUser(user.cd_location_user, searchCity.cd_city);
                     }
-                }
-            /* If need to insert a new localization */
-            } else if (updateUser.location_to && !user.cd_location_user) {
+                    /* If need to insert a new localization */
+                } else if (updateUser.location_to && !user.cd_location_user) {
 
-                if (!updateUser.location_to.city || !updateUser.location_to.geolocation || !updateUser.location_to.uf)
-                    reject({ message: "City, uf and geolocation it's required", status: 400 });
-                else {
-                    const insertedGeolocation =
-                        await GeolocationRepository.insertGeolocation(updateUser.location_to.geolocation)
-                            .catch(err => reject({ status: 400, message: 'Unknown error. Try again later', error: err }));
+                    if (!updateUser.location_to.city || !updateUser.location_to.geolocation || !updateUser.location_to.uf)
+                        reject({ message: "City, uf and geolocation it's required", status: 400 });
+                    else {
+                        const insertedGeolocation =
+                            await GeolocationRepository.insertGeolocation(updateUser.location_to.geolocation)
+                                .catch(err => reject({ status: 400, message: 'Unknown error. Try again later', error: err }));
 
-                    const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
+                        const searchCity = await CityRepository.findCityByNameAndUf(updateUser.location_to.city, updateUser.location_to.uf)
 
-                    if (!searchCity)
-                        reject({ status: 400, message: 'This city not exists' });
-                    else if (insertedGeolocation) {
-                        await LocationUserRepository.insertLocationUser(searchCity.cd_city, insertedGeolocation.cd_geolocation)
-                            .then((locationUser) => {
-                                UserRepository.updateLocationUser(user.cd_user, locationUser.cd_location_user);
-                            })
-                            .catch((err) => {
-                                GeolocationRepository.deleteGeolocation(insertedGeolocation.cd_geolocation);
-                                reject({ status: 400, message: 'Unknown error. Try again later', error: err });
-                            });
+                        if (!searchCity)
+                            reject({ status: 400, message: 'This city not exists' });
+                        else if (insertedGeolocation) {
+                            await LocationUserRepository.insertLocationUser(searchCity.cd_city, insertedGeolocation.cd_geolocation)
+                                .then((locationUser) => {
+                                    UserRepository.updateLocationUser(user.cd_user, locationUser.cd_location_user);
+                                })
+                                .catch((err) => {
+                                    GeolocationRepository.deleteGeolocation(insertedGeolocation.cd_geolocation);
+                                    reject({ status: 400, message: 'Unknown error. Try again later', error: err });
+                                });
+                        }
                     }
                 }
-            }
 
-            if (location) {
-                const searchCity = await CityRepository.findCityById(location.cd_city);
-                const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
+                if (location) {
+                    const searchCity = await CityRepository.findCityById(location.cd_city);
+                    const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
 
-                // Update location of user
-                await UserRepository.updateLocationUser(user.cd_user, location.cd_location_user);
-
-                location = {
-                    city: searchCity.nm_city,
-                    uf: searchCity.sg_uf,
-                    geolocation: {
-                        latitude: searchGeolocation.cd_latitude,
-                        longitude: searchGeolocation.cd_longitude
+                    location = {
+                        city: searchCity.nm_city,
+                        uf: searchCity.sg_uf,
+                        geolocation: {
+                            latitude: searchGeolocation.cd_latitude,
+                            longitude: searchGeolocation.cd_longitude
+                        }
                     }
                 }
-            }
 
-            UserRepository.updateUser(user.cd_user, updateUser)
-                .then(async (user) =>
-                    resolve(await this.readProfile(user)))
-                .catch(err => reject(err));
+                UserRepository.updateUser(user.cd_user, updateUser)
+                    .then(async (user) =>
+                        resolve(await this.readProfile(user)))
+                    .catch(err => reject(err));
+            }
         });
     }
 
@@ -127,8 +109,8 @@ class ProfileController {
                         reject({ message: 'Is necessary be logged with user for delete your account' })
                     else {
                         UserRepository.deleteUserById(user.cd_user)
-                        .then(async () => {
-                            if (user.cd_location_user) {
+                            .then(async () => {
+                                if (user.cd_location_user) {
                                     const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
                                     LocationUserRepository.deleteLocationUserById(user.cd_location_user);
                                     GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation);
@@ -222,7 +204,7 @@ class ProfileController {
 
             if (user.cd_location_user)
                 location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
-            
+
             if (location) {
                 const searchCity = await CityRepository.findCityById(location.cd_city);
                 const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);

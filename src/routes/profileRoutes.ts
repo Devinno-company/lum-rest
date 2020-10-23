@@ -266,12 +266,19 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiUse invalidTokenError
  * @apiUse invalidTokenErrorExample
  * @apiUse incorrectFieldsError
+ * @apiError (400) noField No field need be updated.
+ * @apiErrorExample noField:
+ *  HTTPS/1.1 400 Bad Request
+ *      { 
+ *          status: 400, 
+ *          message: 'No field to update' 
+ *      }
  */
 profileRoutes.put('/profile', validate, (request, response) => {
     const updateUser: UpdateUserRequest = request.body;
-
+    
     getUserByRequest(request).then(user => {
-        controller.updateUser({ user, updateUser })
+        controller.updateUser(user, updateUser)
             .then((result: UserResponse) => response.status(200).json(result))
             .catch((err: any) => response.status(err.status || 400).json(err));
     })

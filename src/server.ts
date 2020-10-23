@@ -1,5 +1,6 @@
 require('dotenv-safe').config();
 import express from 'express';
+import db from './database/connection';
 import eventRoutes from './routes/eventRoutes';
 import profileRoutes from './routes/profileRoutes';
 import userRoutes from './routes/userRoutes';
