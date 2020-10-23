@@ -8,6 +8,7 @@ import UserResponse from '../interfaces/response/UserResponse';
 import validateImage from '../middleware/imageValidation';
 import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
+import CredentialsRequest from '../interfaces/request/CredentialsRequest';
 
 const profileRoutes = express.Router();
 const controller = new ProfileController();
@@ -303,12 +304,12 @@ profileRoutes.put('/profile', validate, (request, response) => {
  * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
  * @apiUse invalidTokenErrorExample
- * @apiError (400) {Object} incorrectCredentials Credentials inserted is incorrects
+ * @apiError (400) {Object} incorrectCredentials Credentials inserted are incorrect
  * @apiUse incorrectCredentialsErrorExample
  * @apiUse incorrectFieldsError
  */
 profileRoutes.delete('/profile', validate, (request, response) => {
-    const credentials = request.body;
+    const credentials:CredentialsRequest = request.body;
 
     getUserByRequest(request)
         .then(user => {

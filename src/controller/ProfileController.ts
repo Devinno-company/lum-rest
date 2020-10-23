@@ -199,7 +199,7 @@ class ProfileController {
             // Faz o upload o arquivo
             s3.upload(putObjectRequest, async (err: Error) => {
                 if (err) {
-                    reject({ message: 'Unknow error. Try again later.', error: err });
+                    reject({ message: 'Unknown error. Try again later.', error: err });
                 } else {
                     // Persiste o link no banco e retorna o link para o usuário
                     UserRepository.addImageById(user.cd_user, link)
@@ -207,7 +207,7 @@ class ProfileController {
                             resolve(await this.readProfile(user));
                         })
                         .catch(e => {
-                            reject({ message: 'Unknow error. Try again later.', error: e })
+                            reject({ message: 'Unknown error. Try again later.', error: e })
                         });
                 }
             });

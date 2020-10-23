@@ -44,11 +44,11 @@ class LocationEventRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_location_event')
+            await trx('tb_location_event')
                 .where('cd_location_event', '=', idLocationEvent)
                 .delete();
 
-            await trx.commit()
+            trx.commit()
                 .then(() => { resolve(); })
                 .catch((err) => {
                     trx.rollback();

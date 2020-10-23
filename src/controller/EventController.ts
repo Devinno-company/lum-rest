@@ -2,6 +2,8 @@ import NewEvent from "../interfaces/request/NewEvent";
 import EventResponse from "../interfaces/response/EventResponse";
 import TeamMember from "../interfaces/response/TeamMember";
 import User from "../models/User";
+import Time from "../models/Time";
+import Credentials from '../interfaces/request/CredentialsRequest';
 import AccessRepository from "../repositorys/AccessRepository";
 import CategoryRepository from "../repositorys/CategoryRepository";
 import CityRepository from "../repositorys/CityRepository";
@@ -11,6 +13,13 @@ import LocationEventRepository from "../repositorys/LocationEventRepository";
 import PrivacyRepository from "../repositorys/PrivacyRepository";
 import RoleRepository from "../repositorys/RoleRepository";
 import UserRepository from "../repositorys/UserRepository";
+import TaskRepository from "../repositorys/TaskRepository";
+import TimeRepository from "../repositorys/TimeRepository";
+import NoticeRepository from "../repositorys/NoticeRepository";
+import MapRepository from "../repositorys/MapRepository";
+import MaterialRepository from "../repositorys/MaterialRepository";
+import LoginRepository from '../repositorys/LoginRepository';
+import bcrypt from 'bcrypt';
 
 class EventController {
 
@@ -24,9 +33,13 @@ class EventController {
             }).catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
             
             const city = await CityRepository.findCityByNameAndUf(newEvent.location.city, newEvent.location.uf);
-            
+            const category = await CategoryRepository.findCategoryById(newEvent.category);
+
+            if (!category) {
+                reject({ status: 400, message: "This category doesn't exist" });
+            };
             if (!city) {
-                reject({ status: 400, message: "This city doesn't exists" });
+                reject({ status: 400, message: "This city doesn't exist" });
             } else if (insertedGeolocation) {
 
                 const insertedLocationEvent = await LocationEventRepository.insertLocationEvent({
@@ -66,6 +79,98 @@ class EventController {
 
                                 reject({ status: 400, message: 'Unknown error. Try again later.', err })
                             });
+                    }
+                }
+            }
+        });
+    }
+
+    async deleteEvent(idEvent:number, user: User, credentials: Credentials) {
+
+        return new Promise(async (resolve, reject) => {
+
+            const event = await EventRepository.findEventById(idEvent);
+            if (!event) {
+                reject({ status: 404, message: "This event doesn't exists" });
+            } else {
+                const access = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, user.cd_user);   
+                if (!access)
+                    reject({ status: 403, message: "You are not allowed to do so" })
+
+                else {
+
+                    const login = await LoginRepository.findLoginById(user.cd_login);
+                    let valid = false;
+
+                    if (!login)
+                        reject({ message: 'Incorrect credentials', status: 409 });
+                    else {
+                        valid = bcrypt.compareSync(credentials.password, login.nm_password);
+
+                        if (!valid)
+                            reject({ message: 'Incorrect credentials', status: 409 });
+                        else {
+                            if (user.cd_login != login.cd_login)
+                                reject({ message: 'Is necessary be logged with user for delete your account' })
+                            else {
+                                /* Deleta todas tasks relacionadas ao evento */
+                                const tasks = await TaskRepository.findTaskByEventId(event.cd_event);
+                                if (tasks) {
+                                    tasks.map(item => {
+                                        TaskRepository.deleteTaskById(item.cd_task)
+                                    });
+                                }
+                                /* Deleta todos acessos relacionados ao evento */
+                                const accesses = await AccessRepository.findAccessByEventId(event.cd_event);
+                                if (accesses) {
+                                    accesses.map(item => {
+                                        AccessRepository.deleteAccessById(item.cd_access)
+                                    });
+                                }
+                                /* Deleta todos tempos(times) relacionados ao evento */
+                                const times = await TimeRepository.findTimeByEventId(event.cd_event);
+                                if (times) {
+                                    times.map(item => {
+                                        TimeRepository.deleteTimeById(item.cd_time)
+                                    });
+                                }
+                                /* Deleta todos avisos(notices) relacionados ao evento */
+                                const notices = await NoticeRepository.findNoticeByEventId(event.cd_event);
+                                if (notices) {
+                                    notices.map(item => {
+                                        NoticeRepository.deleteNoticeById(item.cd_notice)
+                                    });
+                                }
+                                /* Deleta todos mapas(maps) relacionados ao evento */
+                                const maps = await MapRepository.findMapByEventId(event.cd_event);
+                                if (maps) {
+                                    maps.map(item => {
+                                        MapRepository.deleteMapById(item.cd_map)
+                                    });
+                                }
+                                /* Deleta todos materiais(materials) relacionados ao evento */
+                                const materials = await MaterialRepository.findMaterialByEventId(event.cd_event);
+                                if (materials) {
+                                    materials.map(item => {
+                                        MaterialRepository.deleteMaterialById(item.cd_material)
+                                    });
+                                }
+
+
+                                EventRepository.deleteEventById(event.cd_event)
+                                    .then(async () => {
+                                    if (event.cd_location_event) {
+                                        const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
+                                        LocationEventRepository.deleteLocationEventById(event.cd_location_event);
+                                        GeolocationRepository.deleteGeolocation(locationEvent.cd_geolocation);
+                                    }
+                                    resolve();
+                                    })
+                                    .catch((err) => {
+                                        reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
+                                    });
+                            }
+                        }
                     }
                 }
             }

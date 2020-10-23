@@ -1,11 +1,7 @@
-interface InsertEvent {
-    name: string,
-    start_date: string,
-    end_date: string,
-    description?: string,
-    start_time?: string,
-    end_time?: string,
-    type?: string,
+interface InsertAccess {
+    user_id: number,
+    event_id: number,
+    role: string
 }
 
-export default InsertEvent;
+export default InsertAccess;

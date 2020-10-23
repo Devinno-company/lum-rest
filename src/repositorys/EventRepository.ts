@@ -51,11 +51,11 @@ class EventRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_event')
+            await trx('tb_event')
                 .where('cd_event', '=', idEvent)
                 .delete();
 
-            await trx.commit()
+            trx.commit()
                 .then(() => { resolve(); })
                 .catch((err) => {
                     trx.rollback();

@@ -1,5 +1,6 @@
 import express from 'express';
 import EventController from '../controller/EventController';
+import CredentialsRequest from '../interfaces/request/CredentialsRequest';
 import NewEvent from '../interfaces/request/NewEvent';
 import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
@@ -44,7 +45,7 @@ const controller = new EventController();
  *      "start_time": "15:00",
  *      "end_time": "20:00",
  *      "privacy": "PUB",
- *      "category": "NAT"
+ *      "category": "NAT",
  *      "location": {
  *          "street": "Rua rubi",
  *          "neighborhood": "Cidade da criança",
@@ -277,5 +278,22 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
         })
         .catch((err: any) => response.status(err.status || 400).json(err));
 })
+
+eventRoutes.delete('/events', verifyToken, async (request, response) => {
+    const idEvent = request.body['idEvent'];
+    const credentials:CredentialsRequest = request.body;
+
+    if (!Number(idEvent)) {
+        response.status(400).json({ message: 'Id invalid.' });
+    }
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.deleteEvent(Number(idEvent), user, credentials)
+                .then((result) => response.status(200).json(result))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
 
 export default eventRoutes;

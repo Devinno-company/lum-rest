@@ -19,7 +19,8 @@
   "scripts": {
     "start": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env development",
-    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env development"
+    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env development",
+    "dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts"
   },
   "dependencies": {
     "@types/aws-sdk": "^2.7.0",

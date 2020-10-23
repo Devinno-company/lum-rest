@@ -36,15 +36,29 @@ class AccessRepository {
         });
     }
 
+    public static async findAccessByEventIdAndUserId(idEvent: number, idUser: number): Promise<Array<Access>> {
+
+        return new Promise(async (resolve) => {
+            const access =
+            await db('tb_access as a')
+                .select('*')
+                .where('a.cd_event', '=', idEvent)
+                .where('a.cd_user', '=', idUser);
+
+
+            resolve(access);
+        });
+    }
+
     public static async deleteAccessById(idAccess: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            trx('tb_access')
+            await trx('tb_access')
                 .where('cd_access', '=', idAccess)
                 .delete();
 
-            await trx.commit()
+            trx.commit()
                 .then(() => { resolve(); })
                 .catch((err) => {
                     trx.rollback();
