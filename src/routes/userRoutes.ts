@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 import UserController from "../controller/UserController";
 import Credentials from '../interfaces/request/CredentialsRequest';
 import NewUser from "../interfaces/request/NewUserRequest";
@@ -113,6 +113,51 @@ userRoutes.post('/login', validate, (request, response) => {
     controller.login(credentials)
         .then((result: { token: string }) => response.status(200).json(result))
         .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+/**
+ * @api {get} users 2.1. Get user by email
+ * 
+ * @apiVersion 1.5.1
+ * @apiGroup 2. Users
+ * 
+ * @apiParam (Request body params) {String} email User email.
+ * @apiExample {json} Request body:
+ *  {
+ *      "email": "joao1980@gmail.com"
+ *  }
+ * 
+ * @apiSuccess (200) {Number} id User identification code.
+ * @apiSuccess (200) {String} name User name.
+ * @apiSuccess (200) {String} surname User last name.
+ * @apiSuccess (200) {String} email User email.
+ * @apiSuccess (200) {String} [biography] User biography.
+ * @apiSuccess (200) {String} [label] User characteristic.
+ * @apiSuccess (200) {String} [website] User website.
+ * @apiSuccess (200) {String} [image] Profile picture link.
+ * @apiSuccess (200) {String} [profission] User profission.
+ * @apiSuccess (200) {String} [company] User company name.
+ * @apiSuccess (200) {Object} [location] User location.
+ * @apiSuccess (200) {String} location[city] User city.
+ * @apiSuccess (200) {Object} location[geolocation] User geolocation.
+ * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
+ * @apiSuccess (200) {Number} geolocation[longitude] Geolocation longitude.
+ * 
+ * @apiUse profileExample
+ * 
+ * @apiError (404) userNotFound No registered user with this email
+ * @apiErrorExample
+ *  HTTPS/1.1 404 Not Found
+ *      {
+ *          "status": 404,
+ *          "message": "This user don't exists"
+ *      }
+ */
+userRoutes.get('/users', validate, (request, response) => {
+
+    controller.readUserByEmail(request.body.email)
+        .then((result) => response.status(200).json(result))
+        .catch((err) => response.status(err.status || 400).json(err));
 });
 
 export default userRoutes;

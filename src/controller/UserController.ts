@@ -5,6 +5,10 @@ import UserRepository from '../repositorys/UserRepository';
 import User from '../models/User';
 import Credentials from '../interfaces/request/CredentialsRequest';
 import LoginRepository from '../repositorys/LoginRepository';
+import UserResponse from '../interfaces/response/UserResponse';
+import LocationUserRepository from '../repositorys/LocationUserRepository';
+import CityRepository from '../repositorys/CityRepository';
+import GeolocationRepository from '../repositorys/GeolocationRepository';
 
 export default class UserController {
 
@@ -29,7 +33,7 @@ export default class UserController {
                 if (insertedLogin) {
                     UserRepository.insertUser(newUser, insertedLogin.cd_login)
                         .then((result: User) => {
-                            
+
                             const token = jsonwebtoken.sign({
                                 id: result.cd_user
                             }, process.env.SECRET as string);
@@ -64,6 +68,52 @@ export default class UserController {
                 } else {
                     reject({ message: 'Incorrect credentials', status: 401 });
                 }
+            }
+        });
+    }
+
+    async readUserByEmail(email: string): Promise<UserResponse> {
+
+        return new Promise(async (resolve, reject) => {
+
+            const user = await UserRepository.findUserByEmail(email);
+            if (!user)
+                reject({ status: 404, message: "This user don't exists" });
+            else {
+                const login = await LoginRepository.findLoginById(user.cd_login);
+                let location;
+
+                if (user.cd_location_user)
+                    location = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+
+                if (location) {
+                    const searchCity = await CityRepository.findCityById(location.cd_city);
+                    const searchGeolocation = await GeolocationRepository.findGeolocationById(location.cd_geolocation);
+
+                    location = {
+                        city: searchCity.nm_city,
+                        uf: searchCity.sg_uf,
+                        geolocation: {
+                            latitude: searchGeolocation.cd_latitude,
+                            longitude: searchGeolocation.cd_longitude
+                        }
+                    }
+                } else {
+                    location = null;
+                }
+
+                resolve({
+                    id: user.cd_user,
+                    name: user.nm_user,
+                    surname: user.nm_surname_user,
+                    email: login.nm_email,
+                    biography: user.ds_biography,
+                    label: user.nm_label,
+                    website: user.ds_website,
+                    image: user.im_user,
+                    company: user.nm_company,
+                    location: location
+                });
             }
         });
     }

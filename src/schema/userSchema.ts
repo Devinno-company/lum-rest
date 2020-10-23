@@ -91,3 +91,12 @@ export const updateUserSchema = Joi.object({
 })
     .strict()
     .unknown();
+
+export const getUserByEmailSchema = Joi.object({
+    email: Joi.string()
+        .email()
+        .max(255)
+        .required(),
+})
+.unknown()
+.strict();

@@ -1,7 +1,7 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
 import credentialsSchema from "../schema/credentialsSchema";
-import { newUserSchema, updateUserSchema } from "../schema/userSchema";
+import { getUserByEmailSchema, newUserSchema, updateUserSchema } from "../schema/userSchema";
 import updatePasswordSchema from "../schema/updatePasswordSchema";
 import { newEventSchema } from "../schema/eventSchema";
 
@@ -52,12 +52,12 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                     message = "This fiels is a object type. See our documentation";
                     break;
                 case 'string.pattern.base':
-                                        
-                    if(item.context.label == 'cep')
+
+                    if (item.context.label == 'cep')
                         message = 'This format is invalid for cep';
-                    else if(item.context.label.includes('date'))
+                    else if (item.context.label.includes('date'))
                         message = 'This format is invalid for date';
-                    else if(item.context.label.includes('time'))
+                    else if (item.context.label.includes('time'))
                         message = 'This format is invalid for time';
                     else {
                         message = 'This value is invalid for this field. See our documentation.';
@@ -77,7 +77,7 @@ function getErrorsResponse(errors: Joi.ValidationError) {
 }
 
 function validate(request: Request, response: Response, next: NextFunction) {
-    
+
     const route = request.path.toLowerCase();
     const method = request.method.toLowerCase();
 
@@ -91,7 +91,14 @@ function validate(request: Request, response: Response, next: NextFunction) {
             schema = credentialsSchema;
             break;
         case '/events':
-            schema = newEventSchema;
+            switch (method) {
+                case 'post':
+                    schema = newEventSchema;
+                    break;
+                // get
+                default:
+                    schema = getUserByEmailSchema;
+            }
             break;
         // /profile
         default:
@@ -108,11 +115,11 @@ function validate(request: Request, response: Response, next: NextFunction) {
             }
             break;
     }
-    
+
     /* Validate the received data */
     const { error } = schema.validate(request.body, optionsValidation);
-    
-    if (!error) {        
+
+    if (!error) {
         next();
     } else {
         const errorsResponse = getErrorsResponse(error);

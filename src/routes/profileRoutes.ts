@@ -99,13 +99,13 @@ const formData = multer();
  * @apiSuccess (200) {String} name User name.
  * @apiSuccess (200) {String} surname User last name.
  * @apiSuccess (200) {String} email User email.
- * @apiSuccess (200) {String} biography User biography.
- * @apiSuccess (200) {String} label User characteristic.
- * @apiSuccess (200) {String} website User website.
- * @apiSuccess (200) {String} image Profile picture link.
- * @apiSuccess (200) {String} profission User profission.
- * @apiSuccess (200) {String} company User company name.
- * @apiSuccess (200) {Object} location User location.
+ * @apiSuccess (200) {String} [biography] User biography.
+ * @apiSuccess (200) {String} [label] User characteristic.
+ * @apiSuccess (200) {String} [website] User website.
+ * @apiSuccess (200) {String} [image] Profile picture link.
+ * @apiSuccess (200) {String} [profission] User profission.
+ * @apiSuccess (200) {String} [company] User company name.
+ * @apiSuccess (200) {Object} [location] User location.
  * @apiSuccess (200) {String} location[city] User city.
  * @apiSuccess (200) {Object} location[geolocation] User geolocation.
  * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
@@ -228,12 +228,12 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  * @apiSuccess (200) {String} name User name.
  * @apiSuccess (200) {String} surname User last name.
  * @apiSuccess (200) {String} email User email.
- * @apiSuccess (200) {String} biography User biography.
- * @apiSuccess (200) {String} label User characteristic.
- * @apiSuccess (200) {String} website User website.
- * @apiSuccess (200) {String} image Profile picture link.
- * @apiSuccess (200) {String} company User company name.
- * @apiSuccess (200) {Object} location User location.
+ * @apiSuccess (200) {String} [biography] User biography.
+ * @apiSuccess (200) {String} [label] User characteristic.
+ * @apiSuccess (200) {String} [website] User website.
+ * @apiSuccess (200) {String} [image] Profile picture link.
+ * @apiSuccess (200) {String} [company] User company name.
+ * @apiSuccess (200) {Object} [location] User location.
  * @apiSuccess (200) {String} location[city] User city.
  * @apiSuccess (200) {Object} location[geolocation] User geolocation.
  * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
