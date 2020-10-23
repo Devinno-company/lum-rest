@@ -24,14 +24,14 @@ import bcrypt from 'bcrypt';
 class EventController {
 
     public insertEvent(newEvent: NewEvent, user: User) {
-        
+
         return new Promise(async (resolve, reject) => {
-            
+
             const insertedGeolocation = await GeolocationRepository.insertGeolocation({
                 latitude: newEvent.location.geolocation.latitude,
                 longitude: newEvent.location.geolocation.longitude
             }).catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
-            
+
             const city = await CityRepository.findCityByNameAndUf(newEvent.location.city, newEvent.location.uf);
             const category = await CategoryRepository.findCategoryById(newEvent.category);
 
@@ -85,7 +85,7 @@ class EventController {
         });
     }
 
-    async deleteEvent(idEvent:number, user: User, credentials: Credentials) {
+    async deleteEvent(idEvent: number, user: User) {
 
         return new Promise(async (resolve, reject) => {
 
@@ -93,86 +93,71 @@ class EventController {
             if (!event) {
                 reject({ status: 404, message: "This event doesn't exists" });
             } else {
-                const access = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, user.cd_user);   
+                const access = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, user.cd_user);
                 if (!access)
                     reject({ status: 403, message: "You are not allowed to do so" })
-
-                else {
-
-                    const login = await LoginRepository.findLoginById(user.cd_login);
-                    let valid = false;
-
-                    if (!login)
-                        reject({ message: 'Incorrect credentials', status: 409 });
-                    else {
-                        valid = bcrypt.compareSync(credentials.password, login.nm_password);
-
-                        if (!valid)
-                            reject({ message: 'Incorrect credentials', status: 409 });
-                        else {
-                            if (user.cd_login != login.cd_login)
-                                reject({ message: 'Is necessary be logged with user for delete your account' })
-                            else {
-                                /* Deleta todas tasks relacionadas ao evento */
-                                const tasks = await TaskRepository.findTaskByEventId(event.cd_event);
-                                if (tasks) {
-                                    tasks.map(item => {
-                                        TaskRepository.deleteTaskById(item.cd_task)
-                                    });
-                                }
-                                /* Deleta todos acessos relacionados ao evento */
-                                const accesses = await AccessRepository.findAccessByEventId(event.cd_event);
-                                if (accesses) {
-                                    accesses.map(item => {
-                                        AccessRepository.deleteAccessById(item.cd_access)
-                                    });
-                                }
-                                /* Deleta todos tempos(times) relacionados ao evento */
-                                const times = await TimeRepository.findTimeByEventId(event.cd_event);
-                                if (times) {
-                                    times.map(item => {
-                                        TimeRepository.deleteTimeById(item.cd_time)
-                                    });
-                                }
-                                /* Deleta todos avisos(notices) relacionados ao evento */
-                                const notices = await NoticeRepository.findNoticeByEventId(event.cd_event);
-                                if (notices) {
-                                    notices.map(item => {
-                                        NoticeRepository.deleteNoticeById(item.cd_notice)
-                                    });
-                                }
-                                /* Deleta todos mapas(maps) relacionados ao evento */
-                                const maps = await MapRepository.findMapByEventId(event.cd_event);
-                                if (maps) {
-                                    maps.map(item => {
-                                        MapRepository.deleteMapById(item.cd_map)
-                                    });
-                                }
-                                /* Deleta todos materiais(materials) relacionados ao evento */
-                                const materials = await MaterialRepository.findMaterialByEventId(event.cd_event);
-                                if (materials) {
-                                    materials.map(item => {
-                                        MaterialRepository.deleteMaterialById(item.cd_material)
-                                    });
-                                }
-
-
-                                EventRepository.deleteEventById(event.cd_event)
-                                    .then(async () => {
-                                    if (event.cd_location_event) {
-                                        const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
-                                        LocationEventRepository.deleteLocationEventById(event.cd_location_event);
-                                        GeolocationRepository.deleteGeolocation(locationEvent.cd_geolocation);
-                                    }
-                                    resolve();
-                                    })
-                                    .catch((err) => {
-                                        reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
-                                    });
-                            }
-                        }
-                    }
+                else if (access.sg_role != 'CRI') {
+                    reject({ status: 403, message: "You are not allowed to do so" })
                 }
+                else {
+                    /* Deleta todas tasks relacionadas ao evento */
+                    const tasks = await TaskRepository.findTaskByEventId(event.cd_event);
+                    if (tasks) {
+                        tasks.map(item => {
+                            TaskRepository.deleteTaskById(item.cd_task)
+                        });
+                    }
+                    /* Deleta todos acessos relacionados ao evento */
+                    const accesses = await AccessRepository.findAccessByEventId(event.cd_event);
+                    if (accesses) {
+                        accesses.map(item => {
+                            AccessRepository.deleteAccessById(item.cd_access)
+                        });
+                    }
+                    /* Deleta todos tempos(times) relacionados ao evento */
+                    const times = await TimeRepository.findTimeByEventId(event.cd_event);
+                    if (times) {
+                        times.map(item => {
+                            TimeRepository.deleteTimeById(item.cd_time)
+                        });
+                    }
+                    /* Deleta todos avisos(notices) relacionados ao evento */
+                    const notices = await NoticeRepository.findNoticeByEventId(event.cd_event);
+                    if (notices) {
+                        notices.map(item => {
+                            NoticeRepository.deleteNoticeById(item.cd_notice)
+                        });
+                    }
+                    /* Deleta todos mapas(maps) relacionados ao evento */
+                    const maps = await MapRepository.findMapByEventId(event.cd_event);
+                    if (maps) {
+                        maps.map(item => {
+                            MapRepository.deleteMapById(item.cd_map)
+                        });
+                    }
+                    /* Deleta todos materiais(materials) relacionados ao evento */
+                    const materials = await MaterialRepository.findMaterialByEventId(event.cd_event);
+                    if (materials) {
+                        materials.map(item => {
+                            MaterialRepository.deleteMaterialById(item.cd_material)
+                        });
+                    }
+
+
+                    EventRepository.deleteEventById(event.cd_event)
+                        .then(async () => {
+                            if (event.cd_location_event) {
+                                const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
+                                LocationEventRepository.deleteLocationEventById(event.cd_location_event);
+                                GeolocationRepository.deleteGeolocation(locationEvent.cd_geolocation);
+                            }
+                            resolve();
+                        })
+                        .catch((err) => {
+                            reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
+                        });
+                }
+
             }
         });
     }
@@ -242,12 +227,12 @@ class EventController {
                             });
                     });
 
-                    
-                    const startDate = new Date(event.dt_start);
-                    const endDate = new Date(event.dt_end);                    
 
-                    event.dt_start = `${startDate.getFullYear()}-${startDate.getMonth()+1}-${startDate.getDate()}`;
-                    event.dt_end = `${endDate.getFullYear()}-${endDate.getMonth()+1}-${endDate.getDate()}`;
+                    const startDate = new Date(event.dt_start);
+                    const endDate = new Date(event.dt_end);
+
+                    event.dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+                    event.dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
                     event.hr_start = event.hr_start.slice(0, 5);
                     event.hr_end = event.hr_end.slice(0, 5);
 

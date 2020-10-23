@@ -36,7 +36,7 @@ class AccessRepository {
         });
     }
 
-    public static async findAccessByEventIdAndUserId(idEvent: number, idUser: number): Promise<Array<Access>> {
+    public static async findAccessByEventIdAndUserId(idEvent: number, idUser: number): Promise<Access> {
 
         return new Promise(async (resolve) => {
             const access =
@@ -46,7 +46,7 @@ class AccessRepository {
                 .where('a.cd_user', '=', idUser);
 
 
-            resolve(access);
+            resolve(access[0]);
         });
     }
 
