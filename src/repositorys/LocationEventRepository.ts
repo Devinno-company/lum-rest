@@ -1,5 +1,6 @@
 import db from "../database/connection";
 import InsertLocationEvent from "../interfaces/inputRepository/insertLocationEvent";
+import UpdateLocationEvent from "../interfaces/request/UpdateLocationEventRequest";
 import LocationEvent from "../models/LocationEvent";
 
 class LocationEventRepository {
@@ -37,6 +38,55 @@ class LocationEventRepository {
                     .where('le.cd_location_event', '=', idLocationEvent);
         
             resolve(locationEvent[0]);
+        });
+    }
+
+    public static updateLocationEvent(idLocationEvent: number, updateLocationEvent: UpdateLocationEvent): Promise<LocationEvent> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedEventLocations = await trx('tb_location_event')
+                .update({
+                    nm_street: updateLocationEvent.street_to,
+                    nm_neighborhood: updateLocationEvent.neighborhood_to,
+                    nm_complement: updateLocationEvent.complement_to,
+                    cd_number: updateLocationEvent.number_to,
+                    cd_cep: updateLocationEvent.cep_to
+                })
+                .where('cd_location_event', '=', idLocationEvent)
+                .returning('*');
+
+            const locationEvent = updatedEventLocations[0];
+
+            trx.commit()
+                .then(() => { resolve(locationEvent); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
+    public static updateCityEvent(idLocationEvent: number, city_id: number): Promise<LocationEvent> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedLocationEvent =
+                await trx('tb_location_event')
+                    .update({
+                        cd_city: city_id
+                    })
+                    .where('cd_location_event', '=', idLocationEvent)
+                    .returning('*');
+
+await trx.commit()
+                .then(() => { resolve(updatedLocationEvent[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 

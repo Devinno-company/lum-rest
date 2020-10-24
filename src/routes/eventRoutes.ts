@@ -4,6 +4,9 @@ import NewEvent from '../interfaces/request/NewEvent';
 import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
+import UpdateEvent from "../interfaces/request/UpdateEventRequest";
+import EventResponse from '../interfaces/response/EventResponse';
+
 
 const eventRoutes = express.Router();
 const controller = new EventController();
@@ -191,7 +194,7 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
  * @apiSuccess (200) {String{2}} location[uf] Event federative unit. (uppercase).
  * @apiSuccess (200) {Object} location[geolocation] Event geolocation.
  * @apiSuccess (200) {Number} geolocation[latitude] Event latitude.
- * @apiSuccess (200) {Object} geolocation[longitude] Event longitude.
+ * @apiSuccess (200) {Number} geolocation[longitude] Event longitude.
  * @apiSuccess (200) {Object[user]} team Users responsible for organizing the event.
  * @apiSuccess (200) {Number} team[id] User identification code.
  * @apiSuccess (200) {String} team[name] User name.
@@ -276,8 +279,162 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
                 .catch((err: any) => response.status(err.status || 400).json(err));
         })
         .catch((err: any) => response.status(err.status || 400).json(err));
-})
+});
 
+/**
+ * @api {put} events/:id 3.3. Update event
+ * 
+ * @apiVersion 1.7.0
+ * @apiGroup 3. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Request body params) {Number} id Event identification code.
+ * @apiParam (Request body params) {String{3..100}} name Event name.
+ * @apiParam (Request body params) {Date} start_date Start date of the event. (Format: yyyy-mm-dd).
+ * @apiParam (Request body params) {Date} end_date End date of the event. (Format: yyyy-mm-dd).
+ * @apiParam (Request body params) {String{..255}} [description] Event description.
+ * @apiParam (Request body params) {Time} [start_time] Start time of the event. (Format: hh:mm).
+ * @apiParam (Request body params) {Time} [end_time] End time of the event. (Format: hh:mm).
+ * @apiParam (Request body params) {String{0..100}} [type] Event type.
+ * @apiParam (Request body params) {Object} location Event location.
+ * @apiParam (Request body params) {String{3}} privacy Event privacy.
+ * @apiParam (Request body params) {String{3}} category Event category.
+ * @apiParam (Request body params) {String{3..120}} location[street] Event street.
+ * @apiParam (Request body params) {String{3..100}} location[neighborhood] Event neighborhood.
+ * @apiParam (Request body params) {Number} location[number] Event establishment number
+ * @apiParam (Request body params) {String{8}} location[cep] Event zip code. (Only numbers).
+ * @apiParam (Request body params) {String{0..100}} [location[complement]] Additional event location information.
+ * @apiParam (Request body params) {String{3..100}} location[city] Location Event city.
+ * @apiParam (Request body params) {String{2}} location[uf] Event federative unit. (uppercase).
+ * @apiParam (Request body params) {Object} location[geolocation] Event geolocation.
+ * @apiParam (Request body params) {Number} geolocation[latitude] Event latitude.
+ * @apiParam (Request body params) {Number} geolocation[longitude] Event longitude.
+ * 
+ * @apiExample {json} Request body:
+ *  
+ * {
+ *      "name_to": "Árvores e Legumes",
+ *      "date_start_to": "2020-10-25",
+ *      "date_end_to": "2020-11-05",
+ *      "description_to": "Venha participar do maior evento sobre árvores e legumes da América Latina.",
+ *      "hour_start_to": "16:00",
+ *      "hour_end_to": "23:00",
+ *      "type_to": "",
+ *      "location_to": {
+ *          "street_to": "Avenida Kennedy",
+ *          "neighborhood_to": "Guilhermina",
+ *          "complement_to": "Apartamento 220",
+ *          "number_to": 999,
+ *          "cep_to": 11111222,
+ *          "uf": "SP",
+ *          "city": "Praia Grande",
+ *          "geolocation": {
+ *              "latitude": -100.0111,
+ *              "longitude": 90.3245
+ *          },
+ *      "privacy_to": PRI,
+ *      "category_to": REL 
+ * }
+ * 
+ * @apiSuccess (200) {Number} id Event identification code.
+ * @apiSuccess (200) {String{3..100}} name Event name.
+ * @apiSuccess (200) {Date} start_date Start date of the event. (Format: yyyy-mm-dd).
+ * @apiSuccess (200) {Date} end_date End date of the event. (Format: yyyy-mm-dd).
+ * @apiSuccess (200) {String{..255}} [description] Event description.
+ * @apiSuccess (200) {Time} [start_time] Start time of the event. (Format: hh:mm).
+ * @apiSuccess (200) {Time} [end_time] End time of the event. (Format: hh:mm).
+ * @apiSuccess (200) {String{0..100}} [type] Event type.
+ * @apiSuccess (200) {Object} location Event location.
+ * @apiSuccess (200) {String{3}} privacy Event privacy.
+ * @apiSuccess (200) {String{3}} category Event category.
+ * @apiSuccess (200) {String{3..120}} location[street] Event street.
+ * @apiSuccess (200) {String{3..100}} location[neighborhood] Event neighborhood.
+ * @apiSuccess (200) {Number} location[number] Event establishment number
+ * @apiSuccess (200) {String{8}} location[cep] Event zip code. (Only numbers).
+ * @apiSuccess (200) {String{0..100}} [location[complement]] Additional event location information.
+ * @apiSuccess (200) {String{3..100}} location[city] Location Event city.
+ * @apiSuccess (200) {String{2}} location[uf] Event federative unit. (uppercase).
+ * @apiSuccess (200) {Object} location[geolocation] Event geolocation.
+ * @apiSuccess (200) {Number} geolocation[latitude] Event latitude.
+ * @apiSuccess (200) {Number} geolocation[longitude] Event longitude.
+ * 
+ * @apiSuccessExample {json} Success response:
+ *   HTTPS/1.1 200 OK
+ *   {
+ *       "name": "Árvores e Legumes",
+ *       "start_date": "2020-10-25",
+ *       "end_date": "2020-11-05",
+ *       "description": "Venha participar do maior evento sobre árvores e vegumes da América Latina.",
+ *       "start_time": "16:00",
+ *       "end_time": "23:00",
+ *       "privacy": "PRI",
+ *       "category": "REL",
+ *       "location": {
+ *           "street": "Avenida Kennedy",
+ *           "neighborhood": "Guilhermina",
+ *           "number": 999,
+ *           "cep": "11111222",
+ *           "complement": "Apartamento 220",
+ *           "geolocation": {
+ *                "latitude": -100.0111,
+ *                "longitude": 90.3245
+ *           },
+ *           "city": "Praia Grande",
+ *           "uf": "SP"
+ *       }
+ * }
+ * 
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ * @apiUse incorrectFieldsError
+ * @apiError (400) noField No field need be updated.
+ * @apiErrorExample noField:
+ *  HTTPS/1.1 400 Bad Request
+ *      { 
+ *          status: 400, 
+ *          message: 'No field to update' 
+ *      }
+ */
+eventRoutes.put('/events/:idEvent', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const updateEvent: UpdateEvent = request.body;
+    
+    if (!Number(idEvent)) {
+        response.status(400).json({ status: 400, message: 'Id invalid.' });
+    }
+
+    getUserByRequest(request).then(user => {
+        controller.updateEvent(user, updateEvent, Number(idEvent))
+            .then((result: EventResponse) => response.status(200).json(result))
+            .catch((err: any) => response.status(err.status || 400).json(err));
+    })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+/**
+ * @api {delete} events/:id 3.4. Delete event
+ * 
+ * @apiVersion 1.6.3
+ * @apiGroup 3. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} id Event identification code.
+ * 
+ * @apiSuccessExample {json} Success Response:
+ *  HTTPS/1.1 200 OK
+ *  
+ * 
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ */
 eventRoutes.delete('/events/:idEvent', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
 

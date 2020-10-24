@@ -1,6 +1,9 @@
 import NewEvent from "../interfaces/request/NewEvent";
 import EventResponse from "../interfaces/response/EventResponse";
 import TeamMember from "../interfaces/response/TeamMember";
+import UpdateEvent from "../interfaces/request/UpdateEventRequest";
+import UpdateLocationEvent from "../interfaces/request/UpdateLocationEventRequest";
+import InsertLocationEvent from "../interfaces/inputRepository/insertLocationEvent";
 import User from "../models/User";
 import AccessRepository from "../repositorys/AccessRepository";
 import CategoryRepository from "../repositorys/CategoryRepository";
@@ -16,6 +19,8 @@ import TimeRepository from "../repositorys/TimeRepository";
 import NoticeRepository from "../repositorys/NoticeRepository";
 import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
+import { InputLocation } from "aws-sdk/clients/medialive";
+import { string } from "joi";
 
 class EventController {
 
@@ -77,6 +82,70 @@ class EventController {
                             });
                     }
                 }
+            }
+        });
+    }
+
+    async updateEvent(user: User, updateEvent: UpdateEvent, idEvent: number): Promise<EventResponse> {
+
+        return new Promise(async (resolve, reject) => {
+
+            if (JSON.stringify(updateEvent) === '{}') {
+                reject({ status: 400, message: 'No field to update' });
+            } else {
+                const event = await EventRepository.findEventById(idEvent);
+                let location: any = undefined;
+                /* If don't need to make updates to the location */
+                if ((!updateEvent.location_to) && event.cd_location_event) {
+                    location = await LocationEventRepository.findLocationEventById(event.cd_location_event);
+
+                    /* If just need to update localization */
+                } else if (updateEvent.location_to && event.cd_location_event) {
+
+                    const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
+                    const searchCity = await CityRepository.findCityByNameAndUf(updateEvent.location_to.city, updateEvent.location_to.uf)
+
+                    if (!searchCity)
+                        reject({ status: 400, message: "This city does not exist" });
+                    else {
+                        await GeolocationRepository.updateGeolocation(locationEvent.cd_geolocation, updateEvent.location_to.geolocation)
+                            .catch(err => { reject({ status: 400, message: "Unknown error. Try again later.", error: err }) });
+
+                        await LocationEventRepository.updateLocationEvent(event.cd_location_event, updateEvent.location_to);
+
+                        location = await LocationEventRepository.updateCityEvent(event.cd_location_event, searchCity.cd_city);
+                    }
+                    /* If need to insert a new localization */
+                } else if (updateEvent.location_to && !event.cd_location_event) {
+
+                    if (!updateEvent.location_to.city || !updateEvent.location_to.geolocation || !updateEvent.location_to.uf)
+                        reject({ message: "City, uf and geolocation are required", status: 400 });
+                    else {
+                        const insertedGeolocation =
+                            await GeolocationRepository.insertGeolocation(updateEvent.location_to.geolocation)
+                                .catch(err => reject({ status: 400, message: 'Unknown error. Try again later', error: err }));
+
+                        const searchCity = await CityRepository.findCityByNameAndUf(updateEvent.location_to.city, updateEvent.location_to.uf)
+
+                        if (!searchCity)
+                            reject({ status: 400, message: 'This city does not exist' });
+                        else if (insertedGeolocation) {
+                            let locationParams = {street: updateEvent.location_to.street_to, neighborhood: updateEvent.location_to.street_to, number: updateEvent.location_to.number_to, cep: String(updateEvent.location_to.cep_to), complement: updateEvent.location_to.complement_to};
+                            await LocationEventRepository.insertLocationEvent(locationParams, insertedGeolocation.cd_geolocation, searchCity.cd_city)
+                                .then((locationEvent) => {
+                                    EventRepository.updateLocationEvent(event.cd_event, locationEvent.cd_location_event);
+                                })
+                                .catch((err) => {
+                                    GeolocationRepository.deleteGeolocation(insertedGeolocation.cd_geolocation);
+                                    reject({ status: 400, message: 'Unknown error. Try again later', error: err });
+                                });
+                        }
+                    }
+                }
+                EventRepository.updateEvent(event.cd_event, updateEvent)
+                    .then(async (event) =>
+                        resolve(await this.readEvent(event.cd_event, user)))
+                    .catch(err => reject(err));
             }
         });
     }
@@ -159,7 +228,7 @@ class EventController {
         });
     }
 
-    public readEvent(idEvent: number, user: User) {
+    public readEvent(idEvent: number, user: User): Promise<EventResponse> {
 
         return new Promise(async (resolve, reject) => {
             const event = await EventRepository.findEventById(idEvent);
