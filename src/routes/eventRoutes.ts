@@ -7,7 +7,6 @@ import getUserByRequest from '../utils/getUserByRequest';
 import UpdateEvent from "../interfaces/request/UpdateEventRequest";
 import EventResponse from '../interfaces/response/EventResponse';
 
-
 const eventRoutes = express.Router();
 const controller = new EventController();
 
@@ -316,11 +315,11 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  *  
  * {
  *      "name_to": "Árvores e Legumes",
- *      "date_start_to": "2020-10-25",
- *      "date_end_to": "2020-11-05",
+ *      "start_date_to": "2020-10-25",
+ *      "end_date_to": "2020-11-05",
  *      "description_to": "Venha participar do maior evento sobre árvores e legumes da América Latina.",
- *      "hour_start_to": "16:00",
- *      "hour_end_to": "23:00",
+ *      "start_time_to": "16:00",
+ *      "end_time_to": "23:00",
  *      "type_to": "",
  *      "location_to": {
  *          "street_to": "Avenida Kennedy",
@@ -399,10 +398,10 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  *          message: 'No field to update' 
  *      }
  */
-eventRoutes.put('/events/:idEvent', verifyToken, (request, response) => {
+eventRoutes.put('/events/:idEvent', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const updateEvent: UpdateEvent = request.body;
-    
+
     if (!Number(idEvent)) {
         response.status(400).json({ status: 400, message: 'Id invalid.' });
     }

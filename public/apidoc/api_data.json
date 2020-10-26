@@ -936,25 +936,15 @@
         }
       ]
     },
-    "filename": "src/routes/profileRoutes.ts",
-    "groupTitle": "2._Profile",
-    "name": "PutProfile",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
     "error": {
       "fields": {
         "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "noField",
+            "description": "<p>No field need be updated.</p>"
+          },
           {
             "group": "400",
             "type": "Object",
@@ -982,6 +972,11 @@
       },
       "examples": [
         {
+          "title": "noField:",
+          "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
           "title": "No token error:",
           "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
           "type": "json"
@@ -992,6 +987,22 @@
           "type": "json"
         }
       ]
+    },
+    "filename": "src/routes/profileRoutes.ts",
+    "groupTitle": "2._Profile",
+    "name": "PutProfile",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
     }
   },
   {
@@ -1160,6 +1171,92 @@
     "filename": "src/routes/userRoutes.ts",
     "groupTitle": "2._Users",
     "name": "GetUsers"
+  },
+  {
+    "type": "delete",
+    "url": "events/:id",
+    "title": "3.4. Delete event",
+    "version": "1.6.3",
+    "group": "3._Events",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/eventRoutes.ts",
+    "groupTitle": "3._Events",
+    "name": "DeleteEventsId",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error:",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error:",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
   },
   {
     "type": "post",
@@ -1778,7 +1875,7 @@
           },
           {
             "group": "200",
-            "type": "Object",
+            "type": "Number",
             "optional": false,
             "field": "geolocation[longitude]",
             "description": "<p>Event longitude.</p>"
@@ -1892,6 +1989,428 @@
           "type": "json"
         }
       ]
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:id",
+    "title": "3.3. Update event",
+    "version": "1.7.0",
+    "group": "3._Events",
+    "parameter": {
+      "fields": {
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Event name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Date",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Start date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Date",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>End date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Event description.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "start_time",
+            "description": "<p>Start time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "end_time",
+            "description": "<p>End time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "type",
+            "description": "<p>Event type.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Object",
+            "optional": false,
+            "field": "location",
+            "description": "<p>Event location.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "privacy",
+            "description": "<p>Event privacy.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "category",
+            "description": "<p>Event category.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..120",
+            "optional": false,
+            "field": "location[street]",
+            "description": "<p>Event street.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[neighborhood]",
+            "description": "<p>Event neighborhood.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": false,
+            "field": "location[number]",
+            "description": "<p>Event establishment number</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "8",
+            "optional": false,
+            "field": "location[cep]",
+            "description": "<p>Event zip code. (Only numbers).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "location[complement]",
+            "description": "<p>Additional event location information.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[city]",
+            "description": "<p>Location Event city.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "2",
+            "optional": false,
+            "field": "location[uf]",
+            "description": "<p>Event federative unit. (uppercase).</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Object",
+            "optional": false,
+            "field": "location[geolocation]",
+            "description": "<p>Event geolocation.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[latitude]",
+            "description": "<p>Event latitude.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[longitude]",
+            "description": "<p>Event longitude.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": " \n{\n     \"name_to\": \"Árvores e Legumes\",\n     \"date_start_to\": \"2020-10-25\",\n     \"date_end_to\": \"2020-11-05\",\n     \"description_to\": \"Venha participar do maior evento sobre árvores e legumes da América Latina.\",\n     \"hour_start_to\": \"16:00\",\n     \"hour_end_to\": \"23:00\",\n     \"type_to\": \"\",\n     \"location_to\": {\n         \"street_to\": \"Avenida Kennedy\",\n         \"neighborhood_to\": \"Guilhermina\",\n         \"complement_to\": \"Apartamento 220\",\n         \"number_to\": 999,\n         \"cep_to\": 11111222,\n         \"uf\": \"SP\",\n         \"city\": \"Praia Grande\",\n         \"geolocation\": {\n             \"latitude\": -100.0111,\n             \"longitude\": 90.3245\n         },\n     \"privacy_to\": PRI,\n     \"category_to\": REL \n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Event name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Start date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>End date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Event description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": true,
+            "field": "start_time",
+            "description": "<p>Start time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": true,
+            "field": "end_time",
+            "description": "<p>End time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "type",
+            "description": "<p>Event type.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "location",
+            "description": "<p>Event location.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "privacy",
+            "description": "<p>Event privacy.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "category",
+            "description": "<p>Event category.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..120",
+            "optional": false,
+            "field": "location[street]",
+            "description": "<p>Event street.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[neighborhood]",
+            "description": "<p>Event neighborhood.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "location[number]",
+            "description": "<p>Event establishment number</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "8",
+            "optional": false,
+            "field": "location[cep]",
+            "description": "<p>Event zip code. (Only numbers).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "location[complement]",
+            "description": "<p>Additional event location information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[city]",
+            "description": "<p>Location Event city.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "2",
+            "optional": false,
+            "field": "location[uf]",
+            "description": "<p>Event federative unit. (uppercase).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "location[geolocation]",
+            "description": "<p>Event geolocation.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[latitude]",
+            "description": "<p>Event latitude.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[longitude]",
+            "description": "<p>Event longitude.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "  HTTPS/1.1 200 OK\n  {\n      \"name\": \"Árvores e Legumes\",\n      \"start_date\": \"2020-10-25\",\n      \"end_date\": \"2020-11-05\",\n      \"description\": \"Venha participar do maior evento sobre árvores e vegumes da América Latina.\",\n      \"start_time\": \"16:00\",\n      \"end_time\": \"23:00\",\n      \"privacy\": \"PRI\",\n      \"category\": \"REL\",\n      \"location\": {\n          \"street\": \"Avenida Kennedy\",\n          \"neighborhood\": \"Guilhermina\",\n          \"number\": 999,\n          \"cep\": \"11111222\",\n          \"complement\": \"Apartamento 220\",\n          \"geolocation\": {\n               \"latitude\": -100.0111,\n               \"longitude\": 90.3245\n          },\n          \"city\": \"Praia Grande\",\n          \"uf\": \"SP\"\n      }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "noField",
+            "description": "<p>No field need be updated.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noField:",
+          "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error:",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error:",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/eventRoutes.ts",
+    "groupTitle": "3._Events",
+    "name": "PutEventsId",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
     }
   }
 ]

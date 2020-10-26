@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import credentialsSchema from "../schema/credentialsSchema";
 import { getUserByEmailSchema, newUserSchema, updateUserSchema } from "../schema/userSchema";
 import updatePasswordSchema from "../schema/updatePasswordSchema";
-import { newEventSchema } from "../schema/eventSchema";
+import { newEventSchema, updateEventSchema } from "../schema/eventSchema";
+import { newInviteSchema, updateInviteSchema } from "../schema/inviteSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -85,23 +86,22 @@ function validate(request: Request, response: Response, next: NextFunction) {
     /** DEFINE QUAL SCHEMA SERÁ UTILIZADO PARA VALIDAÇÃO */
     switch (route) {
         case '/users':
-            schema = newUserSchema;
-            break;
-        case '/login':
-            schema = credentialsSchema;
-            break;
-        case '/events':
             switch (method) {
                 case 'post':
-                    schema = newEventSchema;
+                    schema = newUserSchema;
                     break;
                 // get
                 default:
                     schema = getUserByEmailSchema;
             }
             break;
-        // /profile
-        default:
+        case '/login':
+            schema = credentialsSchema;
+            break;
+        case '/events':
+            schema = newEventSchema;
+            break;
+        case '/profile':
             switch (method) {
                 case 'put':
                     schema = updateUserSchema;
@@ -114,8 +114,19 @@ function validate(request: Request, response: Response, next: NextFunction) {
                     schema = updatePasswordSchema;
             }
             break;
+        // /profile
+        default:
+            /* /events/:idEvent/invite */
+            if (route.includes('/events/') && route.includes('/invite'))
+                schema = newInviteSchema;
+            /* /invites/:idInvite */
+            else if (route.includes('/invites') && method == 'patch')
+                schema = updateInviteSchema;
+            /* /event/:idEvent */
+            else
+                schema = updateEventSchema;
     }
-
+    
     /* Validate the received data */
     const { error } = schema.validate(request.body, optionsValidation);
 

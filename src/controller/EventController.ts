@@ -2,8 +2,6 @@ import NewEvent from "../interfaces/request/NewEvent";
 import EventResponse from "../interfaces/response/EventResponse";
 import TeamMember from "../interfaces/response/TeamMember";
 import UpdateEvent from "../interfaces/request/UpdateEventRequest";
-import UpdateLocationEvent from "../interfaces/request/UpdateLocationEventRequest";
-import InsertLocationEvent from "../interfaces/inputRepository/insertLocationEvent";
 import User from "../models/User";
 import AccessRepository from "../repositorys/AccessRepository";
 import CategoryRepository from "../repositorys/CategoryRepository";
@@ -19,8 +17,8 @@ import TimeRepository from "../repositorys/TimeRepository";
 import NoticeRepository from "../repositorys/NoticeRepository";
 import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
-import { InputLocation } from "aws-sdk/clients/medialive";
-import { string } from "joi";
+import InviteUserRequest from "../interfaces/request/InviteUserRequest";
+import InviteRepository from "../repositorys/InviteRepository";
 
 class EventController {
 
@@ -299,10 +297,15 @@ class EventController {
 
                     event.dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
                     event.dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
-                    event.hr_start = event.hr_start.slice(0, 5);
-                    event.hr_end = event.hr_end.slice(0, 5);
+
+                    if(event.hr_start)
+                        event.hr_start = event.hr_start.slice(0, 5);
+                    
+                    if(event.hr_end)
+                        event.hr_end = event.hr_end.slice(0, 5);
 
                     const eventResponse: EventResponse = {
+                        id: event.cd_event,
                         name: event.nm_event,
                         description: event.ds_event,
                         start_date: event.dt_start,
