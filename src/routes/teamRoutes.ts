@@ -1,5 +1,6 @@
 import express from 'express';
 import TeamController from '../controller/TeamController';
+import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
@@ -37,17 +38,17 @@ teamRoutes.get('/events/:idEvent/team/:idMember', verifyToken, (request, respons
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
-teamRoutes.patch('/events/:idEvent/team/:idMember', verifyToken, (request, response) => {
+teamRoutes.patch('/events/:idEvent/team/:idMember', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idMember = request.params['idMember'];
-    const updateRoleTeamMember: { role: string } = request.body;
+    const updateRoleTeamMember: { role_to: string } = request.body;
 
     if (!Number(idEvent) || !Number(idMember))
         response.status(400).json({ status: 400, message: "Invalid id." });
 
     getUserByRequest(request)
         .then(user => {
-            controller.updateRoleTeamMember(user, Number(idEvent), Number(idMember), updateRoleTeamMember.role)
+            controller.updateRoleTeamMember(user, Number(idEvent), Number(idMember), updateRoleTeamMember.role_to)
                 .then((result) => response.status(200).json(result))
                 .catch((err) => response.status(err.status || 400).json(err));
         })

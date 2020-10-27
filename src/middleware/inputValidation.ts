@@ -5,6 +5,7 @@ import { getUserByEmailSchema, newUserSchema, updateUserSchema } from "../schema
 import updatePasswordSchema from "../schema/updatePasswordSchema";
 import { newEventSchema, updateEventSchema } from "../schema/eventSchema";
 import { newInviteSchema, updateInviteSchema } from "../schema/inviteSchema";
+import updateRoleTeamMemberSchema from "../schema/teamSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -119,6 +120,8 @@ function validate(request: Request, response: Response, next: NextFunction) {
             /* /events/:idEvent/invite */
             if (route.includes('/events/') && route.includes('/invite'))
                 schema = newInviteSchema;
+            else if(route.includes('/event') && route.includes('/team') && method == 'patch')
+                schema = updateRoleTeamMemberSchema;
             /* /invites/:idInvite */
             else if (route.includes('/invites') && method == 'patch')
                 schema = updateInviteSchema;
