@@ -1,9 +1,12 @@
+import InsertNotification from "../interfaces/inputRepository/insertNotification";
 import InviteUserRequest from "../interfaces/request/InviteUserRequest";
 import InviteResponse from "../interfaces/response/InviteResponse";
 import User from "../models/User";
 import AccessRepository from "../repositorys/AccessRepository";
 import EventRepository from "../repositorys/EventRepository";
 import InviteRepository from "../repositorys/InviteRepository";
+import LinkNotificationRepository from "../repositorys/LinkNotificationRepository";
+import NotificationRepository from "../repositorys/NotificationRepository";
 import RoleRepository from "../repositorys/RoleRepository";
 import StatusInvite from "../repositorys/StatusInviteRepository";
 import UserRepository from "../repositorys/UserRepository";
@@ -31,8 +34,23 @@ class InviteController {
                                     break;
                                 case 'COO':
                                 case 'EQP':
+                                    
                                     InviteRepository.insertInvite(guest.cd_user, event, invite.role)
-                                        .then(() => resolve())
+                                        .then(async (invite) => {
+                                            const insertNotification: InsertNotification = {
+                                                notification_title: "Novo convite!",
+                                                notification_content: "Você recebeu um novo convite para participar da organização de um evento.",
+                                                notification_read: false
+                                            }
+
+                                            const notificationType = (invite.sg_role == "COO"?"CVC":"CVE");
+                                            const linkNotification = await LinkNotificationRepository
+                                                .insertLinkNotification(invite.cd_invite, notificationType);
+
+                                            NotificationRepository
+                                                .insertNotification(insertNotification, invite.cd_user, linkNotification.cd_link)
+                                            resolve()
+                                        })
                                         .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                                     break;
                                 default:

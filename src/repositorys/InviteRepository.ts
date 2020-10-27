@@ -4,7 +4,7 @@ import Invite from '../models/Invite';
 
 class InviteRepository {
 
-    public static async insertInvite(user_id: number, event: Event, role_id: 'COO' | 'EQP') {
+    public static async insertInvite(user_id: number, event: Event, role_id: 'COO' | 'EQP'): Promise<Invite> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
