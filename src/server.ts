@@ -3,6 +3,7 @@ import express from 'express';
 import db from './database/connection';
 import eventRoutes from './routes/eventRoutes';
 import inviteRoutes from './routes/inviteRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 import profileRoutes from './routes/profileRoutes';
 import userRoutes from './routes/userRoutes';
 
@@ -15,6 +16,8 @@ app.use(userRoutes);
 app.use(profileRoutes);
 app.use(eventRoutes);
 app.use(inviteRoutes);
+app.use(notificationRoutes);
+
 
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);

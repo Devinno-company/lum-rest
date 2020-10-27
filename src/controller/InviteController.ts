@@ -16,12 +16,12 @@ class InviteController {
             const event = await EventRepository.findEventById(idEvent);
 
             if (!event)
-                reject({ status: 404, message: 'This event does not exists' });
+                reject({ status: 404, message: 'This event does not exist' });
             else {
                 const guest = await UserRepository.findUserByEmail(invite.guest_email);
 
                 if (!guest)
-                    reject({ status: 404, message: 'This user does not exists' });
+                    reject({ status: 404, message: 'This user does not exist' });
                 else {
                     await havePermission(user.cd_user, event.cd_event, 'CRI')
                         .then(() => {
@@ -33,7 +33,7 @@ class InviteController {
                                 case 'EQP':
                                     InviteRepository.insertInvite(guest.cd_user, event, invite.role)
                                         .then(() => resolve())
-                                        .catch((err) => { reject({ status: 400, message: 'Unknow error. Try again later.', err }) });
+                                        .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                                     break;
                                 default:
                                     reject({ status: 400, message: 'Invalid role' });

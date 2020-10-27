@@ -1,5 +1,5 @@
 import Knex from 'knex';
-import cities from './../../utils/citiesBrazil';
+import cities from '../../utils/citiesBrazil';
 
 export function up(knex: Knex) {
     return knex.insert(cities).into('tb_city');

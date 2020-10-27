@@ -1,5 +1,5 @@
 import Knex from 'knex';
-import ufs from './../../utils/ufsBrazil';
+import ufs from '../../utils/ufsBrazil';
 
 export function up(knex: Knex) {
     return knex.insert(ufs).into('tb_uf');
