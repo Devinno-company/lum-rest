@@ -8,7 +8,7 @@ module.exports = {
             directory: path.resolve(__dirname, 'src', 'database', 'migrations')
         },
     },
-    /*
+    
     development: {
         client: 'pg',
         connection: {
@@ -18,7 +18,11 @@ module.exports = {
             password: 'joaobanco',
             database: 'db_lum'
         },
-    */
+        migrations: {
+            directory: path.resolve(__dirname, 'src', 'database', 'migrations')
+        }
+    }
+    /*
     development: {
             client: 'pg',
             connection: {
@@ -30,5 +34,5 @@ module.exports = {
         migrations: {
             directory: path.resolve(__dirname, 'src', 'database', 'migrations')
         }
-    }
+    }*/
 }

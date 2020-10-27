@@ -16,6 +16,9 @@ const controller = new EventController();
  * @apiVersion 1.5.2
  * @apiGroup 3. Events
  * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
  * @apiParam (Request body params) {String{3..100}} name Event name.
  * @apiParam (Request body params) {Date} start_date Start date of the event. (Format: yyyy-mm-dd).
  * @apiParam (Request body params) {Date} end_date End date of the event. (Format: yyyy-mm-dd).
@@ -171,6 +174,9 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
  * @apiVersion 1.5.2
  * @apiGroup 3. Events
  * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
  * @apiParam (Path Params) {Number} id Event identification code.
  * 
  * @apiSuccess (200) {Number} id Event identification code.
@@ -289,27 +295,26 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiParam (Request body params) {Number} id Event identification code.
- * @apiParam (Request body params) {String{3..100}} name Event name.
- * @apiParam (Request body params) {Date} start_date Start date of the event. (Format: yyyy-mm-dd).
- * @apiParam (Request body params) {Date} end_date End date of the event. (Format: yyyy-mm-dd).
- * @apiParam (Request body params) {String{..255}} [description] Event description.
- * @apiParam (Request body params) {Time} [start_time] Start time of the event. (Format: hh:mm).
- * @apiParam (Request body params) {Time} [end_time] End time of the event. (Format: hh:mm).
- * @apiParam (Request body params) {String{0..100}} [type] Event type.
- * @apiParam (Request body params) {Object} location Event location.
- * @apiParam (Request body params) {String{3}} privacy Event privacy.
- * @apiParam (Request body params) {String{3}} category Event category.
- * @apiParam (Request body params) {String{3..120}} location[street] Event street.
- * @apiParam (Request body params) {String{3..100}} location[neighborhood] Event neighborhood.
- * @apiParam (Request body params) {Number} location[number] Event establishment number
- * @apiParam (Request body params) {String{8}} location[cep] Event zip code. (Only numbers).
- * @apiParam (Request body params) {String{0..100}} [location[complement]] Additional event location information.
- * @apiParam (Request body params) {String{3..100}} location[city] Location Event city.
- * @apiParam (Request body params) {String{2}} location[uf] Event federative unit. (uppercase).
- * @apiParam (Request body params) {Object} location[geolocation] Event geolocation.
- * @apiParam (Request body params) {Number} geolocation[latitude] Event latitude.
- * @apiParam (Request body params) {Number} geolocation[longitude] Event longitude.
+ * @apiParam (Request body params) {String{3..100}} [name_to] New event name.
+ * @apiParam (Request body params) {Date} [start_date_to] New start date of the event. (Format: yyyy-mm-dd).
+ * @apiParam (Request body params) {Date} [end_date_to] New end date of the event. (Format: yyyy-mm-dd).
+ * @apiParam (Request body params) {String{..255}} [description_to] New event description.
+ * @apiParam (Request body params) {Time} [start_time_to] New start time of the event. (Format: hh:mm).
+ * @apiParam (Request body params) {Time} [end_time_to] New end time of the event. (Format: hh:mm).
+ * @apiParam (Request body params) {String{0..100}} [type_to] New event type.
+ * @apiParam (Request body params) {Object} [location_to] New event location.
+ * @apiParam (Request body params) {String{3..120}} location[street_to] New event street.
+ * @apiParam (Request body params) {String{3..100}} location[neighborhood_to] New event neighborhood.
+ * @apiParam (Request body params) {Number} location[number_to] New event establishment number
+ * @apiParam (Request body params) {String{8}} location[cep_to] New event zip code. (Only numbers).
+ * @apiParam (Request body params) {String{0..100}} [location[complement_to]] New additional event location information.
+ * @apiParam (Request body params) {String{3..100}} location[city] New location Event city.
+ * @apiParam (Request body params) {String{2}} location[uf] New event federative unit. (uppercase).
+ * @apiParam (Request body params) {Object} location[geolocation] New event geolocation.
+ * @apiParam (Request body params) {Number} geolocation[latitude] New event latitude.
+ * @apiParam (Request body params) {Number} geolocation[longitude] New event longitude.
+ * @apiParam (Request body params) {String{3}} [privacy_to] New event privacy.
+ * @apiParam (Request body params) {String{3}} [category_to] New event category.
  * 
  * @apiExample {json} Request body:
  *  
@@ -333,8 +338,8 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  *              "latitude": -100.0111,
  *              "longitude": 90.3245
  *          },
- *      "privacy_to": PRI,
- *      "category_to": REL 
+ *      "privacy_to": "PRI",
+ *      "category_to": "REL" 
  * }
  * 
  * @apiSuccess (200) {Number} id Event identification code.
@@ -346,8 +351,6 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  * @apiSuccess (200) {Time} [end_time] End time of the event. (Format: hh:mm).
  * @apiSuccess (200) {String{0..100}} [type] Event type.
  * @apiSuccess (200) {Object} location Event location.
- * @apiSuccess (200) {String{3}} privacy Event privacy.
- * @apiSuccess (200) {String{3}} category Event category.
  * @apiSuccess (200) {String{3..120}} location[street] Event street.
  * @apiSuccess (200) {String{3..100}} location[neighborhood] Event neighborhood.
  * @apiSuccess (200) {Number} location[number] Event establishment number
@@ -358,6 +361,8 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  * @apiSuccess (200) {Object} location[geolocation] Event geolocation.
  * @apiSuccess (200) {Number} geolocation[latitude] Event latitude.
  * @apiSuccess (200) {Number} geolocation[longitude] Event longitude.
+ * @apiSuccess (200) {String{3}} privacy Event privacy. Possible values: "PUB" (public) and "PRI" (private).
+ * @apiSuccess (200) {String{3}} category Event category.
  * 
  * @apiSuccessExample {json} Success response:
  *   HTTPS/1.1 200 OK

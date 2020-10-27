@@ -1426,6 +1426,11 @@ define({ "api": [
         "title": "Request body",
         "content": "{\n    \"name\": \"Flores e frutas\",\n    \"start_date\": \"2020-10-22\",\n    \"end_date\": \"2020-10-25\",\n    \"description\": \"Venha participar do maior evento sobre flores e frutas da América Latina.\",\n    \"start_time\": \"15:00\",\n    \"end_time\": \"20:00\",\n    \"privacy\": \"PUB\",\n    \"category\": \"NAT\",\n    \"location\": {\n        \"street\": \"Rua rubi\",\n        \"neighborhood\": \"Cidade da criança\",\n        \"number\": 202,\n        \"cep\": \"11710210\",\n        \"complement\": \"Espaço B\",\n        \"geolocation\": {\n             \"latitude\": 1.534,\n             \"longitude\": 3.123\n        },\n        \"city\": \"Praia Grande\",\n        \"uf\": \"SP\"\n    }\n}",
         "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
       }
     ],
     "success": {
@@ -1658,6 +1663,19 @@ define({ "api": [
     "filename": "src/routes/eventRoutes.ts",
     "groupTitle": "3._Events",
     "name": "PostEvents",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
     "error": {
       "fields": {
         "400": [
@@ -1949,6 +1967,26 @@ define({ "api": [
     "filename": "src/routes/eventRoutes.ts",
     "groupTitle": "3._Events",
     "name": "PostEventsId",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
     "error": {
       "fields": {
         "400": [
@@ -2002,124 +2040,101 @@ define({ "api": [
         "Request body params": [
           {
             "group": "Request body params",
-            "type": "Number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>Event identification code.</p>"
-          },
-          {
-            "group": "Request body params",
             "type": "String",
             "size": "3..100",
-            "optional": false,
-            "field": "name",
-            "description": "<p>Event name.</p>"
+            "optional": true,
+            "field": "name_to",
+            "description": "<p>New event name.</p>"
           },
           {
             "group": "Request body params",
             "type": "Date",
-            "optional": false,
-            "field": "start_date",
-            "description": "<p>Start date of the event. (Format: yyyy-mm-dd).</p>"
+            "optional": true,
+            "field": "start_date_to",
+            "description": "<p>New start date of the event. (Format: yyyy-mm-dd).</p>"
           },
           {
             "group": "Request body params",
             "type": "Date",
-            "optional": false,
-            "field": "end_date",
-            "description": "<p>End date of the event. (Format: yyyy-mm-dd).</p>"
+            "optional": true,
+            "field": "end_date_to",
+            "description": "<p>New end date of the event. (Format: yyyy-mm-dd).</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "..255",
             "optional": true,
-            "field": "description",
-            "description": "<p>Event description.</p>"
+            "field": "description_to",
+            "description": "<p>New event description.</p>"
           },
           {
             "group": "Request body params",
             "type": "Time",
             "optional": true,
-            "field": "start_time",
-            "description": "<p>Start time of the event. (Format: hh:mm).</p>"
+            "field": "start_time_to",
+            "description": "<p>New start time of the event. (Format: hh:mm).</p>"
           },
           {
             "group": "Request body params",
             "type": "Time",
             "optional": true,
-            "field": "end_time",
-            "description": "<p>End time of the event. (Format: hh:mm).</p>"
+            "field": "end_time_to",
+            "description": "<p>New end time of the event. (Format: hh:mm).</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "0..100",
             "optional": true,
-            "field": "type",
-            "description": "<p>Event type.</p>"
+            "field": "type_to",
+            "description": "<p>New event type.</p>"
           },
           {
             "group": "Request body params",
             "type": "Object",
-            "optional": false,
-            "field": "location",
-            "description": "<p>Event location.</p>"
-          },
-          {
-            "group": "Request body params",
-            "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "privacy",
-            "description": "<p>Event privacy.</p>"
-          },
-          {
-            "group": "Request body params",
-            "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "category",
-            "description": "<p>Event category.</p>"
+            "optional": true,
+            "field": "location_to",
+            "description": "<p>New event location.</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "3..120",
             "optional": false,
-            "field": "location[street]",
-            "description": "<p>Event street.</p>"
+            "field": "location[street_to]",
+            "description": "<p>New event street.</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "3..100",
             "optional": false,
-            "field": "location[neighborhood]",
-            "description": "<p>Event neighborhood.</p>"
+            "field": "location[neighborhood_to]",
+            "description": "<p>New event neighborhood.</p>"
           },
           {
             "group": "Request body params",
             "type": "Number",
             "optional": false,
-            "field": "location[number]",
-            "description": "<p>Event establishment number</p>"
+            "field": "location[number_to]",
+            "description": "<p>New event establishment number</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "8",
             "optional": false,
-            "field": "location[cep]",
-            "description": "<p>Event zip code. (Only numbers).</p>"
+            "field": "location[cep_to]",
+            "description": "<p>New event zip code. (Only numbers).</p>"
           },
           {
             "group": "Request body params",
             "type": "String",
             "size": "0..100",
             "optional": true,
-            "field": "location[complement]",
-            "description": "<p>Additional event location information.</p>"
+            "field": "location[complement_to]",
+            "description": "<p>New additional event location information.</p>"
           },
           {
             "group": "Request body params",
@@ -2127,7 +2142,7 @@ define({ "api": [
             "size": "3..100",
             "optional": false,
             "field": "location[city]",
-            "description": "<p>Location Event city.</p>"
+            "description": "<p>New location Event city.</p>"
           },
           {
             "group": "Request body params",
@@ -2135,28 +2150,44 @@ define({ "api": [
             "size": "2",
             "optional": false,
             "field": "location[uf]",
-            "description": "<p>Event federative unit. (uppercase).</p>"
+            "description": "<p>New event federative unit. (uppercase).</p>"
           },
           {
             "group": "Request body params",
             "type": "Object",
             "optional": false,
             "field": "location[geolocation]",
-            "description": "<p>Event geolocation.</p>"
+            "description": "<p>New event geolocation.</p>"
           },
           {
             "group": "Request body params",
             "type": "Number",
             "optional": false,
             "field": "geolocation[latitude]",
-            "description": "<p>Event latitude.</p>"
+            "description": "<p>New event latitude.</p>"
           },
           {
             "group": "Request body params",
             "type": "Number",
             "optional": false,
             "field": "geolocation[longitude]",
-            "description": "<p>Event longitude.</p>"
+            "description": "<p>New event longitude.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": true,
+            "field": "privacy_to",
+            "description": "<p>New event privacy.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": true,
+            "field": "category_to",
+            "description": "<p>New event category.</p>"
           }
         ]
       }
@@ -2164,7 +2195,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Request body:",
-        "content": " \n{\n     \"name_to\": \"Árvores e Legumes\",\n     \"date_start_to\": \"2020-10-25\",\n     \"date_end_to\": \"2020-11-05\",\n     \"description_to\": \"Venha participar do maior evento sobre árvores e legumes da América Latina.\",\n     \"hour_start_to\": \"16:00\",\n     \"hour_end_to\": \"23:00\",\n     \"type_to\": \"\",\n     \"location_to\": {\n         \"street_to\": \"Avenida Kennedy\",\n         \"neighborhood_to\": \"Guilhermina\",\n         \"complement_to\": \"Apartamento 220\",\n         \"number_to\": 999,\n         \"cep_to\": 11111222,\n         \"uf\": \"SP\",\n         \"city\": \"Praia Grande\",\n         \"geolocation\": {\n             \"latitude\": -100.0111,\n             \"longitude\": 90.3245\n         },\n     \"privacy_to\": PRI,\n     \"category_to\": REL \n}",
+        "content": " \n{\n     \"name_to\": \"Árvores e Legumes\",\n     \"start_date_to\": \"2020-10-25\",\n     \"end_date_to\": \"2020-11-05\",\n     \"description_to\": \"Venha participar do maior evento sobre árvores e legumes da América Latina.\",\n     \"start_time_to\": \"16:00\",\n     \"end_time_to\": \"23:00\",\n     \"type_to\": \"\",\n     \"location_to\": {\n         \"street_to\": \"Avenida Kennedy\",\n         \"neighborhood_to\": \"Guilhermina\",\n         \"complement_to\": \"Apartamento 220\",\n         \"number_to\": 999,\n         \"cep_to\": 11111222,\n         \"uf\": \"SP\",\n         \"city\": \"Praia Grande\",\n         \"geolocation\": {\n             \"latitude\": -100.0111,\n             \"longitude\": 90.3245\n         },\n     \"privacy_to\": \"PRI\",\n     \"category_to\": \"REL\" \n}",
         "type": "json"
       },
       {
@@ -2245,22 +2276,6 @@ define({ "api": [
           {
             "group": "200",
             "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "privacy",
-            "description": "<p>Event privacy.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "category",
-            "description": "<p>Event category.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
             "size": "3..120",
             "optional": false,
             "field": "location[street]",
@@ -2333,6 +2348,22 @@ define({ "api": [
             "optional": false,
             "field": "geolocation[longitude]",
             "description": "<p>Event longitude.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "privacy",
+            "description": "<p>Event privacy. Possible values: &quot;PUB&quot; (public) and &quot;PRI&quot; (private).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "category",
+            "description": "<p>Event category.</p>"
           }
         ]
       },
