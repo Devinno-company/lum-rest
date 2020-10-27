@@ -11,22 +11,26 @@ class NotificationController {
 
         return new Promise(async (resolve, reject) => {
             const notification = await NotificationRepository.findNotificationById(idNotification);
-            if (notification.cd_user != user.cd_user)
-                reject({ status: 401, message: 'You are not allowed to do so' });
+            if (!notification)
+                reject({ status: 404, message: "This notification doesn't exists" });
             else {
-                const link = await LinkNotificationRepository.findLinkNotificationById(notification.cd_link);
+                if (notification.cd_user != user.cd_user)
+                    reject({ status: 401, message: 'You are not allowed to do so' });
+                else {
+                    const link = await LinkNotificationRepository.findLinkNotificationById(notification.cd_link);
 
-                resolve({
-                    id: notification.cd_notification,
-                    title: notification.nm_title,
-                    content: notification.ds_content,
-                    isRead: notification.cd_read,
-                    link: {
-                        idItem: link.cd_item,
-                        type: link.sg_type
-                    },
-                    idUser: notification.cd_user
-                });
+                    resolve({
+                        id: notification.cd_notification,
+                        title: notification.nm_title,
+                        content: notification.ds_content,
+                        isRead: notification.cd_read,
+                        link: {
+                            idItem: link.cd_item,
+                            type: link.sg_type
+                        },
+                        idUser: notification.cd_user
+                    });
+                }
             }
         });
     }
@@ -72,19 +76,19 @@ class NotificationController {
                         case 'read':
                             NotificationRepository.updateRead(notification.cd_notification, 'true')
                                 .then(async () => {
-                                     resolve(await this.readNotification(user, notification.cd_notification));
+                                    resolve(await this.readNotification(user, notification.cd_notification));
                                 })
-                                 .catch((err) => {
-                                     reject({ status: 400, message: 'Unknown error. Try again later.', err });
+                                .catch((err) => {
+                                    reject({ status: 400, message: 'Unknown error. Try again later.', err });
                                 });
                             break;
                         case 'unread':
                             NotificationRepository.updateRead(notification.cd_notification, 'false')
                                 .then(async () => {
-                                     resolve(await this.readNotification(user, notification.cd_notification));
+                                    resolve(await this.readNotification(user, notification.cd_notification));
                                 })
-                                 .catch((err) => {
-                                     reject({ status: 400, message: 'Unknown error. Try again later.', err });
+                                .catch((err) => {
+                                    reject({ status: 400, message: 'Unknown error. Try again later.', err });
                                 });
                             break;
                         default:
@@ -106,9 +110,9 @@ class NotificationController {
                 if (notification.cd_user != user.cd_user)
                     reject({ status: 401, message: "You are not allowed do so" });
                 else {
-                        NotificationRepository.deleteNotificationById(idNotification)
-                            .then(() => { resolve() })
-                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }); })
+                    NotificationRepository.deleteNotificationById(idNotification)
+                        .then(() => { resolve() })
+                        .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }); })
                 }
             }
         });
