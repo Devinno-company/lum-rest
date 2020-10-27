@@ -49,6 +49,28 @@ class TaskRepository {
         });
     }
 
+    public static async cleanAccessByAccessId(idAccess: number): Promise<Array<Task>> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const tasks =
+            await trx('tb_task as t')
+                .update({
+                    cd_access_user: null
+                })
+                .where('cd_access_user', '=', idAccess)
+                .returning('*');
+
+            await trx.commit()
+                .then(() => { resolve(tasks); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
     public static async deleteTaskById(idTask: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();

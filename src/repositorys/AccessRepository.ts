@@ -1,4 +1,5 @@
 import db from "../database/connection";
+import UpdateAccess from "../interfaces/inputRepository/updateAccess";
 import Access from "../models/Access";
 
 class AccessRepository {
@@ -47,6 +48,27 @@ class AccessRepository {
 
 
             resolve(access[0]);
+        });
+    }
+
+    public static async updateRoleById(idAccess: number, role: 'COO' | 'EQP' | 'CRI'): Promise<Access> {
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+            
+            const access =
+            await trx('tb_access')
+                .update({
+                    sg_role: role
+                })
+                .where('cd_access', '=', idAccess)
+                .returning('*');
+
+            trx.commit()
+                .then(() => { resolve(access[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
         });
     }
 
