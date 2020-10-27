@@ -270,13 +270,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         },
         {
@@ -473,13 +473,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -571,13 +571,13 @@ define({ "api": [
           "type": "json"
         },
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -646,13 +646,13 @@ define({ "api": [
           "type": "json"
         },
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ],
@@ -977,13 +977,13 @@ define({ "api": [
           "type": "json"
         },
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -1246,13 +1246,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -1706,13 +1706,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -2017,13 +2017,13 @@ define({ "api": [
       },
       "examples": [
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -2416,13 +2416,13 @@ define({ "api": [
           "type": "json"
         },
         {
-          "title": "No token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"none token provided\"\n}",
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
         },
         {
-          "title": "Invalid token error:",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"message\": \"invalid token\"\n}",
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
           "type": "json"
         }
       ]
@@ -2430,6 +2430,771 @@ define({ "api": [
     "filename": "src/routes/eventRoutes.ts",
     "groupTitle": "3._Events",
     "name": "PutEventsId",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "invites/:idInvite",
+    "title": "4.5. Delete a invite",
+    "version": "1.9.4",
+    "group": "4._Invites",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idInvite",
+            "description": "<p>Invite identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "unanswered",
+            "description": "<p>You can't delete a pending invitation</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "unanswered",
+          "content": "HTTPS/1.1 400 Bad request\n    { \n        \"status\": 400, \n        \"message\": \"You can't delete a pending invitation\" \n    }",
+          "type": "json"
+        },
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/inviteRoutes.ts",
+    "groupTitle": "4._Invites",
+    "name": "DeleteInvitesIdinvite",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "invites",
+    "title": "4.2. Get all your invites",
+    "version": "1.9.4",
+    "group": "4._Invites",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Invite identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "title",
+            "description": "<p>Invite title.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Invite content.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "role",
+            "description": "<p>User role if you accept the invitation.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "role[name]",
+            "description": "<p>Role name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "role[description]",
+            "description": "<p>Role description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Invite status.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "status[name]",
+            "description": "<p>Status name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "status[description]",
+            "description": "<p>Status description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Identification code of the event that the user is being invited to.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 OK\n    [\n        {\n            \"id\": 1,\n            \"title\": \"Você foi convidado para participar da equipe de organização de um evento\",    \n            \"content\": \"O evento Joao Evento está te convidado para você atuar como membro da equipe do evento.\",\n            \"role\": {\n                \"name\": \"Membro da equipe\",\n                \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n            },\n            \"status\": {\n                \"name\": \"Pendente\",\n                \"description\": \"Convite aguarda resposta.\"\n            },\n            \"event_id\": 1\n          }\n    ]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/inviteRoutes.ts",
+    "groupTitle": "4._Invites",
+    "name": "GetInvites",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "invites/:idInvite",
+    "title": "4.3. Get a invite",
+    "version": "1.9.4",
+    "group": "4._Invites",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idInvite",
+            "description": "<p>Invite identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Invite identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "title",
+            "description": "<p>Invite title.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Invite content.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "role",
+            "description": "<p>User role if you accept the invitation.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "role[name]",
+            "description": "<p>Role name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "role[description]",
+            "description": "<p>Role description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Invite status.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..100",
+            "optional": false,
+            "field": "status[name]",
+            "description": "<p>Status name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "status[description]",
+            "description": "<p>Status description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Identification code of the event that the user is being invited to.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n    {\n        \"id\": 1,\n        \"title\": \"Você foi convidado para participar da equipe de organização de um evento\",    \n        \"content\": \"O evento Joao Evento está te convidado para você atuar como membro da equipe do evento.\",\n        \"role\": {\n            \"name\": \"Membro da equipe\",\n            \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n        },\n        \"status\": {\n            \"name\": \"Pendente\",\n            \"description\": \"Convite aguarda resposta.\"\n        },\n        \"event_id\": 1\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/inviteRoutes.ts",
+    "groupTitle": "4._Invites",
+    "name": "GetInvitesIdinvite",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "patch",
+    "url": "invites/:idInvite",
+    "title": "4.4. Reply invitation",
+    "version": "1.9.4",
+    "group": "4._Invites",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idInvite",
+            "description": "<p>Invite identification code.</p>"
+          }
+        ],
+        "Request Body Params": [
+          {
+            "group": "Request Body Params",
+            "type": "String",
+            "optional": false,
+            "field": "choice",
+            "description": "<p>Invite Response. Possible values: ACE (accept) and REC (Reject).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"choice\": \"ACE\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "409": [
+          {
+            "group": "409",
+            "type": "Object",
+            "optional": false,
+            "field": "alreadyAnswered",
+            "description": "<p>This invite already answered</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "alreadyAnswered",
+          "content": "HTTPS/1.1 409 alreadyAnswered\n    {\n        \"status\": 409,\n        \"message\": \"This invitation has already been answered\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/inviteRoutes.ts",
+    "groupTitle": "4._Invites",
+    "name": "PatchInvitesIdinvite",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/invite",
+    "title": "4.1. Invite a user to the event",
+    "version": "1.9.4",
+    "group": "4._Invites",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ],
+        "Request Body Params": [
+          {
+            "group": "Request Body Params",
+            "type": "String",
+            "optional": false,
+            "field": "guest_email",
+            "description": "<p>Guest email.</p>"
+          },
+          {
+            "group": "Request Body Params",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "role",
+            "description": "<p>User role in project. Possible values: COO (coordinator) and EQP (team member).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "(Request body:)",
+        "content": "{\n    \"guest_email\": \"joao1980@gmail.com\",\n    \"role\": \"COO\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "userNotFound",
+            "description": "<p>This user does not exists.</p>"
+          }
+        ],
+        "409": [
+          {
+            "group": "409",
+            "optional": false,
+            "field": "alreadyInvited",
+            "description": "<p>This user has already been invited to this project.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "userNotFound",
+          "content": "HTTPS/1.1 404 Not found\n    {\n        \"status\": 404,\n        \"message\": \"This user does not exist\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "alreadyInvited",
+          "content": "HTTPS/1.1 409 Conflict\n    {\n        \"status\": 409,\n        \"message\": \"This user has already been invited to this project.\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/inviteRoutes.ts",
+    "groupTitle": "4._Invites",
+    "name": "PostEventsIdeventInvite",
     "header": {
       "fields": {
         "Header": [

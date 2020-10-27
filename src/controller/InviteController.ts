@@ -114,7 +114,7 @@ class InviteController {
                 if (invite.cd_user != user.cd_user)
                     reject({ status: 401, message: "You are not allowed to do so" });
                 else if (invite.sg_status != 'PEN')
-                    reject({ status: 401, message: "This invitation has already been answered" });
+                    reject({ status: 409, message: "This invitation has already been answered" });
                 else {
                     switch (choice) {
                         case 'accept':

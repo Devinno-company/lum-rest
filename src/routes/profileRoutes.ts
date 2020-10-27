@@ -21,11 +21,27 @@ const formData = multer();
 
 /**
  * @apiDefine noTokenErrorExample
- * @apiErrorExample {json} No token error:
+ * @apiErrorExample {json} No token error
  *  HTTPS/1.1 403 Forbidden
  *  {
+ *      "status": 403,
  *      "message": "none token provided"
  *  }
+ */
+
+/** 
+ * @apiDefine invalidIdError
+ * @apiError (400) {Object} invalidId the id provided this in an incorrect format.
+ */
+
+/**
+ * @apiDefine invalidIdErrorExample
+ * @apiErrorExample invalidId 
+ *  HTTPS/1.1 400 Bad request
+ *      {
+ *          "status": 400,
+ *          "message": "Invalid id"
+ *      }
  */
 
  /**
@@ -40,9 +56,10 @@ const formData = multer();
 
 /**
  * @apiDefine invalidTokenErrorExample
- * @apiErrorExample {json} Invalid token error:
+ * @apiErrorExample {json} Invalid token error
  *  HTTPS/1.1 403 Forbidden
  *  {
+*      "status": 403,
  *      "message": "invalid token"
  *  }
  */
