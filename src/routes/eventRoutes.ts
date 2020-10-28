@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 import EventController from '../controller/EventController';
 import NewEvent from '../interfaces/request/NewEvent';
 import validate from '../middleware/inputValidation';
@@ -439,7 +439,7 @@ eventRoutes.put('/events/:idEvent', verifyToken, validate, (request, response) =
  * @apiUse invalidTokenError
  * @apiUse invalidTokenErrorExample
  */
-eventRoutes.delete('/events/:idEvent', verifyToken, async (request, response) => {
+eventRoutes.delete('/events/:idEvent', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
     if (!Number(idEvent)) {
@@ -451,6 +451,23 @@ eventRoutes.delete('/events/:idEvent', verifyToken, async (request, response) =>
             controller.deleteEvent(Number(idEvent), user)
                 .then((result) => response.status(200).json(result))
                 .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+eventRoutes.patch('/events/:idEvent/quit', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const { id_newCreator } = request.body;
+
+    if (!Number(idEvent)) {
+        response.status(400).json({ status: 400, message: 'Id invalid.' });
+    }
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.quitEvent(user, Number(idEvent), Number(id_newCreator))
+                .then((result) => response.status(200).json(result))
+                .catch((err) => response.status(err.status || 400).json(err));
         })
         .catch((err: any) => response.status(err.status || 400).json(err));
 });

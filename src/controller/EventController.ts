@@ -19,6 +19,7 @@ import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
 import InviteUserRequest from "../interfaces/request/InviteUserRequest";
 import InviteRepository from "../repositorys/InviteRepository";
+import havePermission from "../utils/havePermission";
 
 class EventController {
 
@@ -128,7 +129,7 @@ class EventController {
                         if (!searchCity)
                             reject({ status: 400, message: 'This city does not exist' });
                         else if (insertedGeolocation) {
-                            let locationParams = {street: updateEvent.location_to.street_to, neighborhood: updateEvent.location_to.street_to, number: updateEvent.location_to.number_to, cep: String(updateEvent.location_to.cep_to), complement: updateEvent.location_to.complement_to};
+                            let locationParams = { street: updateEvent.location_to.street_to, neighborhood: updateEvent.location_to.street_to, number: updateEvent.location_to.number_to, cep: String(updateEvent.location_to.cep_to), complement: updateEvent.location_to.complement_to };
                             await LocationEventRepository.insertLocationEvent(locationParams, insertedGeolocation.cd_geolocation, searchCity.cd_city)
                                 .then((locationEvent) => {
                                     EventRepository.updateLocationEvent(event.cd_event, locationEvent.cd_location_event);
@@ -298,10 +299,10 @@ class EventController {
                     event.dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
                     event.dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
 
-                    if(event.hr_start)
+                    if (event.hr_start)
                         event.hr_start = event.hr_start.slice(0, 5);
-                    
-                    if(event.hr_end)
+
+                    if (event.hr_end)
                         event.hr_end = event.hr_end.slice(0, 5);
 
                     const eventResponse: EventResponse = {
@@ -338,6 +339,54 @@ class EventController {
                     }
 
                     resolve(eventResponse);
+                }
+            }
+        });
+    }
+
+    async quitEvent(user: User, idEvent: number, newCreatorId?: number): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+            if (!event)
+                reject({ status: 404, message: "This events doesn't exists" });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (isAllowed) {
+                    const access = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, user.cd_user);
+
+                    /* If he is a creator before leaving the project he must pass his position to another team member */
+                    if (access.sg_role == 'CRI') {
+                        const eventAccess = await AccessRepository.findAccessByEventId(event.cd_event);
+
+                        if (eventAccess.length == 1)
+                            reject({ status: 400, message: "You can't leave an event that only has you" });
+                        else {
+                            if (!newCreatorId)
+                                reject({ status: 400, message: 'For you to exit an event being creator must inform a team member to be the new creator' });
+                            else {
+                                const newCreator = await UserRepository.findUserById(newCreatorId);
+                                if (!newCreator)
+                                    reject({ status: 404, message: "This user doesn't exists" });
+                                else {
+                                    const newCreatorAccess = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, newCreator.cd_user);
+
+                                    AccessRepository.updateRoleById(newCreatorAccess.cd_access, 'CRI');
+                                    await TaskRepository.cleanAccessByAccessId(access.cd_access);
+                                    AccessRepository.deleteAccessById(access.cd_access)
+                                        .then(() => resolve())
+                                        .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later', err }));
+                                }
+                            }
+                        }
+                    } else {
+                        await TaskRepository.cleanAccessByAccessId(access.cd_access);
+                        AccessRepository.deleteAccessById(access.cd_access)
+                            .then(() => resolve())
+                            .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later', err }));
+                    }
                 }
             }
         });
