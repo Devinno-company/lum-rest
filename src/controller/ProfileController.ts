@@ -228,6 +228,7 @@ class ProfileController {
                 email: login.nm_email,
                 biography: user.ds_biography,
                 label: user.nm_label,
+                profission: user.nm_profission,
                 website: user.ds_website,
                 image: user.im_user,
                 company: user.nm_company,

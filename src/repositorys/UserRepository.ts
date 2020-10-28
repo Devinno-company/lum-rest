@@ -1,6 +1,7 @@
 import db from "../database/connection";
 import NewUser from "../interfaces/request/NewUserRequest";
 import UpdateUser from "../interfaces/request/UpdateUserRequest";
+import UserResponse from "../interfaces/response/UserResponse";
 import User from "../models/User";
 
 class UserRepository {
