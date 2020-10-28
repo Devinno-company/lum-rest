@@ -7,12 +7,12 @@ class LinkNotificationRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
-            const insertedLinkNotification =
-                await trx('tb_link_notification')
+            const insertedLinkNotification = await trx('tb_link_notification')
                     .insert({
                         cd_item: idItem,
                         sg_type: sgType
-                    }).returning('*');
+                    })
+                    .returning('*');
 
             await trx.commit()
                 .then(() => { resolve(insertedLinkNotification[0]); })

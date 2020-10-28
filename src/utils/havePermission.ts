@@ -9,7 +9,7 @@ function havePermission(user_id: number, event_id: number, minimumRole: 'CRI' | 
         else {
             if(minimumRole == 'EQP')
                 resolve(true);
-            else if(minimumRole == 'COO' && access.sg_role == 'COO')
+            else if(minimumRole == 'COO' && access.sg_role == 'COO' || 'CRI')
                 resolve(true);
             else if(minimumRole == 'CRI' && access.sg_role == 'CRI')
                 resolve(true);

@@ -1,20 +1,22 @@
 import db from "../database/connection";
 import Material from "../models/Material";
+import InsertMaterial from "../interfaces/inputRepository/insertMaterial";
+import UpdateMaterial from "../interfaces/request/UpdateMaterialRequest";
 
 class MaterialRepository {
 
-    public static insertMaterial(material_name: string, material_quantity: number, material_observation: string, event_code: number, status_material: number): Promise<Material> {
+    public static insertMaterial(InsertMaterial: InsertMaterial, event_code: number): Promise<Material> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
             const insertedMaterial =
                 await trx('tb_material')
                     .insert({
-                        nm_material: material_name,
-                        qt_material: material_quantity,
-                        ds_observation: material_observation,
+                        nm_material: InsertMaterial.nm_material,
+                        qt_material: InsertMaterial.qt_material,
+                        ds_observation: InsertMaterial.ds_observation,
                         cd_event: event_code,
-                        sg_status: status_material
+                        sg_status: "PEN"
                     }).returning('*');
 
             await trx.commit()
@@ -26,7 +28,50 @@ class MaterialRepository {
         });
     }
 
-    public static async findMaterialById(idMaterial: number): Promise<Array<Material>> {
+    public static updateStatusMaterial(idMaterial: number, status: "ADQ"|"PEN"): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_material')
+                .update({
+                    sg_status: status
+                })
+                .where('cd_material', '=', idMaterial);
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
+    public static updateMaterial(idMaterial: number, UpdateMaterial: UpdateMaterial): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedMaterial =
+            await trx('tb_material')
+                .update({
+                    nm_material: UpdateMaterial.name_to,
+                    qt_material: UpdateMaterial.quantity_to,
+                    ds_observation: UpdateMaterial.description_to
+                })
+                .where('cd_material', '=', idMaterial);
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback(updatedMaterial);
+                    reject(err);
+                });
+        });
+    }
+
+    public static async findMaterialById(idMaterial: number): Promise<Material> {
 
         return new Promise(async (resolve) => {
             const material =
@@ -34,7 +79,7 @@ class MaterialRepository {
                 .select('*')
                 .where('m.cd_material', '=', idMaterial);
 
-            resolve(material);
+            resolve(material[0]);
         });
     }
 
