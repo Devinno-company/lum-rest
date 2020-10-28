@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.12.1",
+  "version": "1.12.3",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.18.3",
@@ -18,8 +18,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node --max_old_space_size=512 -r ts-node/register ./src/server.ts",
-    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env production",
-    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env production",
+    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env development",
+    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env development",
     "dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts"
   },
   "dependencies": {

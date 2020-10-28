@@ -34,7 +34,7 @@ class InviteController {
                                     break;
                                 case 'COO':
                                 case 'EQP':
-                                    
+
                                     InviteRepository.insertInvite(guest.cd_user, event, invite.role)
                                         .then(async (invite) => {
                                             const insertNotification: InsertNotification = {
@@ -43,7 +43,7 @@ class InviteController {
                                                 notification_read: false
                                             }
 
-                                            const notificationType = (invite.sg_role == "COO"?"CVC":"CVE");
+                                            const notificationType = (invite.sg_role == "COO" ? "CVC" : "CVE");
                                             const linkNotification = await LinkNotificationRepository
                                                 .insertLinkNotification(invite.cd_invite, notificationType);
 
@@ -67,26 +67,31 @@ class InviteController {
 
         return new Promise(async (resolve, reject) => {
             const invite = await InviteRepository.findInviteById(idInvite);
-            if (invite.cd_user != user.cd_user)
-                reject({ status: 401, message: 'You are not allowed do so' });
-            else {
-                const role = await RoleRepository.findRole(invite.sg_role);
-                const status = await StatusInvite.findStatusInvite(invite.sg_status);
 
-                resolve({
-                    id: invite.cd_invite,
-                    title: invite.nm_title,
-                    content: invite.ds_content,
-                    role: {
-                        name: role.nm_role,
-                        description: role.ds_role
-                    },
-                    status: {
-                        name: status.nm_status,
-                        description: status.ds_status,
-                    },
-                    event_id: invite.cd_event
-                });
+            if (!invite)
+                reject({ status: 404, message: "This invitation doesn't exists" });
+            else {
+                if (invite.cd_user != user.cd_user)
+                    reject({ status: 401, message: 'You are not allowed do so' });
+                else {
+                    const role = await RoleRepository.findRole(invite.sg_role);
+                    const status = await StatusInvite.findStatusInvite(invite.sg_status);
+
+                    resolve({
+                        id: invite.cd_invite,
+                        title: invite.nm_title,
+                        content: invite.ds_content,
+                        role: {
+                            name: role.nm_role,
+                            description: role.ds_role
+                        },
+                        status: {
+                            name: status.nm_status,
+                            description: status.ds_status,
+                        },
+                        event_id: invite.cd_event
+                    });
+                }
             }
         });
     }
