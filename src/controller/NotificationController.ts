@@ -27,8 +27,7 @@ class NotificationController {
                         link: {
                             idItem: link.cd_item,
                             type: link.sg_type
-                        },
-                        idUser: notification.cd_user
+                        }
                     });
                 }
             }
@@ -52,8 +51,7 @@ class NotificationController {
                     link: {
                         idItem: link.cd_item,
                         type: link.sg_type,
-                    },
-                    idUser: notifications[i].cd_user
+                    }
                 });
             }
 

@@ -6,8 +6,7 @@ interface NotificationResponse {
     link: {
         idItem: number,
         type: string
-    },
-    idUser: number
+    }
 }
 
 export default NotificationResponse;
