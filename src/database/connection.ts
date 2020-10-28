@@ -1,9 +1,9 @@
 import knex from 'knex';
-const { connection } = require('../../knexfile');
+const { production } = require('../../knexfile');
 
 const db = knex({
     client: 'pg',
-    connection: connection.connection
+    connection: production.connection
 });
 
 export default db;
