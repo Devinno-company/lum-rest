@@ -159,9 +159,9 @@ class EventController {
             } else {
                 const access = await AccessRepository.findAccessByEventIdAndUserId(event.cd_event, user.cd_user);
                 if (!access)
-                    reject({ status: 403, message: "You are not allowed to do so" })
+                    reject({ status: 401, message: "You are not allowed to do so" })
                 else if (access.sg_role != 'CRI') {
-                    reject({ status: 403, message: "You are not allowed to do so" })
+                    reject({ status: 401, message: "You are not allowed to do so" })
                 }
                 else {
 
@@ -248,7 +248,7 @@ class EventController {
                 }
 
                 if (!permission)
-                    reject({ status: 403, message: "You are not allowed to do so" })
+                    reject({ status: 401, message: "You are not allowed to do so" })
                 else {
                     const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
                     const geolocation = await GeolocationRepository.findGeolocationById(locationEvent.cd_geolocation);
