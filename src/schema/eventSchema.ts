@@ -97,9 +97,8 @@ export const newEventSchema = Joi.object({
         .max(3)
         .required()
 })
-    .strict()
-    .unknown();
-
+    .strict();
+    
 export const updateEventSchema = Joi.object({
     name_to: Joi.string()
     .min(3)
@@ -197,3 +196,4 @@ export const updateEventSchema = Joi.object({
         .max(3)
         .optional()
 })
+.strict();

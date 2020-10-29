@@ -21,8 +21,7 @@ export const newUserSchema = Joi.object({
         .max(255)
         .required()
 })
-    .strict()
-    .unknown();
+    .strict();
 
 export const updateUserSchema = Joi.object({
     name_to: Joi.string()
@@ -89,8 +88,7 @@ export const updateUserSchema = Joi.object({
     .optional()
     .allow(null)
 })
-    .strict()
-    .unknown();
+    .strict();
 
 export const getUserByEmailSchema = Joi.object({
     email: Joi.string()
@@ -98,5 +96,4 @@ export const getUserByEmailSchema = Joi.object({
         .max(255)
         .required(),
 })
-.unknown()
-.strict();
+.unknown();

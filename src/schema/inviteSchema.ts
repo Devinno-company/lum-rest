@@ -12,7 +12,6 @@ export const newInviteSchema = Joi.object({
         .case("upper")
         .required()
 })
-    .unknown()
     .strict();
 
 export const updateInviteSchema = Joi.object({
@@ -21,5 +20,4 @@ export const updateInviteSchema = Joi.object({
         .max(6)
         .required()
 })
-    .unknown()
     .strict();

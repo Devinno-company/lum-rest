@@ -6,6 +6,7 @@ const updateRoleTeamMemberSchema = Joi.object({
         .max(3)
         .case('upper')
         .required()
-});
+})
+.strict();
 
 export default updateRoleTeamMemberSchema;

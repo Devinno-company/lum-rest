@@ -11,7 +11,6 @@ const credentialsSchema = Joi.object({
         .max(255)
         .required()
 })
-    .strict()
-    .unknown();
-
+    .strict();
+    
 export default credentialsSchema;

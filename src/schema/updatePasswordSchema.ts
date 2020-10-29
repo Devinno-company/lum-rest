@@ -12,7 +12,6 @@ export const updatePasswordSchema = Joi.object({
         .max(255)
         .required()
 })
-    .strict()
-    .unknown();
+    .strict();
 
 export default updatePasswordSchema;
