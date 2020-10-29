@@ -2,6 +2,7 @@ import express from 'express';
 import NoticeController from '../controller/NoticeController';
 import NewNoticeRequest from '../interfaces/request/NewNoticeRequest';
 import UpdateNoticeRequest from '../interfaces/request/UpdateNoticeRequest';
+import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
@@ -39,7 +40,7 @@ noticeRoutes.get('/events/:idEvent/notices/:idNotice', verifyToken, (request, re
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
-noticeRoutes.post('/events/:idEvent/notices', verifyToken, (request, response) => {
+noticeRoutes.post('/events/:idEvent/notices', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const newNotice: NewNoticeRequest = request.body;
 
@@ -55,7 +56,7 @@ noticeRoutes.post('/events/:idEvent/notices', verifyToken, (request, response) =
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
-noticeRoutes.put('/events/:idEvent/notices/:idNotice', verifyToken, (request, response) => {
+noticeRoutes.put('/events/:idEvent/notices/:idNotice', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idNotice = request.params['idNotice'];
     const updateNotice: UpdateNoticeRequest = request.body;

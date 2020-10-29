@@ -6,6 +6,7 @@ import updatePasswordSchema from "../schema/updatePasswordSchema";
 import { newEventSchema, updateEventSchema } from "../schema/eventSchema";
 import { newInviteSchema, updateInviteSchema } from "../schema/inviteSchema";
 import updateRoleTeamMemberSchema from "../schema/teamSchema";
+import { newNoticeSchema, updateNoticeSchema } from "../schema/noticeSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -31,6 +32,12 @@ function getErrorsResponse(errors: Joi.ValidationError) {
                     break;
                 case 'number.base':
                     message = 'This field is number type';
+                    break;
+                case 'number.min':
+                    message = `The minimum value of this field is ${item.context.limit}`;
+                    break;
+                case 'number.max':
+                    message = `The maximum value of this field is ${item.context.limit}`;
                     break;
                 case 'string.min':
                     message = `The name must have on minimum ${item.context.limit} characters`;
@@ -120,8 +127,13 @@ function validate(request: Request, response: Response, next: NextFunction) {
             /* /events/:idEvent/invite */
             if (route.includes('/events/') && route.includes('/invite'))
                 schema = newInviteSchema;
-            else if(route.includes('/event') && route.includes('/team') && method == 'patch')
+            else if (route.includes('/events') && route.includes('/team') && method == 'patch')
                 schema = updateRoleTeamMemberSchema;
+            /* /events/:idEvent/notices */
+            else if (route.includes('/events') && route.includes('/notices') && method == 'post')
+                schema = newNoticeSchema;
+            else if (route.includes('/events') && route.includes('/notices') && method == 'put')
+                schema = updateNoticeSchema;
             /* /invites/:idInvite */
             else if (route.includes('/invites') && method == 'patch')
                 schema = updateInviteSchema;
@@ -129,7 +141,7 @@ function validate(request: Request, response: Response, next: NextFunction) {
             else
                 schema = updateEventSchema;
     }
-    
+
     /* Validate the received data */
     const { error } = schema.validate(request.body, optionsValidation);
 
