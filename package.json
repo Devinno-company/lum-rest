@@ -18,8 +18,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node --max_old_space_size=512 -r ts-node/register ./src/server.ts",
-    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env development",
-    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env development",
+    "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env production",
+    "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env production",
     "dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts"
   },
   "dependencies": {
