@@ -5,16 +5,15 @@ import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 import UpdateMaterialRequest from '../interfaces/request/UpdateMaterialRequest';
-import MaterialResponse from '../interfaces/response/MaterialResponse';
 
 const materialRoutes = express.Router();
 const controller = new MaterialController();
 
 /**
- * @api {post} events/:idEvent/material 6.1. Create material
+ * @api {post} events/:idEvent/materials 7.1. Create material
  * 
  * @apiVersion 1.12.5
- * @apiGroup 6. Materials
+ * @apiGroup 7. Materials
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -54,7 +53,7 @@ const controller = new MaterialController();
  *  @apiUse invalidTokenErrorExample
  *  @apiUse incorrectFieldsError
  */
-materialRoutes.post('/events/:idEvent/material', verifyToken, async (request, response) => {
+materialRoutes.post('/events/:idEvent/materials', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
     const insertMaterial: InsertMaterial = request.body;
 
@@ -72,7 +71,7 @@ materialRoutes.post('/events/:idEvent/material', verifyToken, async (request, re
 });
 
 /**
- * @api {get} events/:idEvent/material/:idMaterial 6.2. Get material by id
+ * @api {get} events/:idEvent/materials/:idMaterial 7.2. Get material by id
  * 
  * @apiVersion 1.12.5
  * @apiGroup 6. Notifications
@@ -113,7 +112,7 @@ materialRoutes.post('/events/:idEvent/material', verifyToken, async (request, re
  *  @apiUse invalidTokenErrorExample
  *  @apiUse incorrectFieldsError
  */
-materialRoutes.get('/events/:idEvent/material/:idMaterial', verifyToken, async (request, response) => {
+materialRoutes.get('/events/:idEvent/materials/:idMaterial', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
     const idMaterial = request.params['idMaterial'];
 
@@ -134,10 +133,10 @@ materialRoutes.get('/events/:idEvent/material/:idMaterial', verifyToken, async (
 });
 
 /**
- * @api {get} events/:idEvent/material 6.3. Get all materials from event
+ * @api {get} events/:idEvent/materials 7.3. Get all materials from event
  * 
  * @apiVersion 1.12.5
- * @apiGroup 6. Materials
+ * @apiGroup 7. Materials
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -181,7 +180,7 @@ materialRoutes.get('/events/:idEvent/material/:idMaterial', verifyToken, async (
  *  @apiUse invalidTokenErrorExample
  *  @apiUse incorrectFieldsError
  */
-materialRoutes.get('/events/:idEvent/material', verifyToken, async (request, response) => {
+materialRoutes.get('/events/:idEvent/materials', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
 
     if (!Number(idEvent)) {
@@ -198,10 +197,10 @@ materialRoutes.get('/events/:idEvent/material', verifyToken, async (request, res
 });
 
 /**
- * @api {put} events/:idEvent/material/:idMaterial 6.4. Update material
+ * @api {put} events/:idEvent/materials/:idMaterial 7.4. Update material
  * 
  * @apiVersion 1.12.5
- * @apiGroup 6. Materials
+ * @apiGroup 7. Materials
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -249,7 +248,7 @@ materialRoutes.get('/events/:idEvent/material', verifyToken, async (request, res
  *          message: 'No field to update' 
  *      }
  */
-materialRoutes.put('/events/:idEvent/material/:idMaterial', verifyToken, (request, response) => {
+materialRoutes.put('/events/:idEvent/materials/:idMaterial', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idMaterial = request.params['idMaterial'];
     const updateMaterial: UpdateMaterialRequest = request.body;
@@ -271,10 +270,10 @@ materialRoutes.put('/events/:idEvent/material/:idMaterial', verifyToken, (reques
 });
 
 /**
- * @api {delete} events/:idEvent/material/:idMaterial 6.5. Delete a Material
+ * @api {delete} events/:idEvent/materials/:idMaterial 7.5. Delete a Material
  * 
  * @apiVersion 1.12.5
- * @apiGroup 6. Materials
+ * @apiGroup 7. Materials
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -300,7 +299,7 @@ materialRoutes.put('/events/:idEvent/material/:idMaterial', verifyToken, (reques
  * @apiUse invalidTokenError
  * @apiUse invalidTokenErrorExample
  */
-materialRoutes.delete('/events/:idEvent/material/:idMaterial', verifyToken, async (request, response) => {
+materialRoutes.delete('/events/:idEvent/materials/:idMaterial', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
     const idMaterial = request.params['idMaterial'];
 

@@ -1,17 +1,16 @@
 import NotificationController from "../controller/NotificationController";
-import express, { request } from 'express';
+import express from 'express';
 import verifyToken from "../middleware/verifyToken";
 import getUserByRequest from "../utils/getUserByRequest";
-import validate from "../middleware/inputValidation";
 
 const notificationRoutes = express.Router();
 const controller = new NotificationController();
 
 /**
- * @api {get} notifications 5.1. Get all notifications from the user
+ * @api {get} notifications 3.1. Get all notifications from the user
  * 
  * @apiVersion 1.9.0
- * @apiGroup 5. Notifications
+ * @apiGroup 3. Notifications
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -72,10 +71,10 @@ notificationRoutes.get('/notifications', verifyToken, (request, response) => {
 });
 
 /**
- * @api {get} notifications/:idNotification 5.2. Get notification by id
+ * @api {get} notifications/:idNotification 3.2. Get notification by id
  * 
  * @apiVersion 1.10.2
- * @apiGroup 5. Notifications
+ * @apiGroup 3. Notifications
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -133,10 +132,10 @@ notificationRoutes.get('/notifications/:idNotification', verifyToken, (request, 
 });
 
 /**
- * @api {patch} notifications/:idNotification 5.3. Change isRead.
+ * @api {patch} notifications/:idNotification 3.3. Change isRead.
  * 
  * @apiVersion 1.10.2
- * @apiGroup 5. Notifications
+ * @apiGroup 3. Notifications
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -185,10 +184,10 @@ notificationRoutes.patch('/notifications/:idNotification', verifyToken, (request
 });
 
 /**
- * @api {delete} notifications/:idNotification 5.4. Delete a notification
+ * @api {delete} notifications/:idNotification 3.4. Delete a notification
  * 
  * @apiVersion 1.10.2
- * @apiGroup 5. Notifications
+ * @apiGroup 3. Notifications
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample

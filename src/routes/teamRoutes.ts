@@ -8,10 +8,10 @@ const teamRoutes = express.Router();
 const controller = new TeamController();
 
 /**
- * @api {get} events/:idEvent/team 7.1. Get team
+ * @api {get} events/:idEvent/team 6.1. Get team
  * 
  * @apiVersion 1.10.0
- * @apiGroup 7. Team
+ * @apiGroup 6. Team
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -90,10 +90,10 @@ teamRoutes.get('/events/:idEvent/team', verifyToken, (request, response) => {
 });
 
 /**
- * @api {get} events/:idEvent/team/:idMember 7.2. Get a team member
+ * @api {get} events/:idEvent/team/:idMember 6.2. Get a team member
  * 
  * @apiVersion 1.10.0
- * @apiGroup 7. Team
+ * @apiGroup 6. Team
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -164,10 +164,10 @@ teamRoutes.get('/events/:idEvent/team/:idMember', verifyToken, (request, respons
 
 
 /**
- * @api {patch} events/:idEvent/team/:idMember 7.3. Update team member role
+ * @api {patch} events/:idEvent/team/:idMember 6.3. Update team member role
  * 
  * @apiVersion 1.10.0
- * @apiGroup 7. Team
+ * @apiGroup 6. Team
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
@@ -244,10 +244,10 @@ teamRoutes.patch('/events/:idEvent/team/:idMember', verifyToken, validate, (requ
 });
 
 /**
- * @api {delete} events/:idEvent/team/:idMember 7.4. Delete team member
+ * @api {delete} events/:idEvent/team/:idMember 6.4. Delete team member
  * 
  * @apiVersion 1.10.0
- * @apiGroup 7. Team
+ * @apiGroup 6. Team
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample
