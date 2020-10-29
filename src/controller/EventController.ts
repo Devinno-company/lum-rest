@@ -17,8 +17,6 @@ import TimeRepository from "../repositorys/TimeRepository";
 import NoticeRepository from "../repositorys/NoticeRepository";
 import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
-import InviteUserRequest from "../interfaces/request/InviteUserRequest";
-import InviteRepository from "../repositorys/InviteRepository";
 import havePermission from "../utils/havePermission";
 
 class EventController {
