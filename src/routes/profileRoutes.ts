@@ -15,6 +15,21 @@ const controller = new ProfileController();
 const formData = multer();
 
 /**
+ * @apiDefine notAllowedError
+ * @apiError (401) {Object} notAllowed You are not allowed to do so
+ */
+
+/**
+* @apiDefine notAllowedErrorExample
+* @apiErrorExample notAllowed
+*   HTTPS/1.1 401 Unauthorized
+*   { 
+*       "status": 401, 
+*       "message": "You are not allowed to do so" 
+*   }
+*/
+
+/**
  * @apiDefine noTokenError
  * @apiError (400) {Object} noneToken None token inserted in header x-access-token
  */
@@ -44,10 +59,10 @@ const formData = multer();
  *      }
  */
 
- /**
-  * @apiDefine incorrectFieldsError 
-  * @apiError (400) {Object[]} incorrectFields The fields were not filled in according to our business rule
-  */
+/**
+ * @apiDefine incorrectFieldsError 
+ * @apiError (400) {Object[]} incorrectFields The fields were not filled in according to our business rule
+ */
 
 /**
  * @apiDefine invalidTokenError
@@ -103,38 +118,38 @@ const formData = multer();
  *  "x-access-token": "Bearer <TOKEN>"
  */
 
- /**
- * @api {get} profile 2.1. Get profile
- * 
- * @apiVersion 1.5.1
- * @apiGroup 2. Profile
- * 
- * @apiUse tokenHeader
- * @apiUse tokenExample
- * 
- * @apiSuccess (200) {Number} id User identification code.
- * @apiSuccess (200) {String} name User name.
- * @apiSuccess (200) {String} surname User last name.
- * @apiSuccess (200) {String} email User email.
- * @apiSuccess (200) {String} [biography] User biography.
- * @apiSuccess (200) {String} [label] User characteristic.
- * @apiSuccess (200) {String} [website] User website.
- * @apiSuccess (200) {String} [image] Profile picture link.
- * @apiSuccess (200) {String} [profission] User profission.
- * @apiSuccess (200) {String} [company] User company name.
- * @apiSuccess (200) {Object} [location] User location.
- * @apiSuccess (200) {String} location[city] User city.
- * @apiSuccess (200) {Object} location[geolocation] User geolocation.
- * @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
- * @apiSuccess (200) {Number} geolocation[longitude] Geolocation longitude.
- * 
- * @apiUse profileExample
- * 
- * @apiUse noTokenError
- * @apiUse noTokenErrorExample
- * @apiUse invalidTokenError
- * @apiUse invalidTokenErrorExample
- */
+/**
+* @api {get} profile 2.1. Get profile
+* 
+* @apiVersion 1.5.1
+* @apiGroup 2. Profile
+* 
+* @apiUse tokenHeader
+* @apiUse tokenExample
+* 
+* @apiSuccess (200) {Number} id User identification code.
+* @apiSuccess (200) {String} name User name.
+* @apiSuccess (200) {String} surname User last name.
+* @apiSuccess (200) {String} email User email.
+* @apiSuccess (200) {String} [biography] User biography.
+* @apiSuccess (200) {String} [label] User characteristic.
+* @apiSuccess (200) {String} [website] User website.
+* @apiSuccess (200) {String} [image] Profile picture link.
+* @apiSuccess (200) {String} [profission] User profission.
+* @apiSuccess (200) {String} [company] User company name.
+* @apiSuccess (200) {Object} [location] User location.
+* @apiSuccess (200) {String} location[city] User city.
+* @apiSuccess (200) {Object} location[geolocation] User geolocation.
+* @apiSuccess (200) {Number} geolocation[latitude] Geolocation latitude.
+* @apiSuccess (200) {Number} geolocation[longitude] Geolocation longitude.
+* 
+* @apiUse profileExample
+* 
+* @apiUse noTokenError
+* @apiUse noTokenErrorExample
+* @apiUse invalidTokenError
+* @apiUse invalidTokenErrorExample
+*/
 profileRoutes.get('/profile', verifyToken, (request, response) => {
 
     getUserByRequest(request)
@@ -293,7 +308,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  */
 profileRoutes.put('/profile', validate, (request, response) => {
     const updateUser: UpdateUserRequest = request.body;
-    
+
     getUserByRequest(request).then(user => {
         controller.updateUser(user, updateUser)
             .then((result: UserResponse) => response.status(200).json(result))
@@ -333,7 +348,7 @@ profileRoutes.put('/profile', validate, (request, response) => {
  * @apiUse incorrectFieldsError
  */
 profileRoutes.delete('/profile', validate, (request, response) => {
-    const credentials:CredentialsRequest = request.body;
+    const credentials: CredentialsRequest = request.body;
 
     getUserByRequest(request)
         .then(user => {

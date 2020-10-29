@@ -3208,5 +3208,1992 @@ define({ "api": [
         ]
       }
     }
+  },
+  {
+    "type": "delete",
+    "url": "notifications/:idNotification",
+    "title": "5.4. Delete a notification",
+    "version": "1.10.2",
+    "group": "5._Notifications",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotification",
+            "description": "<p>Notification identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/notificationRoutes.ts",
+    "groupTitle": "5._Notifications",
+    "name": "DeleteNotificationsIdnotification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "notifications",
+    "title": "5.1. Get all notifications from the user",
+    "version": "1.9.0",
+    "group": "5._Notifications",
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notification identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "title",
+            "description": "<p>Notification name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Notification content.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "isRead",
+            "description": "<p>Is the notification read or unread.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "link",
+            "description": "<p>Notification link.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "link[idItem]",
+            "description": "<p>Identification number of the item(cd_material, cd_invite, etc.).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "link[type]",
+            "description": "<p>Type of the notification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n{\n    id: 3,\n    title: \"Novo material!\",\n    content: \"Material: x10 Violetas, adicionado ao evento Flores e Frutas\",\n    isRead: \"false\",\n    link: {\n        idItem: 42,\n        type: \"MTA\"\n    }\n }\n {\n    id: 5,\n    title: \"Novo convite!\",\n    content: \"Você recebeu um novo convite para participar da organização de um evento.\",\n    isRead: \"true\",\n    link: {\n        idItem: 12,\n        type: \"CVC\"\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/notificationRoutes.ts",
+    "groupTitle": "5._Notifications",
+    "name": "GetNotifications",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "notifications/:idNotification",
+    "title": "5.2. Get notification by id",
+    "version": "1.10.2",
+    "group": "5._Notifications",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotification",
+            "description": "<p>Notification identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notification identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "title",
+            "description": "<p>Notification name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "content",
+            "description": "<p>Notification content.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Boolean",
+            "optional": false,
+            "field": "isRead",
+            "description": "<p>Is the notification read or unread.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "link",
+            "description": "<p>Notification link.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "link[idItem]",
+            "description": "<p>Identification number of the item(cd_material, cd_invite, etc.).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "link[type]",
+            "description": "<p>Type of the notification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n {\n    id: 5,\n    title: \"Novo convite!\",\n    content: \"Você recebeu um novo convite para participar da organização de um evento.\",\n    isRead: \"true\",\n    link: {\n        idItem: 12,\n        type: \"CVC\"\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/notificationRoutes.ts",
+    "groupTitle": "5._Notifications",
+    "name": "GetNotificationsIdnotification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "patch",
+    "url": "notifications/:idNotification",
+    "title": "5.3. Change isRead.",
+    "version": "1.10.2",
+    "group": "5._Notifications",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotification",
+            "description": "<p>Notification identification code.</p>"
+          }
+        ],
+        "Request Body Params": [
+          {
+            "group": "Request Body Params",
+            "type": "String",
+            "optional": false,
+            "field": "choice",
+            "description": "<p>Notification Response. Possible values: &quot;unread&quot; and &quot;read&quot;.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"choice\": \"unread\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/notificationRoutes.ts",
+    "groupTitle": "5._Notifications",
+    "name": "PatchNotificationsIdnotification",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "events/:idEvent/material/:idMaterial",
+    "title": "6.5. Delete a Material",
+    "version": "1.12.5",
+    "group": "6._Materials",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMaterial",
+            "description": "<p>Material identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "6._Materials",
+    "name": "DeleteEventsIdeventMaterialIdmaterial",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/material",
+    "title": "6.3. Get all materials from event",
+    "version": "1.12.5",
+    "group": "6._Materials",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Material identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "quantity",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "observation",
+            "description": "<p>Material observation name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Material status.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n{\n    \"id\": \"2\",\n    \"name\": \"Mesas de Bar\",\n    \"quantity\": \"5\",\n    \"observation\": \"Mesas de bar de plastico tamanho médio\",\n    \"status\": \"PEN\"\n }\n {\n    \"id\": \"4\",\n    \"name\": \"Cadeiras Amarelas\",\n    \"quantity\": \"6\",\n    \"observation\": \"Cadeiras de madeira com estofado, de cor amarela\",\n    \"status\": \"PEN\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "6._Materials",
+    "name": "GetEventsIdeventMaterial",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/material",
+    "title": "6.1. Create material",
+    "version": "1.12.5",
+    "group": "6._Materials",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": true,
+            "field": "nm_material",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": true,
+            "field": "qt_material",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "ds_observation",
+            "description": "<p>Material observation.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n    \"nm_material\": \"Cadeiras Amarelas\",\n    \"qt_material\": \"6\",\n    \"ds_observation\": \"Cadeiras de madeira com estofado, de cor amarela\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Material identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "quantity",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "observation",
+            "description": "<p>Material observation name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Material status.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS/1.1 201 Created\n{\n   \"id\": \"4\",\n   \"name\": \"Cadeiras Amarelas\",\n   \"quantity\": \"6\",\n   \"observation\": \"Cadeiras de madeira com estofado, de cor amarela\",\n   \"status\": \"PEN\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "6._Materials",
+    "name": "PostEventsIdeventMaterial",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:idEvent/material/:idMaterial",
+    "title": "6.4. Update material",
+    "version": "1.12.5",
+    "group": "6._Materials",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMaterial",
+            "description": "<p>Material identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": true,
+            "field": "name_to",
+            "description": "<p>New material name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": true,
+            "field": "quantity_to",
+            "description": "<p>New material quantity.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description_to",
+            "description": "<p>New material observation.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n    \"name_to\": \"Cadeiras Verdes\",\n    \"quantity_to\": \"10\",\n    \"description_to\": \"Cadeiras de plastico sem estofado de cor verde\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Material identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "quantity",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "observation",
+            "description": "<p>Material observation name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Material status.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS/1.1 200 OK\n{\n   \"id\": \"4\",\n   \"name\": \"Cadeiras Verdes\",\n   \"quantity\": \"10\",\n   \"observation\": \"Cadeiras de plastico sem estofado, de cor verde\",\n   \"status\": \"PEN\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "noField",
+            "description": "<p>No field need be updated.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noField:",
+          "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "6._Materials",
+    "name": "PutEventsIdeventMaterialIdmaterial",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/material/:idMaterial",
+    "title": "6.2. Get material by id",
+    "version": "1.12.5",
+    "group": "6._Notifications",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMaterial",
+            "description": "<p>Material identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Material identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "quantity",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "observation",
+            "description": "<p>Material observation name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Material status.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n {\n    \"id\": \"4\",\n    \"name\": \"Cadeiras Amarelas\",\n    \"quantity\": \"6\",\n    \"observation\": \"Cadeiras de madeira com estofado, de cor amarela\",\n    \"status\": \"PEN\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "6._Notifications",
+    "name": "GetEventsIdeventMaterialIdmaterial",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "delete",
+    "url": "events/:idEvent/team/:idMember",
+    "title": "7.4. Delete team member",
+    "version": "1.10.0",
+    "group": "7._Team",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMember",
+            "description": "<p>Team member identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "selfDelete",
+            "description": "<p>You cannot remove yourself from the team of an event. For this action use the endpoint /events/:idEvent/quit.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This event doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "optional": false,
+            "field": "teamMemberNotFound",
+            "description": "<p>This user is not on the organization team for this event.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "selfDelete",
+          "content": "HTTPS/1.1 400 Bad request\n{ \n    \"status\": 400, \n    \"message\": \"You cannot remove yourself from the team of an event. For this action use the endpoint /events/:idEvent/quit\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": \"This event doesn't exists\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "teamMemberNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": 'This user is not on the organization team for this event' \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/teamRoutes.ts",
+    "groupTitle": "7._Team",
+    "name": "DeleteEventsIdeventTeamIdmember",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/team",
+    "title": "7.1. Get team",
+    "version": "1.10.0",
+    "group": "7._Team",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event idetification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "team[id]",
+            "description": "<p>User identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[name]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[surname]",
+            "description": "<p>User surname.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[image]",
+            "description": "<p>User image</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "team[role]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[name]",
+            "description": "<p>Role name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[description]",
+            "description": "<p>Role description.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n[\n    {\n        \"id\": 1,\n        \"name\": \"João\",\n        \"surname\": \"Silva\",\n        \"image\": null,\n        \"role\": {\n            \"name\": \"Criador\",\n            \"description\": \"Responsável pela criação e toda organização do evento.\"\n     },\n     {\n        \"id\": 2,\n        \"name\": \"Marcos\",\n        \"surname\": \"Oliveira\",\n        \"image\": \"https://www.images.com/2\",\n        \"role\": {\n            \"name\": \"Coordenador\",\n            \"description\": \"Responsável por auxiliar o criador a organizar o evento.\"\n     },\n     {\n        \"id\": 3,\n        \"name\": \"Fernanda\",\n        \"surname\": \"Oliveira\",\n        \"image\": \"https://www.images.com/4\",\n        \"role\": {\n            \"name\": \"Membro da equipe\",\n            \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n     }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This event doesn't exists.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": \"This event doesn't exists\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/teamRoutes.ts",
+    "groupTitle": "7._Team",
+    "name": "GetEventsIdeventTeam",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/team/:idMember",
+    "title": "7.2. Get team member",
+    "version": "1.10.0",
+    "group": "7._Team",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMember",
+            "description": "<p>Team member identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "team[id]",
+            "description": "<p>User identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[name]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[surname]",
+            "description": "<p>User surname.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[image]",
+            "description": "<p>User image</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "team[role]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[name]",
+            "description": "<p>Role name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[description]",
+            "description": "<p>Role description.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response",
+          "content": "HTTPS/1.1 200 Ok\n{\n    \"id\": 1,\n    \"name\": \"João\",\n    \"surname\": \"Silva\",\n    \"image\": null,\n    \"role\": {\n        \"name\": \"Criador\",\n        \"description\": \"Responsável pela criação e toda organização do evento.\"\n    }\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This event doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "optional": false,
+            "field": "teamMemberNotFound",
+            "description": "<p>This user is not on the organization team for this event.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": \"This event doesn't exists\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "teamMemberNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": 'This user is not on the organization team for this event' \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/teamRoutes.ts",
+    "groupTitle": "7._Team",
+    "name": "GetEventsIdeventTeamIdmember",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "patch",
+    "url": "events/:idEvent/team/:idMember",
+    "title": "7.3. Update team member role",
+    "version": "1.10.0",
+    "group": "7._Team",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMember",
+            "description": "<p>Team member identification code.</p>"
+          }
+        ],
+        "Request Body Params": [
+          {
+            "group": "Request Body Params",
+            "type": "String",
+            "optional": false,
+            "field": "role_to",
+            "description": "<p>New user role in event. Possible values: &quot;COO&quot;(coordinator) and &quot;EQP&quot;(&quot;Team member&quot;).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request Body",
+        "content": "{\n    \"role_to\": \"EQP\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n{\n    \"id\": 3,\n    \"name\": \"Fernanda\",\n    \"surname\": \"Oliveira\",\n    \"image\": \"https://www.images.com/4\",\n    \"role\": {\n        \"name\": \"Membro da equipe\",\n        \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "selfDelete",
+            "description": "<p>You cannot remove yourself from the team of an event. For this action use the endpoint /events/:idEvent/quit.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This event doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "optional": false,
+            "field": "teamMemberNotFound",
+            "description": "<p>This user is not on the organization team for this event.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "selfDelete",
+          "content": "HTTPS/1.1 400 Bad request\n{ \n    \"status\": 400, \n    \"message\": \"You cannot remove yourself from the team of an event. For this action use the endpoint /events/:idEvent/quit\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": \"This event doesn't exists\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "teamMemberNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n    \"status\": 404, \n    \"message\": 'This user is not on the organization team for this event' \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/teamRoutes.ts",
+    "groupTitle": "7._Team",
+    "name": "PatchEventsIdeventTeamIdmember",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
   }
 ] });

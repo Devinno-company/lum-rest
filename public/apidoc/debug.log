@@ -1,7 +1,0 @@
-[1009/172638.143:ERROR:settings.cc(430)] Settings version is not 5
-[1009/173638.186:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\joao-dev\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\8b54d83a-8892-46cc-802a-2130641b09b9: O sistema não pode encontrar o caminho especificado. (0x3)
-[1009/173638.204:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\joao-dev\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\998335b7-8e46-4b81-86f5-c8371374e541: O sistema não pode encontrar o caminho especificado. (0x3)
-[1009/173638.215:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\joao-dev\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\a9c2e76d-cb60-4c6e-9023-7ba2fe91b99d: O sistema não pode encontrar o caminho especificado. (0x3)
-[1009/173638.216:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\joao-dev\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\adb9f2fd-48ea-45e0-b68a-45c17160e780: O sistema não pode encontrar o caminho especificado. (0x3)
-[1009/173638.217:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\joao-dev\AppData\Local\Microsoft\Edge\User Data\Crashpad\attachments\f8e6ed98-34bb-49f7-92d9-b6567ba87a6d: O sistema não pode encontrar o caminho especificado. (0x3)
-[1009/173638.217:ERROR:directory_reader_win.cc(43)] FindFirstFile: O sistema não pode encontrar o caminho especificado. (0x3)
