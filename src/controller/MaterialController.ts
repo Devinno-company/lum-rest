@@ -45,6 +45,7 @@ class MaterialController {
                                             id: material.cd_material,
                                             name: material.nm_material,
                                             quantity: material.qt_material,
+                                            acquired: material.qt_acquired,
                                             observation: material.ds_observation,
                                             status: material.sg_status
                                         })
@@ -73,6 +74,7 @@ class MaterialController {
                             id: material.cd_material,
                             name: material.nm_material,
                             quantity: material.qt_material,
+                            acquired: material.qt_acquired,
                             observation: material.ds_observation,
                             status: material.sg_status
                         });
@@ -102,6 +104,7 @@ class MaterialController {
                                 id: materials[i].cd_material,
                                 name: materials[i].nm_material,
                                 quantity: materials[i].qt_material,
+                                acquired: materials[i].qt_acquired,
                                 observation: materials[i].ds_observation,
                                 status: materials[i].sg_status
                             });
@@ -130,12 +133,46 @@ class MaterialController {
                 await havePermission(user.cd_user, event.cd_event, 'EQP')
                     .then(() => {
                         MaterialRepository.updateMaterial(idMaterial, updateMaterial)
-                            .then(async () =>
-                                resolve(await this.readMaterial(user, event.cd_event, material.cd_material)))
+                            .then(async () => {
+                                const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                                    if (NewMaterial.acquired > NewMaterial.quantity) {
+                                        MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
+                                        resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
+                                    }
+                                resolve(NewMaterial)
+                            })
                             .catch(err => reject(err));
                     })
                     .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
             }
+        });
+    }
+
+    async updateAcquired(user: User, acquired: number, idEvent: number, idMaterial: number): Promise<MaterialResponse> {
+
+        return new Promise(async (resolve, reject) => {
+
+            const event = await EventRepository.findEventById(idEvent);
+            const material = await MaterialRepository.findMaterialById(idMaterial);
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            if (!material)
+                reject({ status: 404, message: 'This material does not exist' });
+
+            await havePermission(user.cd_user, event.cd_event, 'EQP')
+                .then(() => {
+                    MaterialRepository.updateAcquired(idMaterial, acquired)
+                        .then(async () => {
+                            const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                            if (NewMaterial.acquired > NewMaterial.quantity) {
+                                MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
+                                resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
+                            }
+                        resolve(NewMaterial)
+                            })
+                        .catch(err => reject(err));
+                    })
+                    .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
         });
     }
 

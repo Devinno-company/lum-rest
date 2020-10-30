@@ -270,7 +270,80 @@ materialRoutes.put('/events/:idEvent/materials/:idMaterial', verifyToken, (reque
 });
 
 /**
- * @api {delete} events/:idEvent/materials/:idMaterial 7.5. Delete a Material
+ * @api {put} events/:idEvent/materials/:idMaterial/acquired 7.5. Update material already acquired.
+ * 
+ * @apiVersion 1.15.0
+ * @apiGroup 7. Materials
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idMaterial Material identification code.
+ * 
+ * @apiParam (Request body params) {Number} [acquired] Material quantity already acquired.
+ * 
+ * @apiExample {json} Request body:
+ *  {
+ *      "acquired": 24
+ *  }
+ * 
+ * @apiSuccess (200) {Number} id Material identification code.
+ * @apiSuccess (200) {String} name Material name.
+ * @apiSuccess (200) {Number} quantity Material quantity.
+ * @apiSuccess (200) {String} observation Material observation name.
+ * @apiSuccess (200) {String} status Material status.
+ * 
+ * @apiSuccessExample {json} Success response:
+ *   HTTPS/1.1 200 OK
+ *   {
+ *      "id": "4",
+ *      "name": "Cadeiras Verdes",
+ *      "quantity": "10",
+ *      "acquired": "24",
+ *      "observation": "Cadeiras de plastico sem estofado, de cor verde",
+ *      "status": "ADQ"
+ *   }
+ * 
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ * @apiUse incorrectFieldsError
+ * @apiError (400) noField No field need be updated.
+ * @apiErrorExample noField:
+ *  HTTPS/1.1 400 Bad Request
+ *      { 
+ *          status: 400, 
+ *          message: 'No field to update' 
+ *      }
+ */
+materialRoutes.put('/events/:idEvent/materials/:idMaterial/acquired', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const idMaterial = request.params['idMaterial'];
+    const acquired = request.body['acquired'];
+
+    if (!Number(idEvent)) {
+        response.status(400).json({ status: 400, message: 'Event Id invalid.' });
+    }
+    if (!Number(idMaterial)) {
+        response.status(400).json({ message: 'Material Id invalid.' });
+    }
+    if (!Number(acquired)) {
+        response.status(400).json({ message: 'Acquired number invalid.' });
+    }
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.updateAcquired(user, acquired, Number(idEvent), Number(idMaterial))
+                .then((result) => response.status(200).json(result))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+    })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+/**
+ * @api {delete} events/:idEvent/materials/:idMaterial 7.6. Delete a Material
  * 
  * @apiVersion 1.12.5
  * @apiGroup 7. Materials

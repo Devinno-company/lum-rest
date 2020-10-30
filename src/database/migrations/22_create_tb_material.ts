@@ -5,6 +5,7 @@ export function up(knex: Knex) {
         table.increments('cd_material').primary();
         table.string('nm_material', 100).notNullable();
         table.integer('qt_material').notNullable();
+        table.integer('qt_acquired').notNullable();
         table.string('ds_observation', 255);
 
         table.integer('cd_event').notNullable();

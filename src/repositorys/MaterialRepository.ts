@@ -14,6 +14,7 @@ class MaterialRepository {
                     .insert({
                         nm_material: InsertMaterial.nm_material,
                         qt_material: InsertMaterial.qt_material,
+                        qt_acquired: 0,
                         ds_observation: InsertMaterial.ds_observation,
                         cd_event: event_code,
                         sg_status: "PEN"
@@ -66,6 +67,27 @@ class MaterialRepository {
                 .then(() => { resolve(); })
                 .catch((err) => {
                     trx.rollback(updatedMaterial);
+                    reject(err);
+                });
+        });
+    }
+
+    public static updateAcquired(idMaterial: number, qt_acquired: number): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedAcquired =
+            await trx('tb_material')
+                .update({
+                    qt_acquired: qt_acquired
+                })
+                .where('cd_material', '=', idMaterial);
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback(updatedAcquired);
                     reject(err);
                 });
         });
