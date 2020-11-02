@@ -25,6 +25,18 @@ class AccessRepository {
         });
     }
 
+    public static async findAccessById(idAccess: number): Promise<Access> {
+
+        return new Promise(async (resolve) => {
+            const access =
+            await db('tb_access as a')
+                .select('*')
+                .where('a.cd_access', '=', idAccess);
+
+            resolve(access[0]);
+        });
+    }
+
     public static async findAccessByEventId(idEvent: number): Promise<Array<Access>> {
 
         return new Promise(async (resolve) => {

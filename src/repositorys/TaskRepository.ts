@@ -1,19 +1,19 @@
 import db from "../database/connection";
+import newTaskRequest from "../interfaces/request/newTaskRequest";
 import Task from "../models/Task";
 
 class TaskRepository {
 
-    public static insertTask(task_name: string, desc_task: string, event_code: number, access_code: number): Promise<Task> {
+    public static insertTask(newTask: newTaskRequest, event_id: number): Promise<Task> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
             const insertedTask =
                 await trx('tb_task')
                     .insert({
-                        nm_task: task_name,
-                        ds_task: desc_task,
-                        cd_event: event_code,
-                        cd_access_user: access_code
+                        nm_task: newTask.name,
+                        ds_task: newTask.description,
+                        cd_event: event_id,
                     }).returning('*');
 
             await trx.commit()
@@ -25,7 +25,7 @@ class TaskRepository {
         });
     }
 
-    public static async findTaskById(idTask: number): Promise<Array<Task>> {
+    public static async findTaskById(idTask: number): Promise<Task> {
 
         return new Promise(async (resolve) => {
             const task =
@@ -33,7 +33,7 @@ class TaskRepository {
                 .select('*')
                 .where('t.cd_task', '=', idTask);
 
-            resolve(task);
+            resolve(task[0]);
         });
     }
 
