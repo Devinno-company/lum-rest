@@ -51,6 +51,7 @@ class TaskController {
                             resolve({
                                 id: result.cd_task,
                                 name: result.nm_task,
+                                completed: result.id_completed,
                                 description: result.ds_task,
                                 user_assigned
                             });
@@ -103,6 +104,7 @@ class TaskController {
                         resolve({
                             id: task.cd_task,
                             name: task.nm_task,
+                            completed: task.id_completed,
                             description: task.ds_task,
                             user_assigned
                         });
@@ -154,6 +156,7 @@ class TaskController {
                         tasksResponse.push({
                             id: tasks[i].cd_task,
                             name: tasks[i].nm_task,
+                            completed: tasks[i].id_completed,
                             description: tasks[i].ds_task,
                             user_assigned
                         });
@@ -188,14 +191,15 @@ class TaskController {
                         if (!task)
                             reject({ status: 404, message: "This task doesn't exists" });
                         else {
-                            if (task.cd_access_user)
-                                reject({ status: 409, message: 'Cannot update an already assigned task.' })
+                            if (task.id_completed)
+                                reject({ status: 409, message: 'You cannot update an already completed task' })
                             else {
                                 const updatedTask = await TaskRepository.updateTaskById(idTask, updateTask);
 
                                 resolve({
                                     id: updatedTask.cd_task,
                                     name: updatedTask.nm_task,
+                                    completed: updatedTask.id_completed,
                                     description: updatedTask.ds_task,
                                     user_assigned: null
                                 });
@@ -227,8 +231,8 @@ class TaskController {
                     if (!task)
                         reject({ status: 404, message: "This task doesn't exists" });
                     else {
-                        if (task.cd_access_user)
-                            reject({ status: 409, message: 'Cannot update an already assigned task.' })
+                        if (task.id_completed)
+                            reject({ status: 409, message: 'You cannot update an already completed task' })
                         else {
                             TaskRepository.cleanAccessById(idTask)
                                 .then(() => {
@@ -273,6 +277,7 @@ class TaskController {
                                     resolve({
                                         id: result.cd_task,
                                         name: result.nm_task,
+                                        completed: result.id_completed,
                                         description: result.ds_task,
                                         user_assigned: {
                                             id: user.cd_user,
@@ -314,9 +319,11 @@ class TaskController {
                     if (!task)
                         reject({ status: 404, message: "This task doesn't exists" });
                     else {
-                        if (!task.cd_access_user) {
+                        if (!task.cd_access_user)
                             reject({ status: 401, message: 'This task has not been assigned' });
-                        } else {
+                        if (task.id_completed)
+                            reject({ status: 409, message: "You can't unassign a task that's already completed" })
+                        else {
                             if (task.cd_access_user != user.cd_user)
                                 reject({ status: 401, message: 'You cannot unassign a task that you did not assign' })
                             else {
@@ -325,12 +332,90 @@ class TaskController {
                                         resolve({
                                             id: result.cd_task,
                                             name: result.nm_task,
+                                            completed: result.id_completed,
                                             description: result.ds_task,
                                             user_assigned: null
                                         });
                                     })
                                     .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
                             }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    completeAndUncompleteTask(user: User, idEvent: number, idTask: number): Promise<TaskResponse> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" });
+                else {
+                    const task = await TaskRepository.findTaskById(idTask);
+
+                    if (!task)
+                        reject({ status: 404, message: "This task doesn't exists" });
+                    else {
+                        if (!task.cd_access_user && task.cd_access_user != user.cd_user)
+                            reject({ status: 401, message: 'To complete or uncomplete a task you need to assign it' });
+                        else {
+                            const access = await AccessRepository.findAccessByEventIdAndUserId(idEvent, user.cd_user);
+
+                            let taskResponse;
+                            const role = await RoleRepository.findRole(access.sg_role);
+
+                            if (!task.id_completed) {
+                                await TaskRepository.completeTaskById(idTask)
+                                    .then((result) => {
+                                        taskResponse = {
+                                            id: result.cd_task,
+                                            name: result.nm_task,
+                                            concluded: result.id_completed,
+                                            description: result.ds_task,
+                                            user_assigned: {
+                                                id: user.cd_user,
+                                                name: user.nm_user,
+                                                surname: user.nm_surname_user,
+                                                role: {
+                                                    name: role.nm_role,
+                                                    description: role.ds_role
+                                                }
+                                            }
+                                        };
+                                    })
+                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                            } else {
+                                await TaskRepository.uncompleteTaskById(idTask)
+                                    .then((result) => {
+                                        taskResponse = {
+                                            id: result.cd_task,
+                                            name: result.nm_task,
+                                            concluded: result.id_completed,
+                                            description: result.ds_task,
+                                            user_assigned: {
+                                                id: user.cd_user,
+                                                name: user.nm_user,
+                                                surname: user.nm_surname_user,
+                                                role: {
+                                                    name: role.nm_role,
+                                                    description: role.ds_role
+                                                }
+                                            }
+                                        };
+                                    })
+                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                            }
+
+                            resolve(taskResponse);
                         }
                     }
                 }

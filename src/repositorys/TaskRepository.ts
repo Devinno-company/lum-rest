@@ -95,6 +95,50 @@ class TaskRepository {
         });
     }
 
+    public static async completeTaskById(idTask: number): Promise<Task> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedTask =
+                await trx('tb_task')
+                    .update({
+                        id_completed: true
+                    })
+                    .where('cd_task', '=', idTask)
+                    .returning('*');
+
+            trx.commit()
+                .then(() => { resolve(updatedTask[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
+    public static async uncompleteTaskById(idTask: number): Promise<Task> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedTask =
+                await trx('tb_task')
+                    .update({
+                        id_completed: false
+                    })
+                    .where('cd_task', '=', idTask)
+                    .returning('*');
+
+            trx.commit()
+                .then(() => { resolve(updatedTask[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
     public static async cleanAccessByAccessId(idAccess: number): Promise<Array<Task>> {
 
         return new Promise(async (resolve, reject) => {

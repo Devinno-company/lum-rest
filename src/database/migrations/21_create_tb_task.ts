@@ -5,6 +5,7 @@ export function up(knex: Knex) {
         table.increments('cd_task').primary();
         table.string('nm_task', 100).notNullable();
         table.string('ds_task', 255).notNullable();
+        table.boolean('id_completed').defaultTo(false);
 
         table.integer('cd_event').notNullable();
         table.integer('cd_access_user');
