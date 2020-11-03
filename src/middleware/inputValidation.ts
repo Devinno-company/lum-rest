@@ -7,6 +7,8 @@ import { newEventSchema, updateEventSchema } from "../schema/eventSchema";
 import { newInviteSchema, updateInviteSchema } from "../schema/inviteSchema";
 import updateRoleTeamMemberSchema from "../schema/teamSchema";
 import { newNoticeSchema, updateNoticeSchema } from "../schema/noticeSchema";
+import { Route53Resolver } from "aws-sdk";
+import { newTaskSchema, updateTaskSchema } from "../schema/taskSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -93,6 +95,7 @@ function validate(request: Request, response: Response, next: NextFunction) {
     let schema = null;
     /** DEFINE QUAL SCHEMA SERÁ UTILIZADO PARA VALIDAÇÃO */
     switch (route) {
+        case '/users/':
         case '/users':
             switch (method) {
                 case 'post':
@@ -103,12 +106,15 @@ function validate(request: Request, response: Response, next: NextFunction) {
                     schema = getUserByEmailSchema;
             }
             break;
+        case '/login/':
         case '/login':
             schema = credentialsSchema;
             break;
+        case '/events/':
         case '/events':
             schema = newEventSchema;
             break;
+        case '/profile/':
         case '/profile':
             switch (method) {
                 case 'put':
@@ -122,22 +128,26 @@ function validate(request: Request, response: Response, next: NextFunction) {
                     schema = updatePasswordSchema;
             }
             break;
-        // /profile
         default:
             /* /events/:idEvent/invite */
             if (route.includes('/events/') && route.includes('/invite'))
                 schema = newInviteSchema;
-            else if (route.includes('/events') && route.includes('/team') && method == 'patch')
+            /* /events/:idEvent/team */
+            else if (route.includes('/events/') && route.includes('/team') && method == 'patch')
                 schema = updateRoleTeamMemberSchema;
             /* /events/:idEvent/notices */
-            else if (route.includes('/events') && route.includes('/notices') && method == 'post')
+            else if (route.includes('/events/') && route.includes('/notices') && method == 'post')
                 schema = newNoticeSchema;
-            else if (route.includes('/events') && route.includes('/notices') && method == 'put')
+            else if (route.includes('/events/') && route.includes('/notices') && method == 'put')
                 schema = updateNoticeSchema;
             /* /invites/:idInvite */
             else if (route.includes('/invites') && method == 'patch')
                 schema = updateInviteSchema;
-            /* /event/:idEvent */
+            else if (route.includes('/events/') && route.includes('/tasks') && method == 'post')
+                schema = newTaskSchema;
+            else if (route.includes('/events/') && route.includes('/tasks') && method == 'put')
+                schema = updateTaskSchema;
+            /* /events/:idEvent */
             else
                 schema = updateEventSchema;
     }

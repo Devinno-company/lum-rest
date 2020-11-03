@@ -2,13 +2,14 @@ import express from 'express';
 import TaskController from '../controller/TaskController';
 import NewTaskRequest from '../interfaces/request/newTaskRequest';
 import UpdateTaskRequest from '../interfaces/request/UpdateTaskRequest';
+import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
 const taskRoutes = express.Router();
 const controller = new TaskController();
 
-taskRoutes.post('/events/:idEvent/tasks', verifyToken, (request, response) => {
+taskRoutes.post('/events/:idEvent/tasks', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const newTask: NewTaskRequest = request.body;
 
@@ -60,7 +61,7 @@ taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response
         .catch((err) => response.status(400 || err).json(err))
 });
 
-taskRoutes.put('/events/:idEvent/tasks/:idTask', verifyToken, (request, response) => {
+taskRoutes.put('/events/:idEvent/tasks/:idTask', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
     const updateTask: UpdateTaskRequest = request.body;
