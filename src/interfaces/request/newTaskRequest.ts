@@ -1,6 +1,6 @@
-interface newTaskRequest {
+interface NewTaskRequest {
     name: string,
     description?: string,
 }
 
-export default newTaskRequest;
+export default NewTaskRequest;

@@ -1,4 +1,5 @@
 import newTaskRequest from "../interfaces/request/newTaskRequest";
+import UpdateTaskRequest from "../interfaces/request/UpdateTaskRequest";
 import TaskResponse from "../interfaces/response/TaskResponse";
 import TeamMember from "../interfaces/response/TeamMember";
 import User from "../models/User";
@@ -28,7 +29,7 @@ class TaskController {
                     TaskRepository.insertTask(newTask, idEvent)
                         .then(async (result) => {
 
-                            let user_assigned: undefined | TeamMember = undefined;
+                            let user_assigned: null | TeamMember = null;
 
                             if (result.cd_access_user) {
                                 const access = await AccessRepository.findAccessById(result.cd_access_user);
@@ -69,6 +70,152 @@ class TaskController {
             if (!event)
                 reject({ status: 404, message: 'This event does not exist' });
             else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" });
+                else {
+                    const task = await TaskRepository.findTaskById(idTask);
+
+                    if (!task)
+                        reject({ status: 404, message: "This task doesn't exists" });
+                    else {
+                        let user_assigned: null | TeamMember = null;
+
+                        if (task.cd_access_user) {
+                            const access = await AccessRepository.findAccessById(task.cd_access_user);
+                            const teamMember = await UserRepository.findUserById(access.cd_user);
+                            const role = await RoleRepository.findRole(access.sg_role)
+
+                            user_assigned = {
+                                id: teamMember.cd_user,
+                                name: teamMember.nm_user,
+                                surname: teamMember.nm_surname_user,
+                                image: teamMember.im_user,
+                                role: {
+                                    name: role.nm_role,
+                                    description: role.ds_role
+                                }
+                            }
+                        }
+
+                        resolve({
+                            id: task.cd_task,
+                            name: task.nm_task,
+                            description: task.ds_task,
+                            user_assigned
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    readTasks(user: User, idEvent: number): Promise<Array<TaskResponse>> {
+
+        return new Promise(async (resolve, reject) => {
+
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'COO')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" });
+                else {
+                    const tasks = await TaskRepository.findTaskByEventId(idEvent);
+                    const tasksResponse: Array<TaskResponse> = [];
+
+                    for (let i = 0; i < tasks.length; i++) {
+
+                        let user_assigned: null | TeamMember = null;
+
+                        if (tasks[i].cd_access_user) {
+                            const access = await AccessRepository.findAccessById(tasks[i].cd_access_user as number);
+                            const teamMember = await UserRepository.findUserById(access.cd_user);
+                            const role = await RoleRepository.findRole(access.sg_role)
+
+                            user_assigned = {
+                                id: teamMember.cd_user,
+                                name: teamMember.nm_user,
+                                surname: teamMember.nm_surname_user,
+                                image: teamMember.im_user,
+                                role: {
+                                    name: role.nm_role,
+                                    description: role.ds_role
+                                }
+                            }
+                        }
+
+                        tasksResponse.push({
+                            id: tasks[i].cd_task,
+                            name: tasks[i].nm_task,
+                            description: tasks[i].ds_task,
+                            user_assigned
+                        });
+                    }
+
+                    resolve(tasksResponse);
+                }
+            }
+        });
+    }
+
+    updateTask(user: User, idEvent: number, idTask: number, updateTask: UpdateTaskRequest): Promise<TaskResponse> {
+
+        return new Promise(async (resolve, reject) => {
+
+            if (JSON.stringify(updateTask) === '{}')
+                reject({ status: 400, message: 'No field to update' });
+            else {
+                const event = await EventRepository.findEventById(idEvent);
+
+                if (!event)
+                    reject({ status: 404, message: 'This event does not exist' });
+                else {
+                    const isAllowed = await havePermission(user.cd_user, idEvent, 'COO')
+                        .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                    if (!isAllowed)
+                        reject({ status: 401, message: "You are not allowed to do so" });
+                    else {
+                        const task = await TaskRepository.findTaskById(idTask);
+
+                        if (!task)
+                            reject({ status: 404, message: "This task doesn't exists" });
+                        else {
+                            if (task.cd_access_user)
+                                reject({ status: 409, message: 'Cannot update an already assigned task.' })
+                            else {
+                                const updatedTask = await TaskRepository.updateTaskById(idTask, updateTask);
+
+                                resolve({
+                                    id: updatedTask.cd_task,
+                                    name: updatedTask.nm_task,
+                                    description: updatedTask.ds_task,
+                                    user_assigned: null
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    deleteTask(user: User, idEvent: number, idTask: number): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
                 const isAllowed = await havePermission(user.cd_user, idEvent, 'COO')
                     .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
 
@@ -77,31 +224,21 @@ class TaskController {
                 else {
                     const task = await TaskRepository.findTaskById(idTask);
 
-                    let user_assigned: undefined | TeamMember = undefined;
-
-                    if (task.cd_access_user) {
-                        const access = await AccessRepository.findAccessById(task.cd_access_user);
-                        const teamMember = await UserRepository.findUserById(access.cd_user);
-                        const role = await RoleRepository.findRole(access.sg_role)
-
-                        user_assigned = {
-                            id: teamMember.cd_user,
-                            name: teamMember.nm_user,
-                            surname: teamMember.nm_surname_user,
-                            image: teamMember.im_user,
-                            role: {
-                                name: role.nm_role,
-                                description: role.ds_role
-                            }
+                    if (!task)
+                        reject({ status: 404, message: "This task doesn't exists" });
+                    else {
+                        if (task.cd_access_user)
+                            reject({ status: 409, message: 'Cannot update an already assigned task.' })
+                        else {
+                            TaskRepository.cleanAccessById(idTask)
+                                .then(() => {
+                                    TaskRepository.deleteTaskById(idTask)
+                                        .then(() => resolve())
+                                        .catch((err) => { reject({ status: 400, message: "Unknown error. Try again later.", err }) });
+                                })
+                                .catch((err) => { reject({ status: 400, message: "Unknown error. Try again later.", err }) });
                         }
                     }
-
-                    resolve({
-                        id: task.cd_task,
-                        name: task.nm_task,
-                        description: task.ds_task,
-                        user_assigned
-                    });
                 }
             }
         });

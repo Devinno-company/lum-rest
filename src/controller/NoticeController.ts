@@ -116,7 +116,6 @@ class NoticeController {
     updateNotice(user: User, idEvent: number, idNotice: number, updateNotice: UpdateNoticeRequest): Promise<NoticeResponse> {
 
         return new Promise(async (resolve, reject) => {
-            console.log(JSON.stringify(updateNotice));
             
             if (JSON.stringify(updateNotice) === '{}') {
                 reject({ status: 400, message: 'No field to update' });

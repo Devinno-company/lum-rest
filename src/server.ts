@@ -9,6 +9,7 @@ import profileRoutes from './routes/profileRoutes';
 import teamRoutes from './routes/teamRoutes';
 import userRoutes from './routes/userRoutes';
 import noticeRoutes from './routes/noticeRoutes';
+import taskRoutes from './routes/taskRoutes';
 
 const listen = process.env.PORT || 3000;
 
@@ -23,6 +24,7 @@ app.use(inviteRoutes);
 app.use(notificationRoutes);
 app.use(materialRoutes);
 app.use(noticeRoutes);
+app.use(taskRoutes);
 
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
