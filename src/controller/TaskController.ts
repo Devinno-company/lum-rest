@@ -121,7 +121,7 @@ class TaskController {
             if (!event)
                 reject({ status: 404, message: 'This event does not exist' });
             else {
-                const isAllowed = await havePermission(user.cd_user, idEvent, 'COO')
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
                     .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
 
                 if (!isAllowed)
@@ -237,6 +237,100 @@ class TaskController {
                                         .catch((err) => { reject({ status: 400, message: "Unknown error. Try again later.", err }) });
                                 })
                                 .catch((err) => { reject({ status: 400, message: "Unknown error. Try again later.", err }) });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    assignTask(user: User, idEvent: number, idTask: number): Promise<TaskResponse> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" });
+                else {
+                    const task = await TaskRepository.findTaskById(idTask);
+
+                    if (!task)
+                        reject({ status: 404, message: "This task doesn't exists" });
+                    else {
+                        if (!task.cd_access_user) {
+                            const access = await AccessRepository.findAccessByEventIdAndUserId(idEvent, user.cd_user);
+
+                            TaskRepository.assignTaskByAccessId(idTask, access.cd_access)
+                                .then(async (result) => {
+                                    const role = await RoleRepository.findRole(access.sg_role);
+
+                                    resolve({
+                                        id: result.cd_task,
+                                        name: result.nm_task,
+                                        description: result.ds_task,
+                                        user_assigned: {
+                                            id: user.cd_user,
+                                            name: user.nm_user,
+                                            surname: user.nm_surname_user,
+                                            role: {
+                                                name: role.nm_role,
+                                                description: role.ds_role
+                                            }
+                                        }
+                                    });
+                                })
+                                .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                        } else {
+                            reject({ status: 401, message: 'This task already assigned' });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    unassignTask(user: User, idEvent: number, idTask: number): Promise<TaskResponse> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) });
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" });
+                else {
+                    const task = await TaskRepository.findTaskById(idTask);
+
+                    if (!task)
+                        reject({ status: 404, message: "This task doesn't exists" });
+                    else {
+                        if (!task.cd_access_user) {
+                            reject({ status: 401, message: 'This task has not been assigned' });
+                        } else {
+                            if (task.cd_access_user != user.cd_user)
+                                reject({ status: 401, message: 'You cannot unassign a task that you did not assign' })
+                            else {
+                                TaskRepository.cleanAccessById(idTask)
+                                    .then((result) => {
+                                        resolve({
+                                            id: result.cd_task,
+                                            name: result.nm_task,
+                                            description: result.ds_task,
+                                            user_assigned: null
+                                        });
+                                    })
+                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                            }
                         }
                     }
                 }

@@ -99,4 +99,42 @@ taskRoutes.delete('/events/:idEvent/tasks/:idTask', verifyToken, (request, respo
         .catch((err) => response.status(400 || err).json(err))
 });
 
+taskRoutes.patch('/events/:idEvent/tasks/:idTask/assign', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const idTask = request.params['idTask'];
+
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Event id invalid.' });
+
+    if (!Number(idTask))
+        response.status(400).json({ status: 400, message: 'Task id invalid.' });
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.assignTask(user, Number(idEvent), Number(idTask))
+                .then((result) => { response.status(200).json(result) })
+                .catch((err) => { response.status(err.status || 400).json(err) })
+        })
+        .catch((err) => response.status(400 || err).json(err))
+});
+
+taskRoutes.patch('/events/:idEvent/tasks/:idTask/unassign', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const idTask = request.params['idTask'];
+
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Event id invalid.' });
+
+    if (!Number(idTask))
+        response.status(400).json({ status: 400, message: 'Task id invalid.' });
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.unassignTask(user, Number(idEvent), Number(idTask))
+                .then((result) => { response.status(200).json(result) })
+                .catch((err) => { response.status(err.status || 400).json(err) })
+        })
+        .catch((err) => response.status(400 || err).json(err))
+});
+
 export default taskRoutes;
