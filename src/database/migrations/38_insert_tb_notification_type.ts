@@ -8,7 +8,9 @@ export function up(knex: Knex) {
         { sg_type: 'AFC', nm_type: 'Atualização de função para coordenador', ds_type: 'Notificação de mudança de função para coordenador.' },
         { sg_type: 'MTM', nm_type: 'Material: Meta atingida', ds_type: 'Notificação de que um material teve sua meta atingida'},
         { sg_type: 'MTA', nm_type: 'Material Adicionado', ds_type: 'Notificação de que um novo material foi adicionado'},
-        { sg_type: 'RET', nm_type: 'Removido de um evento', ds_type: 'Notificação de que o usuário doi removido de um evento'}
+        { sg_type: 'RET', nm_type: 'Removido de um evento', ds_type: 'Notificação de que o usuário doi removido de um evento'},
+        { sg_type: 'MSE', nm_type: 'Nova mensagem de um evento', ds_type: 'O suporte de um evento te respondeu'},
+        { sg_type: 'MSU', nm_type: 'Nova mensagem de um usuário', ds_type: 'Um usuário mandou mensagem para o evento'}
     ];
 
     return knex.insert(notification_type).into('tb_notification_type');
