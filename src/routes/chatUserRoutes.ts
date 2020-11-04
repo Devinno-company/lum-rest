@@ -1,13 +1,14 @@
 import express from 'express';
 import ChatUserController from '../controller/ChatUserController';
 import NewChatRequest from '../interfaces/request/NewChatRequest';
+import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
 const chatUserRoutes = express.Router();
 const controller = new ChatUserController();
 
-chatUserRoutes.post('/newChat', verifyToken, (request, response) => {
+chatUserRoutes.post('/newChat', verifyToken, validate, (request, response) => {
     const newChat: NewChatRequest = request.body
 
     getUserByRequest(request)
@@ -19,7 +20,7 @@ chatUserRoutes.post('/newChat', verifyToken, (request, response) => {
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
-chatUserRoutes.post('/chats/:idChat', verifyToken, (request, response) => {
+chatUserRoutes.post('/chats/:idChat', verifyToken, validate, (request, response) => {
     const idChat = request.params['idChat'];
     const newMessage: { message: string } = request.body;
 

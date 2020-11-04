@@ -9,6 +9,7 @@ import updateRoleTeamMemberSchema from "../schema/teamSchema";
 import { newNoticeSchema, updateNoticeSchema } from "../schema/noticeSchema";
 import { Route53Resolver } from "aws-sdk";
 import { newTaskSchema, updateTaskSchema } from "../schema/taskSchema";
+import { newChatSchema, newMessageSchema } from "../schema/chatSchema";
 
 const optionsValidation: Joi.ValidationOptions = {
     abortEarly: false,
@@ -92,7 +93,7 @@ function validate(request: Request, response: Response, next: NextFunction) {
     const route = request.path.toLowerCase();
     const method = request.method.toLowerCase();
 
-    let schema = null;
+    let schema = null;    
     /** DEFINE QUAL SCHEMA SERÁ UTILIZADO PARA VALIDAÇÃO */
     switch (route) {
         case '/users/':
@@ -113,6 +114,10 @@ function validate(request: Request, response: Response, next: NextFunction) {
         case '/events/':
         case '/events':
             schema = newEventSchema;
+            break;
+        case '/newchat/':
+        case '/newchat':
+            schema = newChatSchema;            
             break;
         case '/profile/':
         case '/profile':
@@ -147,6 +152,13 @@ function validate(request: Request, response: Response, next: NextFunction) {
                 schema = newTaskSchema;
             else if (route.includes('/events/') && route.includes('/tasks') && method == 'put')
                 schema = updateTaskSchema;
+            else if (route.includes('/events') && route.includes('/chats') && method == 'post')
+                schema = newMessageSchema;
+            /* /events/:idEvent/chats/:idChat
+               /chats/:idChat 
+            */
+            else if (route.includes('/chats') && method == 'post')
+                schema = newMessageSchema;
             /* /events/:idEvent */
             else
                 schema = updateEventSchema;

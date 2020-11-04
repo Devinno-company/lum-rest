@@ -1,5 +1,6 @@
 import express from 'express';
 import ChatEventController from '../controller/ChatEventController';
+import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
@@ -40,7 +41,7 @@ chatEventRoutes.get('/events/:idEvent/chats/:idChat', verifyToken, (request, res
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
-chatEventRoutes.post('/events/:idEvent/chats/:idChat', verifyToken, (request, response) => {
+chatEventRoutes.post('/events/:idEvent/chats/:idChat', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent']
     const idChat = request.params['idChat'];
     const newMessage: { message: string } = request.body;
