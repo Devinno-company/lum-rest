@@ -4,7 +4,7 @@ interface TaskResponse {
     id: number,
     name: string,
     completed: boolean,
-    description?: string,
+    description: string,
     user_assigned: TeamMember | null
 }
 

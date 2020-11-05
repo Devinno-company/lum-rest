@@ -8,7 +8,52 @@ import getUserByRequest from '../utils/getUserByRequest';
 
 const taskRoutes = express.Router();
 const controller = new TaskController();
-
+/**
+ * @api {post} events/:idEvent/tasks 9.1. Create a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * 
+ * @apiParam (Request body params) {String{3..100}} name Task name.
+ * @apiParam (Request body params) {String{..255}} description Task description.
+ *
+ * @apiExample {json} Request body
+ *  {
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20"
+ *  }
+ * 
+ * @apiSuccess (201) {Number} id Task identification code.
+ * @apiSuccess (201) {String} name Task name.
+ * @apiSuccess (201) {String} description Task description.
+ * @apiSuccess (201) {boolean} completed Task is completed.
+ * @apiSuccess (201) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 201 Created
+ *   {
+ *      "id": 4,
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20.",
+ *      "completed": false,
+ *      "user_assigned": null
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.post('/events/:idEvent/tasks', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const newTask: NewTaskRequest = request.body;
@@ -26,6 +71,61 @@ taskRoutes.post('/events/:idEvent/tasks', verifyToken, validate, (request, respo
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {get} events/:idEvent/tasks 9.2. Get all task from the event
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 200 OK
+ *  [
+ *   {
+ *      "id": 4,
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20.",
+ *      "completed": false,
+ *      "user_assigned": null
+ *   },
+ *   {
+ *      "id": 5,
+ *      "name": "Fazer a logo",
+ *      "description": "Desenvolver o design da logo com uma paleta monocromática.",
+ *      "completed": true,
+ *      "user_assigned": {
+ *          "id": 10,
+ *          "name": "Rian",
+ *          "surname": "Aquino",
+ *          "image": null,
+ *          "role": {
+ *              "name": "Coordenador",
+ *              "description": "Responsável por realizar as tarefas atribuídas a ele."
+ *          }
+ *      }
+ *   },
+ *  ]
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.get('/events/:idEvent/tasks', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
@@ -42,6 +142,44 @@ taskRoutes.get('/events/:idEvent/tasks', verifyToken, (request, response) => {
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {get} events/:idEvent/tasks/:idTask 9.3. Get a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 200 OK
+ *   {
+ *      "id": 4,
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20.",
+ *      "completed": false,
+ *      "user_assigned": null
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
@@ -61,6 +199,52 @@ taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {put} events/:idEvent/tasks/:idTask 9.4. Update a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ * 
+ * @apiParam (Request body params) {String{3..100}} [name_to] Task name.
+ * @apiParam (Request body params) {String{..255}} [description_to] Task description.
+ *
+ * @apiExample {json} Request body
+ *  {
+ *      "description_to": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente."
+ *  }
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 201 Created
+ *   {
+ *      "id": 4,
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente",
+ *      "completed": false,
+ *      "user_assigned": null
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.put('/events/:idEvent/tasks/:idTask', verifyToken, validate, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
@@ -81,6 +265,31 @@ taskRoutes.put('/events/:idEvent/tasks/:idTask', verifyToken, validate, (request
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {delete} events/:idEvent/tasks/:idTask 9.5. Delete a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 200 Ok
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.delete('/events/:idEvent/tasks/:idTask', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
@@ -100,6 +309,44 @@ taskRoutes.delete('/events/:idEvent/tasks/:idTask', verifyToken, (request, respo
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {patch} events/:idEvent/tasks/:idTask 9.6. Complete and Uncomplete a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 201 Created
+ *   {
+ *      "id": 4,
+ *      "name": "Lavar o salão",
+ *      "description": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente",
+ *      "completed": true,
+ *      "user_assigned": null
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.patch('/events/:idEvent/tasks/:idTask', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
@@ -119,6 +366,58 @@ taskRoutes.patch('/events/:idEvent/tasks/:idTask', verifyToken, (request, respon
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {patch} events/:idEvent/tasks/:idTask/assign 9.7. Assign a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ *
+ * @apiExample {json} Request body
+ *  {
+ *      "description_to": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente."
+ *  }
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 200 Ok
+ *   {
+ *      "id": 5,
+ *      "name": "Fazer a logo",
+ *      "description": "Desenvolver o design da logo com uma paleta monocromática.",
+ *      "completed": true,
+ *      "user_assigned": {
+ *          "id": 10,
+ *          "name": "Rian",
+ *          "surname": "Aquino",
+ *          "image": null,
+ *          "role": {
+ *              "name": "Coordenador",
+ *              "description": "Responsável por realizar as tarefas atribuídas a ele."
+ *          }
+ *      }
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.patch('/events/:idEvent/tasks/:idTask/assign', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];
@@ -138,6 +437,44 @@ taskRoutes.patch('/events/:idEvent/tasks/:idTask/assign', verifyToken, (request,
         .catch((err) => response.status(400 || err).json(err))
 });
 
+/**
+ * @api {patch} events/:idEvent/tasks/:idTask/assign 9.8. Unassign a task
+ * 
+ * @apiVersion 1.16.0
+ * @apiGroup 9. Tasks
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} idEvent Event identification code.
+ * @apiParam (Path Params) {Number} idTask Task identification code.
+ * 
+ * @apiSuccess (200) {Number} id Task identification code.
+ * @apiSuccess (200) {String} name Task name.
+ * @apiSuccess (200) {String} description Task description.
+ * @apiSuccess (200) {boolean} completed Task is completed.
+ * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 200 Ok
+ *   {
+ *      "id": 5,
+ *      "name": "Fazer a logo",
+ *      "description": "Desenvolver o design da logo com uma paleta monocromática.",
+ *      "completed": true,
+ *      "user_assigned": null
+ *   }
+ * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
 taskRoutes.patch('/events/:idEvent/tasks/:idTask/unassign', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const idTask = request.params['idTask'];

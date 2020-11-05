@@ -74,7 +74,7 @@ materialRoutes.post('/events/:idEvent/materials', verifyToken, async (request, r
  * @api {get} events/:idEvent/materials/:idMaterial 7.2. Get material by id
  * 
  * @apiVersion 1.12.5
- * @apiGroup 6. Notifications
+ * @apiGroup 6. Materials
  * 
  * @apiUse tokenHeader
  * @apiUse tokenExample

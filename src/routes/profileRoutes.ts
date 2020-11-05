@@ -44,6 +44,36 @@ const formData = multer();
  *  }
  */
 
+/**
+* @apiDefine eventNotFoundError
+* @apiError (404) {Object} eventNotFound This events doesn't exists
+*/
+
+/**
+* @apiDefine eventNotFoundErrorExample
+* @apiErrorExample eventNotFound
+*   HTTPS/1.1 404 Not found
+*   { 
+*        "status": 404, 
+*        "message": "This event doesn't exists" 
+*    }
+*/
+
+/**
+ * @apiDefine noTokenError
+ * @apiError (400) {Object} noneToken None token inserted in header x-access-token
+ */
+
+/**
+ * @apiDefine noTokenErrorExample
+ * @apiErrorExample {json} No token error
+ *  HTTPS/1.1 403 Forbidden
+ *  {
+ *      "status": 403,
+ *      "message": "none token provided"
+ *  }
+ */
+
 /** 
  * @apiDefine invalidIdError
  * @apiError (400) {Object} invalidId the id provided this in an incorrect format.

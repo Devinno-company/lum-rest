@@ -169,7 +169,7 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
 });
 
 /**
- * @api {post} events/:id 5.2. Get event by id
+ * @api {get} events/:id 5.2. Get event by id
  * 
  * @apiVersion 1.5.2
  * @apiGroup 5. Events
@@ -264,8 +264,12 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
  *        ]
  *   }
  * 
+ *  @apiUse eventNotFoundError
+ *  @apiUse eventNotFoundErrorExample
  *  @apiUse noTokenError
  *  @apiUse noTokenErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
  *  @apiUse invalidTokenError
  *  @apiUse invalidTokenErrorExample
  *  @apiUse incorrectFieldsError
@@ -390,8 +394,12 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
  *       }
  * }
  * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
  * @apiUse noTokenError
  * @apiUse noTokenErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
  * @apiUse invalidTokenError
  * @apiUse invalidTokenErrorExample
  * @apiUse incorrectFieldsError
@@ -433,7 +441,10 @@ eventRoutes.put('/events/:idEvent', verifyToken, validate, (request, response) =
  * @apiSuccessExample {json} Success Response:
  *  HTTPS/1.1 200 OK
  *  
- * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
  * @apiUse noTokenError
  * @apiUse noTokenErrorExample
  * @apiUse invalidTokenError
@@ -455,6 +466,29 @@ eventRoutes.delete('/events/:idEvent', verifyToken, (request, response) => {
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
+/**
+ * @api {patch} events/:idEvent/quit 5.5. Exit the event
+ * 
+ * @apiVersion 1.12.0
+ * @apiGroup 5. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} id Event identification code.
+ * 
+ * @apiSuccessExample {json} Success Response:
+ *  HTTPS/1.1 200 OK
+ * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ */
 eventRoutes.patch('/events/:idEvent/quit', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
     const { id_newCreator } = request.body;

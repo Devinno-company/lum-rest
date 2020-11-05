@@ -192,6 +192,7 @@ teamRoutes.get('/events/:idEvent/team/:idMember', verifyToken, (request, respons
  *      "role": {
  *          "name": "Membro da equipe",
  *          "description": "Responsável por realizar as tarefas atribuídas a ele."
+ *      }
  *  }
  * 
  * @apiError (400) selfDelete You cannot remove yourself from the team of an event. For this action use the endpoint /events/:idEvent/quit.

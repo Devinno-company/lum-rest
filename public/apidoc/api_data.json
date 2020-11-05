@@ -2550,6 +2550,15 @@
             "description": "<p>None token inserted in header x-access-token</p>"
           }
         ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
         "403": [
           {
             "group": "403",
@@ -2558,9 +2567,481 @@
             "field": "invalidToken",
             "description": "<p>The token inserted is invalid.</p>"
           }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
         ]
       },
       "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:id",
+    "title": "5.2. Get event by id",
+    "version": "1.5.2",
+    "group": "5._Events",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Event name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "start_date",
+            "description": "<p>Start date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "end_date",
+            "description": "<p>End date of the event. (Format: yyyy-mm-dd).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Event description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": true,
+            "field": "start_time",
+            "description": "<p>Start time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": true,
+            "field": "end_time",
+            "description": "<p>End time of the event. (Format: hh:mm).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "type",
+            "description": "<p>Event type.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "location",
+            "description": "<p>Event location.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "privacy",
+            "description": "<p>Event privacy.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "category",
+            "description": "<p>Event category.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..120",
+            "optional": false,
+            "field": "location[street]",
+            "description": "<p>Event street.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[neighborhood]",
+            "description": "<p>Event neighborhood.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "location[number]",
+            "description": "<p>Event establishment number</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "8",
+            "optional": false,
+            "field": "location[cep]",
+            "description": "<p>Event zip code. (Only numbers).</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "0..100",
+            "optional": true,
+            "field": "location[complement]",
+            "description": "<p>Additional event location information.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "location[city]",
+            "description": "<p>Location Event city.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "2",
+            "optional": false,
+            "field": "location[uf]",
+            "description": "<p>Event federative unit. (uppercase).</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "location[geolocation]",
+            "description": "<p>Event geolocation.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[latitude]",
+            "description": "<p>Event latitude.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "geolocation[longitude]",
+            "description": "<p>Event longitude.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[user]",
+            "optional": false,
+            "field": "team",
+            "description": "<p>Users responsible for organizing the event.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "team[id]",
+            "description": "<p>User identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[name]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[surname]",
+            "description": "<p>User surname.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "team[image]",
+            "description": "<p>User image</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "team[role]",
+            "description": "<p>User name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[name]",
+            "description": "<p>Role name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "role[description]",
+            "description": "<p>Role description.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n{\n     \"name\": \"Flores e frutas\",\n     \"start_date\": \"2020-10-22\",\n     \"end_date\": \"2020-10-25\",\n     \"description\": \"Venha participar do maior evento sobre flores e frutas da América Latina.\",\n     \"start_time\": \"15:00\",\n     \"end_time\": \"20:00\",\n     \"privacy\": \"PUB\",\n     \"category\": \"NAT\"\n     \"location\": {\n         \"street\": \"Rua rubi\",\n         \"neighborhood\": \"Cidade da criança\",\n         \"number\": 202,\n         \"cep\": \"11710210\",\n         \"complement\": \"Espaço B\",\n         \"geolocation\": {\n              \"latitude\": 1.534,\n              \"longitude\": 3.123,\n         },\n         \"city\": \"Praia Grande\",\n         \"uf\": \"SP\"\n     },\n     \"team\": [\n        {\n            \"id\": 1,\n            \"name\": \"João\",\n            \"surname\": \"Silva\",\n            \"image\": null,\n            \"role\": {\n                \"name\": \"Criador\",\n                \"description\": \"Responsável pela criação e toda organização do evento.\"\n         },\n         {\n            \"id\": 2,\n            \"name\": \"Marcos\",\n            \"surname\": \"Oliveira\",\n            \"image\": \"https://www.images.com/2\",\n            \"role\": {\n                \"name\": \"Coordenador\",\n                \"description\": \"Responsável por auxiliar o criador a organizar o evento.\"\n         },\n         {\n            \"id\": 3,\n            \"name\": \"Fernanda\",\n            \"surname\": \"Oliveira\",\n            \"image\": \"https://www.images.com/4\",\n            \"role\": {\n                \"name\": \"Membro da equipe\",\n                \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n         }\n      ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/eventRoutes.ts",
+    "groupTitle": "5._Events",
+    "name": "GetEventsId",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "patch",
+    "url": "events/:idEvent/quit",
+    "title": "5.5. Exit the event",
+    "version": "1.12.0",
+    "group": "5._Events",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/eventRoutes.ts",
+    "groupTitle": "5._Events",
+    "name": "PatchEventsIdeventQuit",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
         {
           "title": "No token error",
           "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
@@ -3035,317 +3516,6 @@
     }
   },
   {
-    "type": "post",
-    "url": "events/:id",
-    "title": "5.2. Get event by id",
-    "version": "1.5.2",
-    "group": "5._Events",
-    "parameter": {
-      "fields": {
-        "Path Params": [
-          {
-            "group": "Path Params",
-            "type": "Number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>Event identification code.</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "200": [
-          {
-            "group": "200",
-            "type": "Number",
-            "optional": false,
-            "field": "id",
-            "description": "<p>Event identification code.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3..100",
-            "optional": false,
-            "field": "name",
-            "description": "<p>Event name.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Date",
-            "optional": false,
-            "field": "start_date",
-            "description": "<p>Start date of the event. (Format: yyyy-mm-dd).</p>"
-          },
-          {
-            "group": "200",
-            "type": "Date",
-            "optional": false,
-            "field": "end_date",
-            "description": "<p>End date of the event. (Format: yyyy-mm-dd).</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "..255",
-            "optional": true,
-            "field": "description",
-            "description": "<p>Event description.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Time",
-            "optional": true,
-            "field": "start_time",
-            "description": "<p>Start time of the event. (Format: hh:mm).</p>"
-          },
-          {
-            "group": "200",
-            "type": "Time",
-            "optional": true,
-            "field": "end_time",
-            "description": "<p>End time of the event. (Format: hh:mm).</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "0..100",
-            "optional": true,
-            "field": "type",
-            "description": "<p>Event type.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Object",
-            "optional": false,
-            "field": "location",
-            "description": "<p>Event location.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "privacy",
-            "description": "<p>Event privacy.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3",
-            "optional": false,
-            "field": "category",
-            "description": "<p>Event category.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3..120",
-            "optional": false,
-            "field": "location[street]",
-            "description": "<p>Event street.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3..100",
-            "optional": false,
-            "field": "location[neighborhood]",
-            "description": "<p>Event neighborhood.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Number",
-            "optional": false,
-            "field": "location[number]",
-            "description": "<p>Event establishment number</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "8",
-            "optional": false,
-            "field": "location[cep]",
-            "description": "<p>Event zip code. (Only numbers).</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "0..100",
-            "optional": true,
-            "field": "location[complement]",
-            "description": "<p>Additional event location information.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "3..100",
-            "optional": false,
-            "field": "location[city]",
-            "description": "<p>Location Event city.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "size": "2",
-            "optional": false,
-            "field": "location[uf]",
-            "description": "<p>Event federative unit. (uppercase).</p>"
-          },
-          {
-            "group": "200",
-            "type": "Object",
-            "optional": false,
-            "field": "location[geolocation]",
-            "description": "<p>Event geolocation.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Number",
-            "optional": false,
-            "field": "geolocation[latitude]",
-            "description": "<p>Event latitude.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Number",
-            "optional": false,
-            "field": "geolocation[longitude]",
-            "description": "<p>Event longitude.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Object[user]",
-            "optional": false,
-            "field": "team",
-            "description": "<p>Users responsible for organizing the event.</p>"
-          },
-          {
-            "group": "200",
-            "type": "Number",
-            "optional": false,
-            "field": "team[id]",
-            "description": "<p>User identification code.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "optional": false,
-            "field": "team[name]",
-            "description": "<p>User name.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "optional": false,
-            "field": "team[surname]",
-            "description": "<p>User surname.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "optional": false,
-            "field": "team[image]",
-            "description": "<p>User image</p>"
-          },
-          {
-            "group": "200",
-            "type": "Object",
-            "optional": false,
-            "field": "team[role]",
-            "description": "<p>User name.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "optional": false,
-            "field": "role[name]",
-            "description": "<p>Role name.</p>"
-          },
-          {
-            "group": "200",
-            "type": "String",
-            "optional": false,
-            "field": "role[description]",
-            "description": "<p>Role description.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success Response:",
-          "content": "HTTPS/1.1 201 Created\n{\n     \"name\": \"Flores e frutas\",\n     \"start_date\": \"2020-10-22\",\n     \"end_date\": \"2020-10-25\",\n     \"description\": \"Venha participar do maior evento sobre flores e frutas da América Latina.\",\n     \"start_time\": \"15:00\",\n     \"end_time\": \"20:00\",\n     \"privacy\": \"PUB\",\n     \"category\": \"NAT\"\n     \"location\": {\n         \"street\": \"Rua rubi\",\n         \"neighborhood\": \"Cidade da criança\",\n         \"number\": 202,\n         \"cep\": \"11710210\",\n         \"complement\": \"Espaço B\",\n         \"geolocation\": {\n              \"latitude\": 1.534,\n              \"longitude\": 3.123,\n         },\n         \"city\": \"Praia Grande\",\n         \"uf\": \"SP\"\n     },\n     \"team\": [\n        {\n            \"id\": 1,\n            \"name\": \"João\",\n            \"surname\": \"Silva\",\n            \"image\": null,\n            \"role\": {\n                \"name\": \"Criador\",\n                \"description\": \"Responsável pela criação e toda organização do evento.\"\n         },\n         {\n            \"id\": 2,\n            \"name\": \"Marcos\",\n            \"surname\": \"Oliveira\",\n            \"image\": \"https://www.images.com/2\",\n            \"role\": {\n                \"name\": \"Coordenador\",\n                \"description\": \"Responsável por auxiliar o criador a organizar o evento.\"\n         },\n         {\n            \"id\": 3,\n            \"name\": \"Fernanda\",\n            \"surname\": \"Oliveira\",\n            \"image\": \"https://www.images.com/4\",\n            \"role\": {\n                \"name\": \"Membro da equipe\",\n                \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n         }\n      ]\n }",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "src/routes/eventRoutes.ts",
-    "groupTitle": "5._Events",
-    "name": "PostEventsId",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Token header:",
-        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
-        "type": "header"
-      }
-    ],
-    "error": {
-      "fields": {
-        "400": [
-          {
-            "group": "400",
-            "type": "Object",
-            "optional": false,
-            "field": "noneToken",
-            "description": "<p>None token inserted in header x-access-token</p>"
-          },
-          {
-            "group": "400",
-            "type": "Object[]",
-            "optional": false,
-            "field": "incorrectFields",
-            "description": "<p>The fields were not filled in according to our business rule</p>"
-          }
-        ],
-        "403": [
-          {
-            "group": "403",
-            "type": "Object",
-            "optional": false,
-            "field": "invalidToken",
-            "description": "<p>The token inserted is invalid.</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "No token error",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
-          "type": "json"
-        },
-        {
-          "title": "Invalid token error",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
-          "type": "json"
-        }
-      ]
-    }
-  },
-  {
     "type": "put",
     "url": "events/:id",
     "title": "5.3. Update event",
@@ -3715,6 +3885,15 @@
             "description": "<p>The fields were not filled in according to our business rule</p>"
           }
         ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
         "403": [
           {
             "group": "403",
@@ -3722,6 +3901,15 @@
             "optional": false,
             "field": "invalidToken",
             "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
           }
         ]
       },
@@ -3732,8 +3920,18 @@
           "type": "json"
         },
         {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
           "title": "No token error",
           "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
           "type": "json"
         },
         {
@@ -3765,7 +3963,7 @@
     "url": "events/:idEvent/materials/:idMaterial",
     "title": "7.2. Get material by id",
     "version": "1.12.5",
-    "group": "6._Notifications",
+    "group": "6._Materials",
     "parameter": {
       "fields": {
         "Path Params": [
@@ -3890,7 +4088,7 @@
       ]
     },
     "filename": "src/routes/materialRoutes.ts",
-    "groupTitle": "6._Notifications",
+    "groupTitle": "6._Materials",
     "name": "GetEventsIdeventMaterialsIdmaterial",
     "header": {
       "fields": {
@@ -4477,7 +4675,7 @@
       "examples": [
         {
           "title": "Success Response:",
-          "content": "HTTPS/1.1 200 Ok\n{\n    \"id\": 3,\n    \"name\": \"Fernanda\",\n    \"surname\": \"Oliveira\",\n    \"image\": \"https://www.images.com/4\",\n    \"role\": {\n        \"name\": \"Membro da equipe\",\n        \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n}",
+          "content": "HTTPS/1.1 200 Ok\n{\n    \"id\": 3,\n    \"name\": \"Fernanda\",\n    \"surname\": \"Oliveira\",\n    \"image\": \"https://www.images.com/4\",\n    \"role\": {\n        \"name\": \"Membro da equipe\",\n        \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -4592,7 +4790,7 @@
   {
     "type": "delete",
     "url": "events/:idEvent/materials/:idMaterial",
-    "title": "7.5. Delete a Material",
+    "title": "7.6. Delete a Material",
     "version": "1.12.5",
     "group": "7._Materials",
     "parameter": {
@@ -5194,6 +5392,2364 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:idEvent/materials/:idMaterial/acquired",
+    "title": "7.5. Update material already acquired.",
+    "version": "1.15.0",
+    "group": "7._Materials",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idMaterial",
+            "description": "<p>Material identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "Number",
+            "optional": true,
+            "field": "acquired",
+            "description": "<p>Material quantity already acquired.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n    \"acquired\": 24\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Material identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Material name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "quantity",
+            "description": "<p>Material quantity.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "observation",
+            "description": "<p>Material observation name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Material status.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS/1.1 200 OK\n{\n   \"id\": \"4\",\n   \"name\": \"Cadeiras Verdes\",\n   \"quantity\": \"10\",\n   \"acquired\": \"24\",\n   \"observation\": \"Cadeiras de plastico sem estofado, de cor verde\",\n   \"status\": \"ADQ\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "noField",
+            "description": "<p>No field need be updated.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noField:",
+          "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "7._Materials",
+    "name": "PutEventsIdeventMaterialsIdmaterialAcquired",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "delete",
+    "url": "events/:idEvent/notices/:idNotice",
+    "title": "8.4. Delete a notice",
+    "version": "1.13.0",
+    "group": "8._Notices",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotice",
+            "description": "<p>Notice identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/noticeRoutes.ts",
+    "groupTitle": "8._Notices",
+    "name": "DeleteEventsIdeventNoticesIdnotice",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/notices",
+    "title": "8.1. Get notices",
+    "version": "1.13.0",
+    "group": "8._Notices",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notice identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Notice title.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Notice description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "priority",
+            "description": "<p>Notice priority to classification.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency",
+            "description": "<p>Notice urgency.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[name]",
+            "description": "<p>Urgency name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[priority]",
+            "description": "<p>Urgency priority to classification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n [\n    {\n        \"id\": 4,\n        \"name\": \"O dia está chegando\",\n        \"description\": \"Temos trabalhado muito, agora é hora de aproveitar.\",\n        \"priority\": 10,\n        \"urgency\": {\n        \"name\": \"Importante\",\n        \"priority\": 2\n        }\n    },\n    {\n        \"id\": 5,\n        \"name\": \"Todos os materiais foram adquiridos.\",\n        \"description\": \"Parabéns a todos, estamos mais próximos que nunca.\",\n        \"priority\": 11,\n        \"urgency\": {\n        \"name\": \"Urgente\",\n        \"priority\": 1\n        }\n    }\n ]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/noticeRoutes.ts",
+    "groupTitle": "8._Notices",
+    "name": "GetEventsIdeventNotices",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/notices/:idNotice",
+    "title": "8.2. Get a notice",
+    "version": "1.13.0",
+    "group": "8._Notices",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotice",
+            "description": "<p>Notice identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notice identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Notice title.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Notice description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "priority",
+            "description": "<p>Notice priority to classification.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency",
+            "description": "<p>Notice urgency.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[name]",
+            "description": "<p>Urgency name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[priority]",
+            "description": "<p>Urgency priority to classification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n {\n    \"id\": \"4\",\n    \"name\": \"O dia está chegando\",\n    \"description\": \"Temos trabalhado muito, agora é hora de aproveitar.\",\n    \"priority\": 10,\n    \"urgency\": {\n        \"name\": \"Importante\",\n        \"priority\": 2\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/noticeRoutes.ts",
+    "groupTitle": "8._Notices",
+    "name": "GetEventsIdeventNoticesIdnotice",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/notices",
+    "title": "8.3. Create a notice",
+    "version": "1.13.0",
+    "group": "8._Notices",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Notice title.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Notice description.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "optional": false,
+            "field": "priority",
+            "description": "<p>Notice the priority for classification.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": false,
+            "field": "urgency",
+            "description": "<p>Notice urgency. Possible values: URG(Urgente), IMP(Importante), REL(Relevante).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"name\": \"O dia está chegando\",\n    \"description\": \"Temos trabalhado muito, agora é hora de aproveitar.\",\n    \"priority\": 10,\n    \"urgency\": \"IMP\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notice identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Notice title.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Notice description.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "priority",
+            "description": "<p>Notice priority to classification.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency",
+            "description": "<p>Notice urgency.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[name]",
+            "description": "<p>Urgency name.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[priority]",
+            "description": "<p>Urgency priority to classification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"O dia está chegando\",\n    \"description\": \"Temos trabalhado muito, agora é hora de aproveitar.\",\n    \"priority\": 10,\n    \"urgency\": {\n        \"name\": \"Importante\",\n        \"priority\": 2\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/noticeRoutes.ts",
+    "groupTitle": "8._Notices",
+    "name": "PostEventsIdeventNotices",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:idEvent/notices/:idNotice",
+    "title": "8.3. Update a notice",
+    "version": "1.13.0",
+    "group": "8._Notices",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idNotice",
+            "description": "<p>Notice identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": true,
+            "field": "name_to",
+            "description": "<p>New notice title.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": true,
+            "field": "description_to",
+            "description": "<p>New notice description.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3",
+            "optional": true,
+            "field": "urgency_to",
+            "description": "<p>New notice urgency. Possible values: URG(Urgente), IMP(Importante), REL(Relevante).</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"name_to\": \"Estamos quase lá!\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Notice identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Notice title.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": true,
+            "field": "description",
+            "description": "<p>Notice description.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "priority",
+            "description": "<p>Notice priority to classification.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency",
+            "description": "<p>Notice urgency.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[name]",
+            "description": "<p>Urgency name.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "Urgency[priority]",
+            "description": "<p>Urgency priority to classification.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"Estamos quase lá\",\n    \"description\": \"Temos trabalhado muito, agora é hora de aproveitar.\",\n    \"priority\": 10,\n    \"urgency\": {\n        \"name\": \"Importante\",\n        \"priority\": 2\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/noticeRoutes.ts",
+    "groupTitle": "8._Notices",
+    "name": "PutEventsIdeventNoticesIdnotice",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "delete",
+    "url": "events/:idEvent/tasks/:idTask",
+    "title": "9.5. Delete a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "DeleteEventsIdeventTasksIdtask",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/tasks",
+    "title": "9.2. Get all task from the event",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "201",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n[\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20.\",\n    \"completed\": false,\n    \"user_assigned\": null\n },\n {\n    \"id\": 5,\n    \"name\": \"Fazer a logo\",\n    \"description\": \"Desenvolver o design da logo com uma paleta monocromática.\",\n    \"completed\": true,\n    \"user_assigned\": {\n        \"id\": 10,\n        \"name\": \"Rian\",\n        \"surname\": \"Aquino\",\n        \"image\": null,\n        \"role\": {\n            \"name\": \"Coordenador\",\n            \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n        }\n    }\n },\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "GetEventsIdeventTasks",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/tasks/:idTask",
+    "title": "9.3. Get a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "201",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20.\",\n    \"completed\": false,\n    \"user_assigned\": null\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "GetEventsIdeventTasksIdtask",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "patch",
+    "url": "events/:idEvent/tasks/:idTask",
+    "title": "9.6. Complete and Uncomplete a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente\",\n    \"completed\": true,\n    \"user_assigned\": null\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtask",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "patch",
+    "url": "events/:idEvent/tasks/:idTask/assign",
+    "title": "9.7. Assign a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"description_to\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente.\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n {\n    \"id\": 5,\n    \"name\": \"Fazer a logo\",\n    \"description\": \"Desenvolver o design da logo com uma paleta monocromática.\",\n    \"completed\": true,\n    \"user_assigned\": {\n        \"id\": 10,\n        \"name\": \"Rian\",\n        \"surname\": \"Aquino\",\n        \"image\": null,\n        \"role\": {\n            \"name\": \"Coordenador\",\n            \"description\": \"Responsável por realizar as tarefas atribuídas a ele.\"\n        }\n    }\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtaskAssign",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "patch",
+    "url": "events/:idEvent/tasks/:idTask/assign",
+    "title": "9.8. Unassign a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n {\n    \"id\": 5,\n    \"name\": \"Fazer a logo\",\n    \"description\": \"Desenvolver o design da logo com uma paleta monocromática.\",\n    \"completed\": true,\n    \"user_assigned\": null\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtaskAssign",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/tasks",
+    "title": "9.1. Create a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "201",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20.\",\n    \"completed\": false,\n    \"user_assigned\": null\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PostEventsIdeventTasks",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:idEvent/tasks/:idTask",
+    "title": "9.4. Update a task",
+    "version": "1.16.0",
+    "group": "9._Tasks",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTask",
+            "description": "<p>Task identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": false,
+            "field": "name_to",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "..255",
+            "optional": false,
+            "field": "description_to",
+            "description": "<p>Task description.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"description_to\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente.\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Task identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Task name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "description",
+            "description": "<p>Task description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "boolean",
+            "optional": false,
+            "field": "completed",
+            "description": "<p>Task is completed.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": true,
+            "field": "user_assigned",
+            "description": "<p>Task user assigned.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente\",\n    \"completed\": false,\n    \"user_assigned\": null\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PutEventsIdeventTasksIdtask",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "notAllowed",
+            "description": "<p>You are not allowed to do so</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "eventNotFound",
+            "description": "<p>This events doesn't exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
     }
   }
 ]
