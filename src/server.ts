@@ -13,6 +13,7 @@ import noticeRoutes from './routes/noticeRoutes';
 import taskRoutes from './routes/taskRoutes';
 import chatEventRoutes from './routes/chatEventRoutes';
 import chatUserRoutes from './routes/chatUserRoutes';
+import ticketRoutes from './routes/TicketRoutes';
 
 const listen = process.env.PORT || 3000;
 
@@ -31,6 +32,7 @@ app.use(noticeRoutes);
 app.use(taskRoutes);
 app.use(chatEventRoutes);
 app.use(chatUserRoutes);
+app.use(ticketRoutes);
 
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
