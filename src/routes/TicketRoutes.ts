@@ -1,6 +1,6 @@
 import express from 'express';
 import TicketController from '../controller/TicketController';
-import NewTicketRequest from '../interfaces/request/newTicketRequest';
+import NewTicketRequest from '../interfaces/request/NewTicketRequest';
 import UpdateTicketRequest from '../interfaces/request/UpdateTicketRequest';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
