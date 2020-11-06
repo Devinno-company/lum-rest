@@ -1,5 +1,5 @@
 import db from "../database/connection";
-import NewTicketRequest from "../interfaces/request/newTicketRequest";
+import NewTicketRequest from "../interfaces/request/NewTicketRequest";
 import UpdateTicketRequest from "../interfaces/request/UpdateTicketRequest";
 import Ticket from "../models/Ticket";
 

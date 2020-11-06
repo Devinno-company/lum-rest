@@ -1,4 +1,4 @@
-import NewTicketRequest from "../interfaces/request/newTicketRequest";
+import NewTicketRequest from "../interfaces/request/NewTicketRequest";
 import UpdateTicketRequest from "../interfaces/request/UpdateTicketRequest";
 import TicketResponse from "../interfaces/response/TicketResponse";
 import User from "../models/User";
