@@ -46,6 +46,14 @@ const controller = new MaterialController();
  *      "observation": "Cadeiras de madeira com estofado, de cor amarela",
  *      "status": "PEN"
  *   }
+ *  
+ * @apiError (401) {Object} noAllowed You don't have permission to do so.
+ * @apiErrorExample noAllowed
+ *   HTTPS/1.1 401 Unauthorized
+ *      {
+ *          "status": 401,
+ *          "message": "You are not allowed do so"
+ *      }
  * 
  *  @apiUse noTokenError
  *  @apiUse noTokenErrorExample
@@ -247,6 +255,14 @@ materialRoutes.get('/events/:idEvent/materials', verifyToken, async (request, re
  *          status: 400, 
  *          message: 'No field to update' 
  *      }
+ * 
+ * @apiError (401) {Object} noAllowed You don't have permission to do so.
+ * @apiErrorExample noAllowed
+ *   HTTPS/1.1 401 Unauthorized
+ *      {
+ *          "status": 401,
+ *          "message": "You are not allowed do so"
+ *      }
  */
 materialRoutes.put('/events/:idEvent/materials/:idMaterial', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
@@ -316,6 +332,14 @@ materialRoutes.put('/events/:idEvent/materials/:idMaterial', verifyToken, (reque
  *      { 
  *          status: 400, 
  *          message: 'No field to update' 
+ *      }
+ * 
+ * @apiError (401) {Object} noAllowed You don't have permission to do so.
+ * @apiErrorExample noAllowed
+ *   HTTPS/1.1 401 Unauthorized
+ *      {
+ *          "status": 401,
+ *          "message": "You are not allowed do so"
  *      }
  */
 materialRoutes.put('/events/:idEvent/materials/:idMaterial/acquired', verifyToken, (request, response) => {
