@@ -172,6 +172,8 @@ taskRoutes.get('/events/:idEvent/tasks', verifyToken, (request, response) => {
  * 
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError
@@ -215,7 +217,8 @@ taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response
  * @apiParam (Request body params) {String{..255}} [description_to] Task description.
  *
  * @apiExample {json} Request body
- *  {
+ *  {   
+ *      "name_to": "Lavar o salão de festas.",
  *      "description_to": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente."
  *  }
  * 
@@ -226,10 +229,10 @@ taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response
  * @apiSuccess (200) {Object} [user_assigned] Task user assigned.
  * 
  * @apiSuccessExample Success Response:
- *  HTTPS/1.1 201 Created
+ *  HTTPS/1.1 200 Ok
  *   {
  *      "id": 4,
- *      "name": "Lavar o salão",
+ *      "name": "Lavar o salão de festas.",
  *      "description": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente",
  *      "completed": false,
  *      "user_assigned": null
@@ -237,6 +240,8 @@ taskRoutes.get('/events/:idEvent/tasks/:idTask', verifyToken, (request, response
  * 
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError
@@ -282,6 +287,8 @@ taskRoutes.put('/events/:idEvent/tasks/:idTask', verifyToken, validate, (request
  * 
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError
@@ -337,8 +344,18 @@ taskRoutes.delete('/events/:idEvent/tasks/:idTask', verifyToken, (request, respo
  *      "user_assigned": null
  *   }
  * 
+ * @apiError (401) {Object} unassign You must assign the task to complete it.
+ * @apiErrorExample unassign
+ *  HTTPS/1.1 401 Unauthorized
+ *      { 
+ *          "status": 401, 
+ *          "message": "To complete or uncomplete a task you need to assign it"
+ *      }  
+ * 
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError
@@ -377,11 +394,6 @@ taskRoutes.patch('/events/:idEvent/tasks/:idTask', verifyToken, (request, respon
  * 
  * @apiParam (Path Params) {Number} idEvent Event identification code.
  * @apiParam (Path Params) {Number} idTask Task identification code.
- *
- * @apiExample {json} Request body
- *  {
- *      "description_to": "É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente."
- *  }
  * 
  * @apiSuccess (200) {Number} id Task identification code.
  * @apiSuccess (200) {String} name Task name.
@@ -408,8 +420,17 @@ taskRoutes.patch('/events/:idEvent/tasks/:idTask', verifyToken, (request, respon
  *      }
  *   }
  * 
+ *  @apiError (401) {Object} alreadyAssigned This task already assigned
+ *  @apiErrorExample alreadyAssigned
+ *     HTTPS/1.1 401 Unauthorized
+ *      { 
+ *          "status": 401, 
+ *          "message": "This task already assigned" 
+ *      }
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError
@@ -463,10 +484,33 @@ taskRoutes.patch('/events/:idEvent/tasks/:idTask/assign', verifyToken, (request,
  *      "description": "Desenvolver o design da logo com uma paleta monocromática.",
  *      "completed": true,
  *      "user_assigned": null
- *   }
+ *   } 
  * 
+ *  
+ *  @apiErrorExample assignedAnother
+ *   HTTPS/1.1 401 Unauthorized
+ *    { 
+ *      "status": 401, 
+ *      "message": "You cannot unassign a task that you did not assign"
+ *    }
+ * 
+ *  @apiErrorExample notAssigned
+ *   HTTPS/1.1 401 Unauthorized
+ *    { 
+ *      "status": 401, 
+ *      "message": "This task has not been assigned "
+ *    }
+ * 
+ *  @apiErrorExample alreadyComplete
+ *   HTTPS/1.1 409 Conflict
+ *    { 
+ *      "status": 409, 
+ *      "message": "You can't unassign a task that's already completed"
+ *    }
  *  @apiUse eventNotFoundError
  *  @apiUse eventNotFoundErrorExample
+ *  @apiUse taskNotFoundError
+ *  @apiUse taskNotFoundErrorExample
  *  @apiUse notAllowedError
  *  @apiUse notAllowedErrorExample
  *  @apiUse noTokenError

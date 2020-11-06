@@ -75,21 +75,22 @@ class ChatUserController {
 
                 /* Send notification to event team */
                 EventRepository.findEventById(room.cd_event)
-                    .then(event =>
-                        LinkNotificationRepository.insertLinkNotification(event.cd_event, "MSU")
-                            .then(async (link) => {
-                                const team = await AccessRepository.findAccessByEventId(event.cd_event);
+                    .then(event => {
+                            LinkNotificationRepository.insertLinkNotification(event.cd_event, "MSU")
+                                .then(async (link) => {
+                                    const team = await AccessRepository.findAccessByEventId(event.cd_event);
 
-                                team.map(access => {
-                                    NotificationRepository.insertNotification({
-                                        notification_title: "Nova mensagem de usuário",
-                                        notification_content: `O evento ${event.nm_event} recebeu uma nova mensagem`,
-                                        notification_read: false
-                                    }, access.cd_user, link.cd_link)
-                                        .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                                    team.map(access => {
+                                        NotificationRepository.insertNotification({
+                                            notification_title: "Nova mensagem de usuário",
+                                            notification_content: `O evento ${event.nm_event} recebeu uma nova mensagem`,
+                                            notification_read: false
+                                        }, access.cd_user, link.cd_link)
+                                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                                    })
                                 })
-                            })
-                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) })
+                                .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) })
+                        }
                     );
 
                 resolve({

@@ -187,6 +187,2173 @@
   },
   {
     "type": "delete",
+    "url": "events/:idEvent/times/:idTime",
+    "title": "10.5. Delete a Material",
+    "version": "1.23.6",
+    "group": "10._Times",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTime",
+            "description": "<p>Time identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n    {\n        \"status\": 401,\n        \"message\": \"You are not allowed do so\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/timeRoutes.ts",
+    "groupTitle": "10._Times",
+    "name": "DeleteEventsIdeventTimesIdtime",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/times",
+    "title": "10.3. Get all times from event",
+    "version": "1.23.6",
+    "group": "10._Times",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Time identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "nm_time",
+            "description": "<p>Time name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "ds_time",
+            "description": "<p>Time description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "dt_time",
+            "description": "<p>Time date.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_start",
+            "description": "<p>Time start hour and minute.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_end",
+            "description": "<p>Time end hour and minute.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n{\n    \"id\": \"2\",\n    \"nm_time\": \"Segundo dia do Evento\",\n    \"ds_time\": \"Segundo dia do evento com as atrações: Flores e Orquideas, Tuberculos e Seus Similares\",\n    \"dt_time\": \"2020-10-20\",\n    \"hr_start\": \"16:00\",\n    \"hr_end\": \"20:00\"\n }\n {\n    \"id\": \"3\",\n    \"nm_time\": \"Terceiro dia do Evento\",\n    \"ds_time\": \"Terceiro dia do evento com Finalização do Evento e entrega de prêmios\",\n    \"dt_time\": \"2020-09-16\",\n    \"hr_start\": \"12:00\",\n    \"hr_end\": \"18:00\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/timeRoutes.ts",
+    "groupTitle": "10._Times",
+    "name": "GetEventsIdeventTimes",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/times/:idTime",
+    "title": "10.2. Get time by id",
+    "version": "1.23.6",
+    "group": "10._Times",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTime",
+            "description": "<p>Time identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Time identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "nm_time",
+            "description": "<p>Time name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "ds_time",
+            "description": "<p>Time description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "dt_time",
+            "description": "<p>Time date.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_start",
+            "description": "<p>Time start hour and minute.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_end",
+            "description": "<p>Time end hour and minute.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 OK\n {\n    \"id\": \"2\",\n    \"nm_time\": \"Segundo dia do Evento\",\n    \"ds_time\": \"Segundo dia do evento com as atrações: Flores e Orquideas, Tuberculos e Seus Similares\",\n    \"dt_time\": \"2020-10-20\",\n    \"hr_start\": \"16:00\",\n    \"hr_end\": \"20:00\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/timeRoutes.ts",
+    "groupTitle": "10._Times",
+    "name": "GetEventsIdeventTimesIdtime",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/times",
+    "title": "10.1. Create time",
+    "version": "1.23.6",
+    "group": "10._Times",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": true,
+            "field": "nm_time",
+            "description": "<p>Time name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..255",
+            "optional": true,
+            "field": "ds_time",
+            "description": "<p>Time description.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Date",
+            "optional": true,
+            "field": "dt_time",
+            "description": "<p>Time date.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "hr_start",
+            "description": "<p>Time start hour and minute.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "hr_end",
+            "description": "<p>Time end hour and minute.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n   \"nm_time\": \"Segundo dia do Evento\",\n   \"ds_time\": \"Segundo dia do evento com as atrações: Flores e Orquideas, Tuberculos e Seus Similares\",\n   \"dt_time\": \"2020-10-20\",\n   \"hr_start\": \"16:00\",\n   \"hr_end\": \"20:00\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Time identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "nm_time",
+            "description": "<p>Time name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "ds_time",
+            "description": "<p>Time description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "dt_time",
+            "description": "<p>Time date.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_start",
+            "description": "<p>Time start hour and minute.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_end",
+            "description": "<p>Time end hour and minute.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS/1.1 201 Created\n{\n   \"id\": \"2\",\n   \"nm_time\": \"Segundo dia do Evento\",\n   \"ds_time\": \"Segundo dia do evento com as atrações: Flores e Orquideas, Tuberculos e Seus Similares\",\n   \"dt_time\": \"2020-10-20\",\n   \"hr_start\": \"16:00\",\n   \"hr_end\": \"20:00\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/timeRoutes.ts",
+    "groupTitle": "10._Times",
+    "name": "PostEventsIdeventTimes",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "put",
+    "url": "events/:idEvent/times/:idTime",
+    "title": "10.4. Update time",
+    "version": "1.23.6",
+    "group": "10._Times",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idTime",
+            "description": "<p>Time identification code.</p>"
+          }
+        ],
+        "Request body params": [
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..100",
+            "optional": true,
+            "field": "nm_time_to",
+            "description": "<p>New Time name.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "String",
+            "size": "3..255",
+            "optional": true,
+            "field": "ds_time_to",
+            "description": "<p>New Time description.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Date",
+            "optional": true,
+            "field": "dt_time_to",
+            "description": "<p>New Time date.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "hr_start_to",
+            "description": "<p>New Time start hour and minute.</p>"
+          },
+          {
+            "group": "Request body params",
+            "type": "Time",
+            "optional": true,
+            "field": "hr_end_to",
+            "description": "<p>New Time end hour and minute.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body:",
+        "content": "{\n    \"nm_time_to\": \"Quarto dia do Evento\",\n    \"ds_time_to\": \"Quarto dia do evento com Finalização do Evento e entrega de prêmios\",\n    \"dt_time_to\": \"2020-08-11\",\n    \"hr_start_to\": \"10:00\",\n    \"hr_end_to\": \"22:00\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Time identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "nm_time",
+            "description": "<p>Time name.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "ds_time",
+            "description": "<p>Time description.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Date",
+            "optional": false,
+            "field": "dt_time",
+            "description": "<p>Time date.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_start",
+            "description": "<p>Time start hour and minute.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Time",
+            "optional": false,
+            "field": "hr_end",
+            "description": "<p>Time end hour and minute.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success response:",
+          "content": "HTTPS/1.1 200 OK\n{\n   \"id\": \"3\",\n   \"nm_time\": \"Quarto dia do Evento\",\n   \"ds_time\": \"Quarto dia do evento com Finalização do Evento e entrega de prêmios\",\n   \"dt_time\": \"2020-08-11\",\n   \"hr_start\": \"11:00\",\n   \"hr_end\": \"22:00\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "optional": false,
+            "field": "noField",
+            "description": "<p>No field need be updated.</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object[]",
+            "optional": false,
+            "field": "incorrectFields",
+            "description": "<p>The fields were not filled in according to our business rule</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "noField:",
+          "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/timeRoutes.ts",
+    "groupTitle": "10._Times",
+    "name": "PutEventsIdeventTimesIdtime",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "chats",
+    "title": "11.3. Get all chats from the user",
+    "version": "1.10.2",
+    "group": "11._Chat",
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n[\n {\n    \"id\": 2,\n    \"user_id\": 1,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 4,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 5,\n            \"message\": \"Preciso de ajuda\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n },\n {    \n    \"id\": 3,\n    \"user_id\": 1,\n    \"event_id\": 2,\n    \"messages\": [\n        {\n            \"id\": 6,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 7,\n            \"message\": \"Preciso de ajuda\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatUserRoutes.ts",
+    "groupTitle": "11._Chat",
+    "name": "GetChats",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "chats/:idChat",
+    "title": "11.4. Get a chat",
+    "version": "1.10.2",
+    "group": "11._Chat",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idChat",
+            "description": "<p>Chat identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n {    \n    \"id\": 3,\n    \"user_id\": 1,\n    \"event_id\": 2,\n    \"messages\": [\n        {\n            \"id\": 6,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 7,\n            \"message\": \"Preciso de ajuda\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "chatNotFound",
+            "description": "<p>This chat doen'st exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "chatNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{\n    \"status\": 404,\n    \"message\": \"This chat doesn't exists\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatUserRoutes.ts",
+    "groupTitle": "11._Chat",
+    "name": "GetChatsIdchat",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "chats/:idChat",
+    "title": "11.2. Send a message",
+    "version": "1.10.2",
+    "group": "11._Chat",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idChat",
+            "description": "<p>Chat identification code.</p>"
+          }
+        ],
+        "Request body Params": [
+          {
+            "group": "Request body Params",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message text.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"message\": \"Preciso de ajuda\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 2,\n    \"user_id\": 1,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 4,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 5,\n            \"message\": \"Preciso de ajuda\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "chatExists",
+            "description": "<p>This chat already created</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "eventPrivate",
+            "description": "<p>Can't send messages to private events</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventPrivate",
+          "content": "HTTPS/1.1 401 Unauthorized\n    { \n        \"status\": 401, \n        \"message\": \"Can't send messages to private events\" \n    }",
+          "type": "json"
+        },
+        {
+          "title": "chatExists",
+          "content": "HTTPS/1.1 400 Bad request\n    { \n        \"status\": 400, \n        \"message\": \"This chat already created\" \n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatUserRoutes.ts",
+    "groupTitle": "11._Chat",
+    "name": "PostChatsIdchat",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "post",
+    "url": "newChat",
+    "title": "11.1. Start a chat with a event",
+    "version": "1.10.2",
+    "group": "11._Chat",
+    "parameter": {
+      "fields": {
+        "Request body Params": [
+          {
+            "group": "Request body Params",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Identification code of the event that will start the chat</p>"
+          },
+          {
+            "group": "Request body Params",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>First message of the conversation</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"event_id\": 1,\n    \"message\": \"Olá, bom dia\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 2,\n    \"user_id\": 1,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 4,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        }\n    ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "chatExists",
+            "description": "<p>This chat already created</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "eventPrivate",
+            "description": "<p>Can't send messages to private events</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "eventPrivate",
+          "content": "HTTPS/1.1 401 Unauthorized\n    { \n        \"status\": 401, \n        \"message\": \"Can't send messages to private events\" \n    }",
+          "type": "json"
+        },
+        {
+          "title": "chatExists",
+          "content": "HTTPS/1.1 400 Bad request\n    { \n        \"status\": 400, \n        \"message\": \"This chat already created\" \n    }",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatUserRoutes.ts",
+    "groupTitle": "11._Chat",
+    "name": "PostNewchat",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/chats",
+    "title": "12.2. Get all chats from the event",
+    "version": "1.10.2",
+    "group": "12._Event_chat",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n[\n {\n    \"id\": 2,\n    \"user_id\": 1,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 4,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 5,\n            \"message\": \"Preciso de ajuda\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n },\n {    \n    \"id\": 3,\n    \"user_id\": 2,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 6,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 7,\n            \"message\": \"No que podemos ajudar?\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"EVT\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatEventRoutes.ts",
+    "groupTitle": "12._Event_chat",
+    "name": "GetEventsIdeventChats",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "get",
+    "url": "events/:idEvent/chats/:idChat",
+    "title": "12.3. Get a chat",
+    "version": "1.10.2",
+    "group": "12._Event_chat",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idChat",
+            "description": "<p>Chat identification code.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "200": [
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "200",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "200",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 200 Ok\n {    \n    \"id\": 3,\n    \"user_id\": 1,\n    \"event_id\": 2,\n    \"messages\": [\n        {\n            \"id\": 6,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 7,\n            \"message\": \"No que podemos ajudar?\",\n            \"author\": {\n                \"id\": 2,\n                \"type\": \"EVT\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ],
+        "404": [
+          {
+            "group": "404",
+            "optional": false,
+            "field": "chatNotFound",
+            "description": "<p>This chat doen'st exists</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "chatNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{\n    \"status\": 404,\n    \"message\": \"This chat doesn't exists\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatEventRoutes.ts",
+    "groupTitle": "12._Event_chat",
+    "name": "GetEventsIdeventChatsIdchat",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
+  },
+  {
+    "type": "post",
+    "url": "events/:idEvent/chats/:idChat",
+    "title": "12.1. Send a message",
+    "version": "1.10.2",
+    "group": "12._Event_chat",
+    "parameter": {
+      "fields": {
+        "Path Params": [
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idEvent",
+            "description": "<p>Event identification code.</p>"
+          },
+          {
+            "group": "Path Params",
+            "type": "Number",
+            "optional": false,
+            "field": "idChat",
+            "description": "<p>Chat identification code.</p>"
+          }
+        ],
+        "Request body Params": [
+          {
+            "group": "Request body Params",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>Message text.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request body",
+        "content": "{\n    \"message\": \"No que podemos ajudar?\"\n}",
+        "type": "json"
+      },
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
+    "success": {
+      "fields": {
+        "201": [
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Chat id.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "event_id",
+            "description": "<p>Event Code of the event you are supporting.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "user_id",
+            "description": "<p>User code that is contacting the event.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object[]",
+            "optional": false,
+            "field": "messages",
+            "description": "<p>Conversation message array.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[id]",
+            "description": "<p>Message identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "messages[message]",
+            "description": "<p>Message text.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "messages[sended_at]",
+            "description": "<p>Message timestamp.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Object",
+            "optional": false,
+            "field": "author",
+            "description": "<p>Information about the author of the message that may be the event or the user.</p>"
+          },
+          {
+            "group": "201",
+            "type": "Number",
+            "optional": false,
+            "field": "author[id]",
+            "description": "<p>Author identification code.</p>"
+          },
+          {
+            "group": "201",
+            "type": "String",
+            "optional": false,
+            "field": "author[type]",
+            "description": "<p>Tells you if the author is the user or the event.If the event is the value returned is &quot;EVT&quot; if the user is the value is &quot;USR&quot;</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success Response:",
+          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 2,\n    \"user_id\": 1,\n    \"event_id\": 1,\n    \"messages\": [\n        {\n            \"id\": 4,\n            \"message\": \"olá, bom dia\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"USR\"\n            },\n            \"sended_at\": \"2020-11-06T16:54:43.396Z\"\n        },\n        {\n            \"id\": 5,\n            \"message\": \"No que podemos ajudar?\",\n            \"author\": {\n                \"id\": 1,\n                \"type\": \"EVT\"\n            },\n            \"sended_at\": \"2020-11-06T16:55:00.396Z\"\n        }\n    ]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/routes/chatEventRoutes.ts",
+    "groupTitle": "12._Event_chat",
+    "name": "PostEventsIdeventChatsIdchat",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400": [
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "noneToken",
+            "description": "<p>None token inserted in header x-access-token</p>"
+          },
+          {
+            "group": "400",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidId",
+            "description": "<p>the id provided this in an incorrect format.</p>"
+          }
+        ],
+        "403": [
+          {
+            "group": "403",
+            "type": "Object",
+            "optional": false,
+            "field": "invalidToken",
+            "description": "<p>The token inserted is invalid.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "invalidId ",
+          "content": "HTTPS/1.1 400 Bad request\n    {\n        \"status\": 400,\n        \"message\": \"Invalid id\"\n    }",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ]
+    }
+  },
+  {
+    "type": "delete",
     "url": "profile",
     "title": "2.5. Delete user",
     "version": "1.4.11",
@@ -5156,22 +7323,6 @@
         }
       ]
     },
-    "filename": "src/routes/materialRoutes.ts",
-    "groupTitle": "7._Materials",
-    "name": "PostEventsIdeventMaterials",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
     "error": {
       "fields": {
         "400": [
@@ -5190,6 +7341,15 @@
             "description": "<p>The fields were not filled in according to our business rule</p>"
           }
         ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
         "403": [
           {
             "group": "403",
@@ -5202,6 +7362,11 @@
       },
       "examples": [
         {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
+          "type": "json"
+        },
+        {
           "title": "No token error",
           "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
           "type": "json"
@@ -5212,6 +7377,22 @@
           "type": "json"
         }
       ]
+    },
+    "filename": "src/routes/materialRoutes.ts",
+    "groupTitle": "7._Materials",
+    "name": "PostEventsIdeventMaterials",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
     }
   },
   {
@@ -5349,6 +7530,15 @@
             "description": "<p>The fields were not filled in according to our business rule</p>"
           }
         ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
         "403": [
           {
             "group": "403",
@@ -5363,6 +7553,11 @@
         {
           "title": "noField:",
           "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
           "type": "json"
         },
         {
@@ -5513,6 +7708,15 @@
             "description": "<p>The fields were not filled in according to our business rule</p>"
           }
         ],
+        "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "noAllowed",
+            "description": "<p>You don't have permission to do so.</p>"
+          }
+        ],
         "403": [
           {
             "group": "403",
@@ -5527,6 +7731,11 @@
         {
           "title": "noField:",
           "content": "HTTPS/1.1 400 Bad Request\n    { \n        status: 400, \n        message: 'No field to update' \n    }",
+          "type": "json"
+        },
+        {
+          "title": "noAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n   {\n       \"status\": 401,\n       \"message\": \"You are not allowed do so\"\n   }",
           "type": "json"
         },
         {
@@ -6496,6 +8705,13 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
       },
@@ -6503,6 +8719,11 @@
         {
           "title": "eventNotFound",
           "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
           "type": "json"
         },
         {
@@ -6544,37 +8765,37 @@
     },
     "success": {
       "fields": {
-        "201": [
+        "200": [
           {
-            "group": "201",
+            "group": "200",
             "type": "Number",
             "optional": false,
             "field": "id",
             "description": "<p>Task identification code.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "String",
             "optional": false,
             "field": "name",
             "description": "<p>Task name.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "String",
             "optional": false,
             "field": "description",
             "description": "<p>Task description.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "boolean",
             "optional": false,
             "field": "completed",
             "description": "<p>Task is completed.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "Object",
             "optional": true,
             "field": "user_assigned",
@@ -6706,72 +8927,42 @@
             "field": "idTask",
             "description": "<p>Task identification code.</p>"
           }
-        ],
-        "Request body params": [
-          {
-            "group": "Request body params",
-            "type": "String",
-            "size": "3..100",
-            "optional": false,
-            "field": "name",
-            "description": "<p>Task name.</p>"
-          },
-          {
-            "group": "Request body params",
-            "type": "String",
-            "size": "..255",
-            "optional": false,
-            "field": "description",
-            "description": "<p>Task description.</p>"
-          }
         ]
       }
     },
-    "examples": [
-      {
-        "title": "Request body",
-        "content": "{\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20\"\n}",
-        "type": "json"
-      },
-      {
-        "title": "Token header:",
-        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
-        "type": "header"
-      }
-    ],
     "success": {
       "fields": {
-        "201": [
+        "200": [
           {
-            "group": "201",
+            "group": "200",
             "type": "Number",
             "optional": false,
             "field": "id",
             "description": "<p>Task identification code.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "String",
             "optional": false,
             "field": "name",
             "description": "<p>Task name.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "String",
             "optional": false,
             "field": "description",
             "description": "<p>Task description.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "boolean",
             "optional": false,
             "field": "completed",
             "description": "<p>Task is completed.</p>"
           },
           {
-            "group": "201",
+            "group": "200",
             "type": "Object",
             "optional": true,
             "field": "user_assigned",
@@ -6803,6 +8994,13 @@
         ]
       }
     },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ],
     "error": {
       "fields": {
         "400": [
@@ -6846,6 +9044,13 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
       },
@@ -6853,6 +9058,11 @@
         {
           "title": "eventNotFound",
           "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
           "type": "json"
         },
         {
@@ -6947,29 +9157,6 @@
         }
       ]
     },
-    "filename": "src/routes/taskRoutes.ts",
-    "groupTitle": "9._Tasks",
-    "name": "PatchEventsIdeventTasksIdtask",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Token header:",
-        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
-        "type": "header"
-      }
-    ],
     "error": {
       "fields": {
         "400": [
@@ -6989,6 +9176,13 @@
           }
         ],
         "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "unassign",
+            "description": "<p>You must assign the task to complete it.</p>"
+          },
           {
             "group": "401",
             "type": "Object",
@@ -7013,13 +9207,30 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
       },
       "examples": [
         {
+          "title": "unassign",
+          "content": "HTTPS/1.1 401 Unauthorized\n    { \n        \"status\": 401, \n        \"message\": \"To complete or uncomplete a task you need to assign it\"\n    }",
+          "type": "json"
+        },
+        {
           "title": "eventNotFound",
           "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
           "type": "json"
         },
         {
@@ -7038,7 +9249,30 @@
           "type": "json"
         }
       ]
-    }
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtask",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
   },
   {
     "type": "patch",
@@ -7066,18 +9300,6 @@
         ]
       }
     },
-    "examples": [
-      {
-        "title": "Request body",
-        "content": "{\n    \"description_to\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente.\"\n}",
-        "type": "json"
-      },
-      {
-        "title": "Token header:",
-        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
-        "type": "header"
-      }
-    ],
     "success": {
       "fields": {
         "200": [
@@ -7126,22 +9348,6 @@
         }
       ]
     },
-    "filename": "src/routes/taskRoutes.ts",
-    "groupTitle": "9._Tasks",
-    "name": "PatchEventsIdeventTasksIdtaskAssign",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
     "error": {
       "fields": {
         "400": [
@@ -7161,6 +9367,13 @@
           }
         ],
         "401": [
+          {
+            "group": "401",
+            "type": "Object",
+            "optional": false,
+            "field": "alreadyAssigned",
+            "description": "<p>This task already assigned</p>"
+          },
           {
             "group": "401",
             "type": "Object",
@@ -7185,13 +9398,30 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
       },
       "examples": [
         {
+          "title": "alreadyAssigned",
+          "content": "HTTPS/1.1 401 Unauthorized\n { \n     \"status\": 401, \n     \"message\": \"This task already assigned\" \n }",
+          "type": "json"
+        },
+        {
           "title": "eventNotFound",
           "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
           "type": "json"
         },
         {
@@ -7210,7 +9440,30 @@
           "type": "json"
         }
       ]
-    }
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtaskAssign",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
   },
   {
     "type": "patch",
@@ -7286,30 +9539,49 @@
         }
       ]
     },
-    "filename": "src/routes/taskRoutes.ts",
-    "groupTitle": "9._Tasks",
-    "name": "PatchEventsIdeventTasksIdtaskAssign",
-    "header": {
-      "fields": {
-        "Header": [
-          {
-            "group": "Header",
-            "type": "String",
-            "optional": false,
-            "field": "x-access-token",
-            "description": "<p>Token for authentication.</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Token header:",
-        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
-        "type": "header"
-      }
-    ],
     "error": {
+      "examples": [
+        {
+          "title": "assignedAnother",
+          "content": "HTTPS/1.1 401 Unauthorized\n { \n   \"status\": 401, \n   \"message\": \"You cannot unassign a task that you did not assign\"\n }",
+          "type": "json"
+        },
+        {
+          "title": "notAssigned",
+          "content": "HTTPS/1.1 401 Unauthorized\n { \n   \"status\": 401, \n   \"message\": \"This task has not been assigned \"\n }",
+          "type": "json"
+        },
+        {
+          "title": "alreadyComplete",
+          "content": "HTTPS/1.1 409 Conflict\n { \n   \"status\": 409, \n   \"message\": \"You can't unassign a task that's already completed\"\n }",
+          "type": "json"
+        },
+        {
+          "title": "eventNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "notAllowed",
+          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
+          "type": "json"
+        },
+        {
+          "title": "No token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
+          "type": "json"
+        },
+        {
+          "title": "Invalid token error",
+          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
+          "type": "json"
+        }
+      ],
       "fields": {
         "400": [
           {
@@ -7352,32 +9624,40 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
-      },
-      "examples": [
-        {
-          "title": "eventNotFound",
-          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
-          "type": "json"
-        },
-        {
-          "title": "notAllowed",
-          "content": "HTTPS/1.1 401 Unauthorized\n{ \n    \"status\": 401, \n    \"message\": \"You are not allowed to do so\" \n}",
-          "type": "json"
-        },
-        {
-          "title": "No token error",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"none token provided\"\n}",
-          "type": "json"
-        },
-        {
-          "title": "Invalid token error",
-          "content": "HTTPS/1.1 403 Forbidden\n{\n    \"status\": 403,\n    \"message\": \"invalid token\"\n}",
-          "type": "json"
-        }
-      ]
-    }
+      }
+    },
+    "filename": "src/routes/taskRoutes.ts",
+    "groupTitle": "9._Tasks",
+    "name": "PatchEventsIdeventTasksIdtaskAssign",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "x-access-token",
+            "description": "<p>Token for authentication.</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Token header:",
+        "content": "\"x-access-token\": \"Bearer <TOKEN>\"",
+        "type": "header"
+      }
+    ]
   },
   {
     "type": "post",
@@ -7591,7 +9871,7 @@
             "group": "Request body params",
             "type": "String",
             "size": "3..100",
-            "optional": false,
+            "optional": true,
             "field": "name_to",
             "description": "<p>Task name.</p>"
           },
@@ -7599,7 +9879,7 @@
             "group": "Request body params",
             "type": "String",
             "size": "..255",
-            "optional": false,
+            "optional": true,
             "field": "description_to",
             "description": "<p>Task description.</p>"
           }
@@ -7609,7 +9889,7 @@
     "examples": [
       {
         "title": "Request body",
-        "content": "{\n    \"description_to\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente.\"\n}",
+        "content": "{   \n    \"name_to\": \"Lavar o salão de festas.\",\n    \"description_to\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente.\"\n}",
         "type": "json"
       },
       {
@@ -7661,7 +9941,7 @@
       "examples": [
         {
           "title": "Success Response:",
-          "content": "HTTPS/1.1 201 Created\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente\",\n    \"completed\": false,\n    \"user_assigned\": null\n }",
+          "content": "HTTPS/1.1 200 Ok\n {\n    \"id\": 4,\n    \"name\": \"Lavar o salão de festas.\",\n    \"description\": \"É necessário lavar o salão de festa até as 18h do dia 20. Não pode usar detergente\",\n    \"completed\": false,\n    \"user_assigned\": null\n }",
           "type": "json"
         }
       ]
@@ -7725,6 +10005,13 @@
             "optional": false,
             "field": "eventNotFound",
             "description": "<p>This events doesn't exists</p>"
+          },
+          {
+            "group": "404",
+            "type": "Object",
+            "optional": false,
+            "field": "taskNotFound",
+            "description": "<p>This task doesn't exists</p>"
           }
         ]
       },
@@ -7732,6 +10019,11 @@
         {
           "title": "eventNotFound",
           "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This event doesn't exists\" \n }",
+          "type": "json"
+        },
+        {
+          "title": "taskNotFound",
+          "content": "HTTPS/1.1 404 Not found\n{ \n     \"status\": 404, \n     \"message\": \"This task doesn't exists\" \n }",
           "type": "json"
         },
         {

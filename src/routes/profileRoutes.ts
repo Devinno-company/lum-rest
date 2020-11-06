@@ -45,6 +45,21 @@ const formData = multer();
  */
 
 /**
+* @apiDefine taskNotFoundError
+* @apiError (404) {Object} taskNotFound This task doesn't exists
+*/
+
+/**
+* @apiDefine taskNotFoundErrorExample
+* @apiErrorExample taskNotFound
+*   HTTPS/1.1 404 Not found
+*   { 
+*        "status": 404, 
+*        "message": "This task doesn't exists" 
+*    }
+*/
+
+/**
 * @apiDefine eventNotFoundError
 * @apiError (404) {Object} eventNotFound This events doesn't exists
 */
