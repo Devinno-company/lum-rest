@@ -11,7 +11,6 @@ class PurchaseRepository {
             const insertedPurchase =
                 await trx('tb_purchase')
                     .insert({
-                        cd_payee_code: InsertPurchase.cd_payee_code,
                         sg_status: InsertPurchase.sg_status,
                         cd_user: user_code
                     }).returning('*');

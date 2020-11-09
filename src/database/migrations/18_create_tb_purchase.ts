@@ -3,7 +3,6 @@ import Knex from 'knex';
 export function up(knex: Knex) {
     return knex.schema.createTable('tb_purchase', table => {
         table.increments('cd_purchase').primary();
-        table.string('cd_payee_code', 100).notNullable();
 
         table.string('sg_status', 3).notNullable();
         table.integer('cd_user').notNullable()
