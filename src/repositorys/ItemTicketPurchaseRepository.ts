@@ -66,7 +66,7 @@ class ItemTicketPurchaseRepository {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
             
-            const access =
+            const item =
             await trx('item_ticket_purchase')
                 .update({
                     qt_ticket_sell: quantity
@@ -76,7 +76,7 @@ class ItemTicketPurchaseRepository {
                 .returning('*');
 
             trx.commit()
-                .then(() => { resolve(access[0]); })
+                .then(() => { resolve(item[0]); })
                 .catch((err) => {
                     trx.rollback();
                     reject(err);

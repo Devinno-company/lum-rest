@@ -24,7 +24,7 @@ class PurchaseRepository {
         });
     }
 
-    public static updatePurchaseStatus(idPurchase: number, status: 'CON'|'DIS'|'PAG'|'BLO'|'ANA'|'DPN'): Promise<void> {
+    public static updatePurchaseStatus(idPurchase: number, status: string): Promise<void> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -56,7 +56,7 @@ class PurchaseRepository {
         });
     }
 
-    public static async findPurchasesByEventId(idUser: number): Promise<Array<Purchase>> {
+    public static async findPurchasesByUserId(idUser: number): Promise<Array<Purchase>> {
 
         return new Promise(async (resolve) => {
             const purchase =

@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.24.4",
+  "version": "1.26.0",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.18.3",
