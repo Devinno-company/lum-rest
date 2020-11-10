@@ -1,6 +1,5 @@
 require('dotenv-safe').config();
 import express from 'express';
-import db from './database/connection';
 import eventRoutes from './routes/eventRoutes';
 import inviteRoutes from './routes/inviteRoutes';
 import notificationRoutes from './routes/notificationRoutes';
@@ -15,11 +14,19 @@ import chatEventRoutes from './routes/chatEventRoutes';
 import chatUserRoutes from './routes/chatUserRoutes';
 import ticketRoutes from './routes/TicketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
+const cors = require('cors');
+
+const mercadopago = require('mercadopago');
+mercadopago.configure({
+    access_token: process.env.ACCESS_TOKEN_MP,
+    sandbox: true
+});
 
 const listen = process.env.PORT || 3000;
 
 const app = express();
 
+app.use(cors({origin: '*'}));
 app.use(express.json());
 app.use(userRoutes);
 app.use(profileRoutes);

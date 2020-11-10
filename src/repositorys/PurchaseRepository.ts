@@ -4,15 +4,20 @@ import InsertPurchase from "../interfaces/inputRepository/insertPurchase";
 
 class PurchaseRepository {
 
-    public static insertPurchase(InsertPurchase: InsertPurchase, user_code: number): Promise<Purchase> {
+    public static insertPurchase(insertPurchase: InsertPurchase, status_id: string, user_id: number, purchase_billet_id?: number, purchase_credit_card_id?: number): Promise<Purchase> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
             const insertedPurchase =
                 await trx('tb_purchase')
                     .insert({
-                        sg_status: InsertPurchase.sg_status,
-                        cd_user: user_code
+                        cd_ticket: insertPurchase.ticket_id,
+                        qt_ticket: insertPurchase.quantity_ticket,
+                        cd_purchase_mercado_pago: insertPurchase.cd_purchase_mercado_pago,
+                        cd_status: status_id,
+                        cd_user: user_id,
+                        cd_purchase_billet: purchase_billet_id,
+                        cd_purchase_credit_card: purchase_credit_card_id
                     }).returning('*');
 
             await trx.commit()

@@ -1,11 +1,24 @@
 import express from 'express';
 import PurchaseController from '../controller/PurchaseController';
+import NewPurchase from '../interfaces/request/NewPurchase';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 
 const purchaseRoutes = express.Router();
 const controller = new PurchaseController();
 
+purchaseRoutes.post('/purchases', verifyToken, (request, response) => {
+    const newPurchase: NewPurchase = request.body;
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.insertPurchase(user, newPurchase)
+                .then((result) => { response.status(201).json(result) })
+                .catch((err) => { response.status(err.status || 400).json(err) });
+        })
+        .catch((err) => { response.status(err.status || 400).json(err) });
+
+});
 
 purchaseRoutes.get('/purchases/:idPurchase', verifyToken, async (request, response) => {
     const idPurchase = request.params['idPurchase'];

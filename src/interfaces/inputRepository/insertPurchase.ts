@@ -1,5 +1,7 @@
 interface insertPurchase {
-    sg_status: string
+    ticket_id: number,
+    quantity_ticket: number,
+    cd_purchase_mercado_pago: number,
 }
 
 export default insertPurchase;
