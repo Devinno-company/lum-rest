@@ -9,7 +9,7 @@ interface NewPurchase {
         installments: number,
         issuer?: string,
     },
-    ticket?: {
+    billet?: {
         zip_code: string,
         street_name: string,
         street_number: string,

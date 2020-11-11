@@ -72,16 +72,16 @@ class PurchaseController {
                             });
                     }
                 } else {
-                    if (!purchase.ticket)
+                    if (!purchase.billet)
                         reject({ status: 400, message: 'You need to send a location.' });
                     else {
                         const address = {
-                            zip_code: purchase.ticket.zip_code,
-                            street_name: purchase.ticket.street_name,
-                            street_number: purchase.ticket.street_number,
-                            neighborhood: purchase.ticket.neighborhood,
-                            city: purchase.ticket.city,
-                            federal_unit: purchase.ticket.federal_unit
+                            zip_code: purchase.billet.zip_code,
+                            street_name: purchase.billet.street_name,
+                            street_number: purchase.billet.street_number,
+                            neighborhood: purchase.billet.neighborhood,
+                            city: purchase.billet.city,
+                            federal_unit: purchase.billet.federal_unit
                         }
 
                         const payment_data: PaymentDataTicket = {
@@ -162,7 +162,6 @@ class PurchaseController {
                 resolve({
                     cd_purchase: purchase.cd_purchase,
                     sg_status: purchase.cd_status,
-                    cd_user: purchase.cd_user,
                     tickets
                 });
             }
@@ -202,7 +201,6 @@ class PurchaseController {
                     purchasesResponse.push({
                         cd_purchase: purchases[i].cd_purchase,
                         sg_status: purchases[i].cd_status,
-                        cd_user: purchases[i].cd_user,
                         tickets
                     });
                     tickets = [];
