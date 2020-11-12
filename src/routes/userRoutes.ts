@@ -162,7 +162,7 @@ userRoutes.get('/users', validate, (request, response) => {
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
-userRoutes.post('/get_code_mercado_pago', (request, response) => {
+userRoutes.get('/get_code_mercado_pago', (request, response) => {
     const authorization_code = request.query.code as string;
     const random_id = request.query.id as string;
 
