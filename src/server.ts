@@ -16,17 +16,13 @@ import ticketRoutes from './routes/TicketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
 const cors = require('cors');
 
-const mercadopago = require('mercadopago');
-mercadopago.configure({
-    access_token: process.env.ACCESS_TOKEN_MP,
-    sandbox: true
-});
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const listen = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(cors({origin: '*'}));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(userRoutes);
 app.use(profileRoutes);

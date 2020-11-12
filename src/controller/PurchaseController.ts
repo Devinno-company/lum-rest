@@ -11,6 +11,7 @@ import PurchaseBilletRepository from "../repositorys/PurchaseBilletRepository";
 import PurchaseCreditCardRepository from "../repositorys/PurchaseCreditCardRepository";
 import insertPurchase from "../interfaces/inputRepository/insertPurchase";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
+import { link } from "joi";
 const mercadopago = require('mercadopago');
 
 class PurchaseController {
@@ -27,16 +28,15 @@ class PurchaseController {
                     reject({ status: 400, message: "This ticket id doesn't exist" });
                 }
                 const login = await LoginRepository.findLoginById(user.cd_login);
-
                 const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
-
                 
-
+                mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
+                
                 if (purchase.type_payment == 'credit-card') {
                     if (!purchase.credit_card)
                         reject({ status: 400, message: 'Unsubmitted transaction information' })
                     else {
-                        const payment_data: PaymentDataCreditCard = {
+                        const payment_data: any = {
                             transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
                             token: purchase.credit_card?.token,
                             description: ticket.nm_ticket,
@@ -52,9 +52,7 @@ class PurchaseController {
                                 }
                             }
                         };
-
-                        mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
-
+                        
                         mercadopago.payment.save(payment_data)
                             .then((result: Response) => {
                                 const payment = (result.body as any);
@@ -97,7 +95,7 @@ class PurchaseController {
                             transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
                             description: ticket.nm_ticket,
                             payment_method_id: 'bolbradesco',
-                            application_fee: ((ticket.vl_ticket * purchase.quantity_ticket) * 0.035),
+                            application_fee: Number(((ticket.vl_ticket * purchase.quantity_ticket) * 0.035).toFixed(2)),
                             payer: {
                                 email: login.nm_email,
                                 first_name: user.nm_user,
@@ -109,8 +107,6 @@ class PurchaseController {
                                 address
                             }
                         };
-
-                        mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
 
                         mercadopago.payment.create(payment_data)
                             .then((response: Response) => {
@@ -156,38 +152,38 @@ class PurchaseController {
                 reject({ status: 401, message: 'You can only see your own purchases' });
             else {
                 const ticket = await TicketRepository.findTicketById(purchase.cd_ticket);
-                    const event = await EventRepository.findEventById(ticket.cd_event);
+                const event = await EventRepository.findEventById(ticket.cd_event);
 
-                    let billet
-                    let credit_card;
+                let billet
+                let credit_card;
 
-                    const billetCode = purchase.cd_purchase_billet;
-                    if (billetCode) {
-                        const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
+                const billetCode = purchase.cd_purchase_billet;
+                if (billetCode) {
+                    const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
 
-                        billet = {
-                            idBillet: searchBillet.cd_purchase_billet,
-                            BilletImage: searchBillet.im_billet,
-                            BilletPurchaseDate: searchBillet.dt_purchase
-                        }
+                    billet = {
+                        idBillet: searchBillet.cd_purchase_billet,
+                        BilletImage: searchBillet.im_billet,
+                        BilletPurchaseDate: searchBillet.dt_purchase
                     }
-                    else {
-                        billet = null;
-                    };
+                }
+                else {
+                    billet = null;
+                };
 
-                    const creditCode = purchase.cd_purchase_credit_card;
-                    if (creditCode) {
-                        const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
+                const creditCode = purchase.cd_purchase_credit_card;
+                if (creditCode) {
+                    const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
 
-                        credit_card = {
-                            idCreditCard: searchCreditCard.cd_purchase_credit_card,
-                            CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
-                            CreditCardApprovedDate: searchCreditCard.dt_approved
-                        }
+                    credit_card = {
+                        idCreditCard: searchCreditCard.cd_purchase_credit_card,
+                        CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
+                        CreditCardApprovedDate: searchCreditCard.dt_approved
                     }
-                    else {
-                        credit_card = null;
-                    };
+                }
+                else {
+                    credit_card = null;
+                };
 
                 resolve({
                     id: purchase.cd_purchase,
@@ -222,7 +218,7 @@ class PurchaseController {
             else {
 
                 for (let i = 0; i < purchases.length; i++) {
-                    
+
                     const ticket = await TicketRepository.findTicketById(purchases[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
 

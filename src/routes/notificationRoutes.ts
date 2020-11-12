@@ -227,4 +227,9 @@ notificationRoutes.delete('/notifications/:idNotification', verifyToken, (reques
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
+notificationRoutes.get('/notifications_mercado_pago', (request, response) => {
+    console.log(request.body);
+    response.status(200).json();
+});
+
 export default notificationRoutes;

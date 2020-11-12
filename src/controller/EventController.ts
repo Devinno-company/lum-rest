@@ -412,6 +412,7 @@ class EventController {
                         const updateLink: updateLinkMercadoPago = {
                             refresh_token: response.data.refresh_token,
                             cd_public_key: response.data.public_key,
+                            authorization_code: response.data.authorization_code,
                             id_valid: true,
                             cd_access_token: response.data.access_token,
                         }
