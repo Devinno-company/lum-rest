@@ -4,7 +4,7 @@ import LinkMercadoPago from "../models/LinkMercadoPago";
 
 class LinkMercadoPagoRepository {
 
-    public static insertLinkMercadoPago(identificaion_id: string, user_id: number): Promise<LinkMercadoPago> {
+    public static insertLinkMercadoPago(identificaion_id: string, event_id: number): Promise<LinkMercadoPago> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
@@ -12,7 +12,7 @@ class LinkMercadoPagoRepository {
             await trx('tb_link_mercado_pago')
                 .insert({
                     cd_identification: identificaion_id,
-                    cd_user: user_id
+                    cd_event: event_id
                 })
                 .returning('*');
 
@@ -45,7 +45,7 @@ class LinkMercadoPagoRepository {
         })
     }
 
-    public static findLinkMercadoPagoByUserId(idUser: number): Promise<LinkMercadoPago> {
+    public static findLinkMercadoPagoByEventId(event_id: number): Promise<LinkMercadoPago> {
 
         return new Promise(async (resolve) => {
             const trx = await db.transaction();
@@ -53,7 +53,7 @@ class LinkMercadoPagoRepository {
             const linkMercado =
             await trx('tb_link_mercado_pago as l')
                 .select('*')
-                .where('l.cd_user', '=', idUser)
+                .where('l.cd_event', '=', event_id)
                 .returning('*');
 
             resolve(linkMercado[0]);

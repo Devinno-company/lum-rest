@@ -10,12 +10,12 @@ export function up(knex: Knex) {
         table.string('cd_public_key');
         table.boolean('id_valid').notNullable().defaultTo(false);
         table.date('dt_issue').notNullable().defaultTo(knex.fn.now());
-        table.integer('cd_user');
+        table.integer('cd_event');
 
         /* FOREIGN KEY */
-        table.foreign('cd_user')
-            .references('cd_user')
-            .inTable('tb_user');
+        table.foreign('cd_event')
+            .references('cd_event')
+            .inTable('tb_event');
     });
 }
 

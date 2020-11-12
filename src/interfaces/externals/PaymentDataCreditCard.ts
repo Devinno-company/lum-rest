@@ -5,6 +5,7 @@ interface PaymentDataCreditCard {
     installments: Number,
     payment_method_id: String,
     issuer_id?: String,
+    application_fee: number,
     payer: {
         email: String,
         identification: {

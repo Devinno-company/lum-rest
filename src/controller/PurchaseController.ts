@@ -10,6 +10,7 @@ import PaymentDataTicket from "../interfaces/externals/PaymentDataTicket";
 import PurchaseBilletRepository from "../repositorys/PurchaseBilletRepository";
 import PurchaseCreditCardRepository from "../repositorys/PurchaseCreditCardRepository";
 import insertPurchase from "../interfaces/inputRepository/insertPurchase";
+import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
 const mercadopago = require('mercadopago');
 
 class PurchaseController {
@@ -27,6 +28,10 @@ class PurchaseController {
                 }
                 const login = await LoginRepository.findLoginById(user.cd_login);
 
+                const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
+
+                
+
                 if (purchase.type_payment == 'credit-card') {
                     if (!purchase.credit_card)
                         reject({ status: 400, message: 'Unsubmitted transaction information' })
@@ -38,6 +43,7 @@ class PurchaseController {
                             installments: purchase.credit_card.installments,
                             payment_method_id: purchase.credit_card.payment_method_id,
                             issuer_id: purchase.credit_card.issuer,
+                            application_fee: ((ticket.vl_ticket * purchase.quantity_ticket) * 0.035),
                             payer: {
                                 email: login.nm_email,
                                 identification: {
@@ -46,6 +52,8 @@ class PurchaseController {
                                 }
                             }
                         };
+
+                        mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
 
                         mercadopago.payment.save(payment_data)
                             .then((result: Response) => {
@@ -89,6 +97,7 @@ class PurchaseController {
                             transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
                             description: ticket.nm_ticket,
                             payment_method_id: 'bolbradesco',
+                            application_fee: ((ticket.vl_ticket * purchase.quantity_ticket) * 0.035),
                             payer: {
                                 email: login.nm_email,
                                 first_name: user.nm_user,
@@ -100,6 +109,8 @@ class PurchaseController {
                                 address
                             }
                         };
+
+                        mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
 
                         mercadopago.payment.create(payment_data)
                             .then((response: Response) => {

@@ -162,29 +162,4 @@ userRoutes.get('/users', validate, (request, response) => {
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
-userRoutes.get('/get_code_mercado_pago', (request, response) => {
-    const authorization_code = request.query.code as string;
-    const random_id = request.query.state as string;
-
-    if(!authorization_code)
-        response.status(400).json({status:400, message: 'Authotization code is required'})
-    if(!random_id)
-        response.status(400).json({status:400, message: 'Id is required'})
-
-    controller.getLinkMercadoPagoAccount(authorization_code, random_id)
-        .then(() => response.status(201).json())
-        .catch((err) => response.status(err.status || 400).json(err));  
-});
-
-userRoutes.post('/link_mercado_pago', verifyToken, (request, response) => {
-
-    getUserByRequest(request)
-        .then((user) => {
-            controller.linkMercadoPagoAccount(user)
-                .then((result) => response.status(201).json(result))
-                .catch((err) => response.status(err.status || 400).json(err));
-        })
-        .catch((err) => response.status(err.status || 400).json(err));
-});
-
 export default userRoutes;

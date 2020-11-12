@@ -2,6 +2,7 @@ interface PaymentDataTicket {
     transaction_amount: number,
     description: String,
     payment_method_id: String,
+    application_fee: number,
     payer: {
         email: String,
         first_name: String,
