@@ -30,7 +30,7 @@ class PurchaseController {
                 const login = await LoginRepository.findLoginById(user.cd_login);
                 const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
                 
-                mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
+                mercadopago.configure.setAccessToken(linkMercadoPago.cd_access_token);
                 
                 if (purchase.type_payment == 'credit-card') {
                     if (!purchase.credit_card)
