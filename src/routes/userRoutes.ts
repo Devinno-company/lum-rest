@@ -181,7 +181,7 @@ userRoutes.post('/link_mercado_pago', verifyToken, (request, response) => {
     getUserByRequest(request)
         .then((user) => {
             controller.linkMercadoPagoAccount(user)
-                .then(() => response.status(201).json())
+                .then((result) => response.status(201).json(result))
                 .catch((err) => response.status(err.status || 400).json(err));
         })
         .catch((err) => response.status(err.status || 400).json(err));
