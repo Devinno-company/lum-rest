@@ -1,0 +1,24 @@
+import Knex from 'knex';
+
+export function up(knex: Knex) {
+    return knex.schema.createTable('tb_link_mercado_pago', table => {
+        table.increments('cd_link_mercado_pago').primary();
+        table.string('cd_authorization', 255);
+        table.string('cd_identification').notNullable();
+        table.string('cd_refresh_token');
+        table.string('cd_access_token');
+        table.string('cd_public_key');
+        table.boolean('id_valid').notNullable().defaultTo(false);
+        table.date('dt_issue').notNullable().defaultTo(knex.fn.now());
+        table.integer('cd_user');
+
+        /* FOREIGN KEY */
+        table.foreign('cd_user')
+            .references('cd_user')
+            .inTable('tb_user');
+    });
+}
+
+export function down(knex: Knex) {
+    return knex.schema.dropTable('tb_link_mercado_pago');
+}

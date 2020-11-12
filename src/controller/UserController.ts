@@ -9,6 +9,9 @@ import UserResponse from '../interfaces/response/UserResponse';
 import LocationUserRepository from '../repositorys/LocationUserRepository';
 import CityRepository from '../repositorys/CityRepository';
 import GeolocationRepository from '../repositorys/GeolocationRepository';
+import LinkMercadoPagoRepository from '../repositorys/LinkMercadoPagoRepository';
+import Axios from 'axios';
+import updateLinkMercadoPago from '../interfaces/inputRepository/updateLinkMercadoPago';
 
 export default class UserController {
 
@@ -115,6 +118,65 @@ export default class UserController {
                     location: location
                 });
             }
+        });
+    }
+
+    getLinkMercadoPagoAccount(authorization_code: string, state_id: string) {
+        return new Promise(async (resolve, reject) => {
+
+            const link = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(state_id)
+            if (!link)
+                reject({ status: 404, message: 'there are no records with this id in our bank' })
+            else {
+                Axios.post('https://api.mercadopago.com/oauth/token', {
+                    client_secret: process.env.ACCESS_TOKEN_MP,
+                    grant_type: 'authorization_code',
+                    code: authorization_code,
+                    redirect_uri: process.env.REDIRECT_URI_MP
+                })
+                    .then((response) => {
+                        console.log(response.data);
+                        
+                        const updateLink: updateLinkMercadoPago = {
+                            refresh_token: response.data.refresh_token,
+                            cd_public_key: response.data.public_key,
+                            id_valid: true,
+                            cd_access_token: response.data.access_token,
+                        }
+                        LinkMercadoPagoRepository.updateLinkMercadoPago(link.cd_link_mercado_pago, updateLink)
+                            .then(() => resolve())
+                            .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                    })
+                    .catch((err) => {
+                        reject({ status: 400, message: 'Unknown error. Try again later.', err });
+                    });
+            }
+
+        });
+    }
+
+    linkMercadoPagoAccount(user: User) {
+        return new Promise(async (resolve, reject) => {
+
+            const app_id = process.env.APP_ID_MP as string;
+            const redirect_uri = process.env.REDIRECT_URI_MP as string;
+
+            let random_id = '0';
+            let continue_process = false;
+
+            do {
+                random_id = `${Math.random() * 100}`;
+                const searchLink = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(random_id);
+
+                if (!searchLink)
+                    continue_process = true;
+            } while (!continue_process);
+
+            const link = `https://auth.mercadopago.com.br/authorization?client_id=${app_id}&response_type=code&platform_id=mp&redirect_uri=${redirect_uri}&state=${random_id}`;
+
+            LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, user.cd_user)
+                .then(() => resolve(link))
+                .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
         });
     }
 }

@@ -3,6 +3,8 @@ import UserController from "../controller/UserController";
 import Credentials from '../interfaces/request/CredentialsRequest';
 import NewUser from "../interfaces/request/NewUserRequest";
 import validate from "../middleware/inputValidation";
+import verifyToken from '../middleware/verifyToken';
+import getUserByRequest from '../utils/getUserByRequest';
 
 const userRoutes = express.Router();
 
@@ -157,6 +159,31 @@ userRoutes.get('/users', validate, (request, response) => {
 
     controller.readUserByEmail(request.body.email)
         .then((result) => response.status(200).json(result))
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
+userRoutes.post('/get_code_mercado_pago', (request, response) => {
+    const authorization_code = request.query.code as string;
+    const random_id = request.query.id as string;
+
+    if(!authorization_code)
+        response.status(400).json({status:400, message: 'Authotization code is required'})
+    if(!random_id)
+        response.status(400).json({status:400, message: 'Id is required'})
+
+    controller.getLinkMercadoPagoAccount(authorization_code, random_id)
+        .then(() => response.status(201).json())
+        .catch((err) => response.status(err.status || 400).json(err));  
+});
+
+userRoutes.post('/link_mercado_pago', verifyToken, (request, response) => {
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.linkMercadoPagoAccount(user)
+                .then(() => response.status(201).json())
+                .catch((err) => response.status(err.status || 400).json(err));
+        })
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
