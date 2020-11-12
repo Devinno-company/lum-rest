@@ -1,7 +1,6 @@
 import express from 'express';
 import TimeController from '../controller/TimeController';
 import InsertTime from '../interfaces/inputRepository/insertTime';
-import validate from '../middleware/inputValidation';
 import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 import UpdateTimeRequest from '../interfaces/request/UpdateTimeRequest';

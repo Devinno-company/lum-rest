@@ -164,7 +164,7 @@ userRoutes.get('/users', validate, (request, response) => {
 
 userRoutes.get('/get_code_mercado_pago', (request, response) => {
     const authorization_code = request.query.code as string;
-    const random_id = request.query.id as string;
+    const random_id = request.query.state as string;
 
     if(!authorization_code)
         response.status(400).json({status:400, message: 'Authotization code is required'})
