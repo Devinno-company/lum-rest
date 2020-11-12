@@ -1,8 +1,6 @@
 import PurchaseResponse from "../interfaces/response/PurchaseResponse";
 import User from "../models/User";
 import PurchaseRepository from "../repositorys/PurchaseRepository";
-import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
-import TicketPurchase from "../interfaces/response/TicketPurchase";
 import TicketRepository from "../repositorys/TicketRepository";
 import EventRepository from "../repositorys/EventRepository";
 import LoginRepository from "../repositorys/LoginRepository";
@@ -24,6 +22,9 @@ class PurchaseController {
             }
             else {
                 const ticket = await TicketRepository.findTicketById(purchase.ticket_id);
+                if (!ticket) {
+                    reject({ status: 400, message: "This ticket id doesn't exist" });
+                }
                 const login = await LoginRepository.findLoginById(user.cd_login);
 
                 if (purchase.type_payment == 'credit-card') {
@@ -143,26 +144,54 @@ class PurchaseController {
             else if (user.cd_user != purchase.cd_user)
                 reject({ status: 401, message: 'You can only see your own purchases' });
             else {
-                const itens = await ItemTicketPurchaseRepository.findItemByPurchaseId(idPurchase);
-
-                const tickets: Array<TicketPurchase> = [];
-                for (let i = 0; i < itens.length; i++) {
-                    const ticket = await TicketRepository.findTicketById(itens[i].cd_ticket);
+                const ticket = await TicketRepository.findTicketById(purchase.cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
 
-                    tickets.push({
+                    let billet
+                    let credit_card;
+
+                    const billetCode = purchase.cd_purchase_billet;
+                    if (billetCode) {
+                        const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
+
+                        billet = {
+                            idBillet: searchBillet.cd_purchase_billet,
+                            BilletImage: searchBillet.im_billet,
+                            BilletPurchaseDate: searchBillet.dt_purchase
+                        }
+                    }
+                    else {
+                        billet = null;
+                    };
+
+                    const creditCode = purchase.cd_purchase_credit_card;
+                    if (creditCode) {
+                        const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
+
+                        credit_card = {
+                            idCreditCard: searchCreditCard.cd_purchase_credit_card,
+                            CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
+                            CreditCardApprovedDate: searchCreditCard.dt_approved
+                        }
+                    }
+                    else {
+                        credit_card = null;
+                    };
+
+                resolve({
+                    id: purchase.cd_purchase,
+                    idMercadoPago: purchase.cd_purchase_mercado_pago,
+                    PurchaseDate: purchase.dt_purchase,
+                    PurchaseStatus: purchase.cd_status,
+                    ticket: {
                         idTicket: ticket.cd_ticket,
                         TicketName: ticket.nm_ticket,
                         TicketEvent: event.nm_event,
-                        TicketQuantity: itens[i].qt_ticket_sell,
+                        TicketQuantity: purchase.qt_ticket,
                         TicketValue: ticket.vl_ticket
-                    });
-                }
-
-                resolve({
-                    cd_purchase: purchase.cd_purchase,
-                    sg_status: purchase.cd_status,
-                    tickets
+                    },
+                    billet: billet,
+                    credit_card: credit_card
                 });
             }
         });
@@ -180,30 +209,58 @@ class PurchaseController {
                 reject({ status: 401, message: 'You can only see your own purchases' })
             }
             else {
-                var tickets: Array<TicketPurchase> = [];
 
                 for (let i = 0; i < purchases.length; i++) {
+                    
+                    const ticket = await TicketRepository.findTicketById(purchases[i].cd_ticket);
+                    const event = await EventRepository.findEventById(ticket.cd_event);
 
-                    const itens = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchases[i].cd_purchase);
-                    for (let i2 = 0; i2 < itens.length; i2++) {
-                        const ticket = await TicketRepository.findTicketById(itens[i2].cd_ticket);
-                        const event = await EventRepository.findEventById(ticket.cd_event);
+                    let billet
+                    let credit_card;
 
-                        tickets.push({
+                    const billetCode = purchases[i].cd_purchase_billet;
+                    if (billetCode) {
+                        const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
+
+                        billet = {
+                            idBillet: searchBillet.cd_purchase_billet,
+                            BilletImage: searchBillet.im_billet,
+                            BilletPurchaseDate: searchBillet.dt_purchase
+                        }
+                    }
+                    else {
+                        billet = null;
+                    };
+
+                    const creditCode = purchases[i].cd_purchase_credit_card;
+                    if (creditCode) {
+                        const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
+
+                        credit_card = {
+                            idCreditCard: searchCreditCard.cd_purchase_credit_card,
+                            CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
+                            CreditCardApprovedDate: searchCreditCard.dt_approved
+                        }
+                    }
+                    else {
+                        credit_card = null;
+                    };
+
+                    purchasesResponse.push({
+                        id: purchases[i].cd_purchase,
+                        idMercadoPago: purchases[i].cd_purchase_mercado_pago,
+                        PurchaseDate: purchases[i].dt_purchase,
+                        PurchaseStatus: purchases[i].cd_status,
+                        ticket: {
                             idTicket: ticket.cd_ticket,
                             TicketName: ticket.nm_ticket,
                             TicketEvent: event.nm_event,
-                            TicketQuantity: itens[i2].qt_ticket_sell,
+                            TicketQuantity: purchases[i].qt_ticket,
                             TicketValue: ticket.vl_ticket
-                        });
-                    }
-
-                    purchasesResponse.push({
-                        cd_purchase: purchases[i].cd_purchase,
-                        sg_status: purchases[i].cd_status,
-                        tickets
+                        },
+                        billet: billet,
+                        credit_card: credit_card
                     });
-                    tickets = [];
                 }
                 resolve(purchasesResponse);
             };

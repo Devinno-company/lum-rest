@@ -16,38 +16,14 @@ const controller = new PurchaseController();
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- *     //// COLOCAR EXEMPLO DE INPUT
+ * @apiParam
  * 
- * @apiSuccess (200) {Number} cd_purchase Purchase identification code.
- * @apiSuccess (200) {String} sg_status Purchase status.
- * @apiSuccess (200) {Object[ticket]} tickets Tickets in the purchase.
- * @apiSuccess (200) {Number} tickets[idTicket] Ticket identification code.
- * @apiSuccess (200) {String} tickets[TicketName] Ticket name.
- * @apiSuccess (200) {String} tickets[TicketEvent] Event name.
- * @apiSuccess (200) {Number} tickets[TicketQuantity] Ticket Quantity.
- * @apiSuccess (200) {Number} tickets[TicketValue] Ticket Value.
+ * @apiSuccess 
  * 
  * @apiSuccessExample {json} Success response:
  *   HTTPS/1.1 201 Created
  *   {
- *      "cd_purchase": 1,
- *      "sg_status": "PEN",
- *      "tickets": [
- *          {
- *              "idTicket": 1,
- *              "TicketName": "Ticket Normal F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 2,
- *              "TicketValue": 50.75
- *          }
- *          {
- *              "idTicket": 2,
- *              "TicketName": "Ticket Vip F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 1,
- *              "TicketValue": 120.50
- *          }
- *      ]
+ *      
  *   }
  * 
  *  @apiUse noTokenError
@@ -80,36 +56,12 @@ purchaseRoutes.post('/purchases', verifyToken, (request, response) => {
  * 
  * @apiParam (Path Params) {Number} idPurchase Purchase identification code.
  * 
- * @apiSuccess (200) {Number} cd_purchase Purchase identification code.
- * @apiSuccess (200) {String} sg_status Purchase status.
- * @apiSuccess (200) {Object[ticket]} tickets Tickets in the purchase.
- * @apiSuccess (200) {Number} tickets[idTicket] Ticket identification code.
- * @apiSuccess (200) {String} tickets[TicketName] Ticket name.
- * @apiSuccess (200) {String} tickets[TicketEvent] Event name.
- * @apiSuccess (200) {Number} tickets[TicketQuantity] Ticket Quantity.
- * @apiSuccess (200) {Number} tickets[TicketValue] Ticket Value.
+ * @apiSuccess
  * 
  * @apiSuccessExample Success Response:
  *  HTTPS/1.1 200 OK
  *   {
- *      "cd_purchase": 1,
- *      "sg_status": "PEN",
- *      "tickets": [
- *          {
- *              "idTicket": 1,
- *              "TicketName": "Ticket Normal F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 2,
- *              "TicketValue": 50.75
- *          }
- *          {
- *              "idTicket": 2,
- *              "TicketName": "Ticket Vip F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 1,
- *              "TicketValue": 120.50
- *          }
- *      ]
+ *      
  *   }
  * 
  * 
@@ -144,49 +96,15 @@ purchaseRoutes.get('/purchases/:idPurchase', verifyToken, async (request, respon
  * @apiUse tokenHeader
  * @apiUse tokenExample
  * 
- * @apiSuccess (200) {Number} cd_purchase Purchase identification code.
- * @apiSuccess (200) {String} sg_status Purchase status.
- * @apiSuccess (200) {Object[ticket]} tickets Tickets in the purchase.
- * @apiSuccess (200) {Number} tickets[idTicket] Ticket identification code.
- * @apiSuccess (200) {String} tickets[TicketName] Ticket name.
- * @apiSuccess (200) {String} tickets[TicketEvent] Event name.
- * @apiSuccess (200) {Number} tickets[TicketQuantity] Ticket Quantity.
- * @apiSuccess (200) {Number} tickets[TicketValue] Ticket Value.
+ * @apiSuccess 
  * 
  * @apiSuccessExample Success Response:
  *  HTTPS/1.1 200 OK
  *  {
- *      "cd_purchase": 1,
- *      "sg_status": "PEN",
- *      "tickets": [
- *          {
- *              "idTicket": 1,
- *              "TicketName": "Ticket Normal F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 2,
- *              "TicketValue": 50.75
- *          }
- *          {
- *              "idTicket": 2,
- *              "TicketName": "Ticket Vip F&F",
- *              "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 1,
- *              "TicketValue": 120.50
- *          }
- *      ]
+ *      
  *   }
  *   {
- *      "cd_purchase": 2,
- *      "sg_status": "PEN",
- *      "tickets": [
- *          {
- *              "idTicket": 1,
- *              "TicketName": "Ticket Normal F&F",
- *             "TicketEvent": "Flores e Frutas",
- *              "TicketQuantity": 5,
- *              "TicketValue": 50.75
- *          }
- *      ]
+ *      
  *   }
  *
  *  @apiUse noTokenError

@@ -1,9 +1,25 @@
-import TicketPurchase from "./TicketPurchase";
-
 interface PurchaseResponse {
-    cd_purchase: number,
-    sg_status: string,
-    tickets: Array<TicketPurchase>
+    id: number,
+    idMercadoPago: number,
+    PurchaseDate: string,
+    PurchaseStatus: string,
+    ticket: {
+        idTicket: number,
+        TicketName: string,
+        TicketEvent: string,
+        TicketQuantity: number,
+        TicketValue: number
+    }
+    billet?: {
+        idBillet: number,
+        BilletImage: string,
+        BilletPurchaseDate: string
+    } | null,
+    credit_card?: {
+        idCreditCard: number,
+        CreditCardPaymentMethod: string,
+        CreditCardApprovedDate: string
+    } | null
 }
 
 export default PurchaseResponse;
