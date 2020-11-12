@@ -18,6 +18,7 @@ const cors = require('cors');
 
 const mercadopago = require('mercadopago');
 mercadopago.configure({
+    access_token: process.env.ACCESS_TOKEN_MP,
     sandbox: true
 });
 
