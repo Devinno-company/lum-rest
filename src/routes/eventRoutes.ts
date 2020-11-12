@@ -523,7 +523,7 @@ eventRoutes.get('/get_code_mercado_pago', (request, response) => {
 eventRoutes.post('/events/:idEvent/link_mercado_pago', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if(Number(idEvent))
+    if(!Number(idEvent))
         response.status(400).json({status:400, message: 'Id invalid'});
 
     getUserByRequest(request)
