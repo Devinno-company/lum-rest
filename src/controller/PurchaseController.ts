@@ -11,7 +11,6 @@ import PurchaseBilletRepository from "../repositorys/PurchaseBilletRepository";
 import PurchaseCreditCardRepository from "../repositorys/PurchaseCreditCardRepository";
 import insertPurchase from "../interfaces/inputRepository/insertPurchase";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
-import { link } from "joi";
 const mercadopago = require('mercadopago');
 
 class PurchaseController {
@@ -29,8 +28,8 @@ class PurchaseController {
                 }
                 const login = await LoginRepository.findLoginById(user.cd_login);
                 const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
-                
-                mercadopago.configure.setAccessToken(linkMercadoPago.cd_access_token);
+
+                mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
                 
                 if (purchase.type_payment == 'credit-card') {
                     if (!purchase.credit_card)
@@ -43,16 +42,16 @@ class PurchaseController {
                             installments: purchase.credit_card.installments,
                             payment_method_id: purchase.credit_card.payment_method_id,
                             issuer_id: purchase.credit_card.issuer,
-                            application_fee: ((ticket.vl_ticket * purchase.quantity_ticket) * 0.035),
+                            application_fee: Number(((ticket.vl_ticket * purchase.quantity_ticket) * 0.035).toFixed(2)),
                             payer: {
-                                email: login.nm_email,
+                                email: "test_user_90351067@testuser.com",
                                 identification: {
                                     type: 'CPF',
                                     number: purchase.cpf_payer
                                 }
                             }
                         };
-                        
+
                         mercadopago.payment.save(payment_data)
                             .then((result: Response) => {
                                 const payment = (result.body as any);
@@ -91,22 +90,23 @@ class PurchaseController {
                             federal_unit: purchase.billet.federal_unit
                         }
 
-                        const payment_data: PaymentDataTicket = {
+                        const payment_data: any = {
                             transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
                             description: ticket.nm_ticket,
                             payment_method_id: 'bolbradesco',
                             application_fee: Number(((ticket.vl_ticket * purchase.quantity_ticket) * 0.035).toFixed(2)),
                             payer: {
-                                email: login.nm_email,
                                 first_name: user.nm_user,
                                 last_name: user.nm_surname_user,
+                                email: "test_user_90351067@testuser.com",
                                 identification: {
-                                    type: 'CPF',
-                                    number: purchase.cpf_payer
+                                    number: purchase.cpf_payer,
+                                    type: "CPF"
                                 },
                                 address
                             }
-                        };
+                        }
+
 
                         mercadopago.payment.create(payment_data)
                             .then((response: Response) => {

@@ -15,8 +15,12 @@ import chatUserRoutes from './routes/chatUserRoutes';
 import ticketRoutes from './routes/TicketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
 const cors = require('cors');
+const mercadopago = require('mercadopago');
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+mercadopago.configure({
+    sandbox: true,
+    access_token: process.env.ACCESS_TOKEN_MP
+})
 
 const listen = process.env.PORT || 3000;
 

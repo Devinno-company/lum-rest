@@ -407,7 +407,6 @@ class EventController {
                     redirect_uri: process.env.REDIRECT_URI_MP
                 })
                     .then((response) => {
-                        console.log(response.data);
 
                         const updateLink: updateLinkMercadoPago = {
                             refresh_token: response.data.refresh_token,
