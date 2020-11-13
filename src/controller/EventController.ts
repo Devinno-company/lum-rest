@@ -456,7 +456,7 @@ class EventController {
                     const link = `https://auth.mercadopago.com.br/authorization?client_id=${app_id}&response_type=code&platform_id=mp&redirect_uri=${redirect_uri}&state=${random_id}`;
 
                     LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, event.cd_event)
-                        .then(() => resolve(link))
+                        .then(() => resolve({ link }))
                         .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
                 }
             }

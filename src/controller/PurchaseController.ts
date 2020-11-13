@@ -30,13 +30,13 @@ class PurchaseController {
                 const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
 
                 mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
-                
+
                 if (purchase.type_payment == 'credit-card') {
                     if (!purchase.credit_card)
                         reject({ status: 400, message: 'Unsubmitted transaction information' })
                     else {
                         const payment_data: any = {
-                            transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
+                            transaction_amount: Number((ticket.vl_ticket * purchase.quantity_ticket).toFixed(2)),
                             token: purchase.credit_card?.token,
                             description: ticket.nm_ticket,
                             installments: purchase.credit_card.installments,
@@ -44,7 +44,7 @@ class PurchaseController {
                             issuer_id: purchase.credit_card.issuer,
                             application_fee: Number(((ticket.vl_ticket * purchase.quantity_ticket) * 0.035).toFixed(2)),
                             payer: {
-                                email: "test_user_90351067@testuser.com",
+                                email: login.nm_email,
                                 identification: {
                                     type: 'CPF',
                                     number: purchase.cpf_payer
@@ -65,9 +65,30 @@ class PurchaseController {
                                             cd_purchase_mercado_pago: payment.id,
                                             quantity_ticket: purchase.quantity_ticket,
                                         }
+                                        
+                                        PurchaseRepository.insertPurchase(newPurchase, payment.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
+                                            .then(async (result) => { 
+                                                const event = await EventRepository.findEventById(ticket.cd_event);
 
-                                        PurchaseRepository.insertPurchase(newPurchase, payment.status_payment, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
-                                            .then(() => { resolve() })
+                                                resolve({
+                                                id: result.cd_purchase,
+                                                idMercadoPago: result.cd_purchase_mercado_pago,
+                                                ticket: {
+                                                    idTicket: ticket.cd_ticket,
+                                                    TicketName: ticket.nm_ticket,
+                                                    TicketEvent: event.nm_event,
+                                                    TicketQuantity: result.qt_ticket,
+                                                    TicketValue: ticket.vl_ticket
+                                                },
+                                                billet: null,
+                                                credit_card: {
+                                                    idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
+                                                    CreditCardApprovedDate: purchaseCreditCard.dt_approved,
+                                                    CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
+                                                },
+                                                PurchaseStatus: result.cd_status,
+                                                PurchaseDate: result.dt_purchase
+                                            }) })
                                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                                     })
                                     .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
@@ -91,14 +112,14 @@ class PurchaseController {
                         }
 
                         const payment_data: any = {
-                            transaction_amount: (ticket.vl_ticket * purchase.quantity_ticket),
+                            transaction_amount: Number((ticket.vl_ticket * purchase.quantity_ticket).toFixed(2)),
                             description: ticket.nm_ticket,
                             payment_method_id: 'bolbradesco',
                             application_fee: Number(((ticket.vl_ticket * purchase.quantity_ticket) * 0.035).toFixed(2)),
                             payer: {
                                 first_name: user.nm_user,
                                 last_name: user.nm_surname_user,
-                                email: "test_user_90351067@testuser.com",
+                                email: login.nm_email,
                                 identification: {
                                     number: purchase.cpf_payer,
                                     type: "CPF"
@@ -106,8 +127,7 @@ class PurchaseController {
                                 address
                             }
                         }
-
-
+                        
                         mercadopago.payment.create(payment_data)
                             .then((response: Response) => {
                                 const payment = response.body as any;
@@ -122,8 +142,29 @@ class PurchaseController {
                                             cd_purchase_mercado_pago: payment.id,
                                             quantity_ticket: purchase.quantity_ticket,
                                         }
-                                        PurchaseRepository.insertPurchase(newPurchase, payment.status_payment, user.cd_user, purchaseBillet.cd_purchase_billet)
-                                            .then(() => { resolve() })
+                                        PurchaseRepository.insertPurchase(newPurchase, payment.status, user.cd_user, purchaseBillet.cd_purchase_billet)
+                                            .then(async (result) => { 
+                                                const event = await EventRepository.findEventById(ticket.cd_event)
+
+                                                resolve({
+                                                id: result.cd_purchase,
+                                                idMercadoPago: result.cd_purchase_mercado_pago,
+                                                ticket: {
+                                                    idTicket: ticket.cd_ticket,
+                                                    TicketName: ticket.nm_ticket,
+                                                    TicketEvent: event.nm_event,
+                                                    TicketQuantity: result.qt_ticket,
+                                                    TicketValue: ticket.vl_ticket
+                                                },
+                                                billet: {
+                                                    idBillet: purchaseBillet.cd_purchase_billet,
+                                                    BilletImage: purchaseBillet.im_billet,
+                                                    BilletPurchaseDate: purchaseBillet.dt_purchase
+                                                },
+                                                credit_card: null,
+                                                PurchaseStatus: result.cd_status,
+                                                PurchaseDate: result.dt_purchase
+                                            }) })
                                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                                     })
                                     .catch((err) => {
