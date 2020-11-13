@@ -439,25 +439,33 @@ class EventController {
                 if (!isAllowed)
                     reject({ status: 401, message: 'You are not allowed to do so' });
                 else {
-                    const app_id = process.env.APP_ID_MP as string;
-                    const redirect_uri = process.env.REDIRECT_URI_MP as string;
+                    const searchLinkByEvent = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(event.cd_event)
+                    if (searchLinkByEvent && searchLinkByEvent.id_valid)
+                        reject({ status: 409, message: "This events already linked with Mercado Pago" })
+                    else {
+                        if (searchLinkByEvent && !searchLinkByEvent.id_valid)
+                            LinkMercadoPagoRepository.deleteLinkMercadoPagoById(searchLinkByEvent.cd_link_mercado_pago)
+                                .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
 
-                    let random_id = '';
-                    let continue_process = false;
+                        const app_id = process.env.APP_ID_MP as string;
+                        const redirect_uri = process.env.REDIRECT_URI_MP as string;
+                        let random_id = '';
+                        let continue_process = false;
 
-                    do {
-                        random_id = `${Math.random() * 100}`;
-                        const searchLink = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(random_id);
+                        do {
+                            random_id = `${Math.random() * 100}`;
+                            const searchLink = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(random_id);
 
-                        if (!searchLink)
-                            continue_process = true;
-                    } while (!continue_process);
+                            if (!searchLink)
+                                continue_process = true;
+                        } while (!continue_process);
 
-                    const link = `https://auth.mercadopago.com.br/authorization?client_id=${app_id}&response_type=code&platform_id=mp&redirect_uri=${redirect_uri}&state=${random_id}`;
+                        const link = `https://auth.mercadopago.com.br/authorization?client_id=${app_id}&response_type=code&platform_id=mp&redirect_uri=${redirect_uri}&state=${random_id}`;
 
-                    LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, event.cd_event)
-                        .then(() => resolve({ link }))
-                        .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                        LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, event.cd_event)
+                            .then(() => resolve({ link }))
+                            .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                    }
                 }
             }
         });

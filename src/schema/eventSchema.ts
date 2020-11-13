@@ -111,22 +111,22 @@ export const updateEventSchema = Joi.object({
         .allow('', null)
         .optional(),
 
-    start_date_to: Joi.string()
+    date_start_to: Joi.string()
         .regex(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
         .optional(),
 
-    end_date_to: Joi.string()
+    date_end_to: Joi.string()
         .regex(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
         .optional(),
 
-    start_time_to: Joi.string()
+    hour_start_to: Joi.string()
         .min(5)
         .max(5)
         .regex(/^([01]\d|2[0-3]):?([0-5]\d)$/)
         .allow('', null)
         .optional(),
 
-    end_time_to: Joi.string()
+    hour_end_to: Joi.string()
         .min(5)
         .max(5)
         .regex(/^([01]\d|2[0-3]):?([0-5]\d)$/)

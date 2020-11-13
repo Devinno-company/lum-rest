@@ -45,6 +45,20 @@ class LinkMercadoPagoRepository {
         })
     }
 
+    public static deleteLinkMercadoPagoById(idLinkMercadoPago: number): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            trx('tb_link_mercado_pago')
+                .delete()
+                .where('cd_link_mercado_pago', '=', idLinkMercadoPago);
+
+            trx.commit()
+                .then(() => resolve())
+                .catch((err) => reject(err));
+        })
+    }
+
     public static findLinkMercadoPagoByEventId(event_id: number): Promise<LinkMercadoPago> {
 
         return new Promise(async (resolve) => {
