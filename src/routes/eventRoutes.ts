@@ -520,6 +520,29 @@ eventRoutes.get('/get_code_mercado_pago', (request, response) => {
         .catch((err) => response.status(err.status || 400).json(err));  
 });
 
+/**
+ * @api {patch} events/:idEvent/link_mercado_pago 5.6. Link the event with Mercado Pago to receive payments
+ * 
+ * @apiVersion 1.30.1
+ * @apiGroup 5. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} id Event identification code.
+ * 
+ * @apiSuccessExample {json} Success Response:
+ *  HTTPS/1.1 201 OK
+ * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ */
 eventRoutes.post('/events/:idEvent/link_mercado_pago', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
