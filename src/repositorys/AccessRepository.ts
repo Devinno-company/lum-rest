@@ -49,6 +49,18 @@ class AccessRepository {
         });
     }
 
+    public static async findAccessByUserId(idUser: number): Promise<Array<Access>> {
+
+        return new Promise(async (resolve) => {
+            const access =
+            await db('tb_access as a')
+                .select('*')
+                .where('a.cd_user', '=', idUser);
+
+            resolve(access);
+        });
+    }
+
     public static async findAccessByEventIdAndUserId(idEvent: number, idUser: number): Promise<Access> {
 
         return new Promise(async (resolve) => {

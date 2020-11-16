@@ -233,22 +233,24 @@ class EventController {
 
     public readEvents(user: User): Promise<Array<EventResponse>> {
         return new Promise(async (resolve) => {
-            const events = await EventRepository.findEventByUserId(user.cd_user);
+            const access = await AccessRepository.findAccessByUserId(user.cd_user);
             const eventResponse: Array<EventResponse> = [];
 
-            for (let i = 0; events.length < i; i++) {
-                const locationEvent = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);
+            for (let i = 0; access.length < i; i++) {
+                const event = await EventRepository.findEventById(access[i].cd_event);
+                
+                const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
                 const geolocation = await GeolocationRepository.findGeolocationById(locationEvent.cd_geolocation);
-                const category = await CategoryRepository.findCategoryById(events[i].sg_category);
+                const category = await CategoryRepository.findCategoryById(event.sg_category);
                 const city = await CityRepository.findCityById(locationEvent.cd_city);
-                const privacy = await PrivacyRepository.findPrivacyById(events[i].sg_privacy);
+                const privacy = await PrivacyRepository.findPrivacyById(event.sg_privacy);
 
                 const team: Array<TeamMember> = [];
-                const access = await AccessRepository.findAccessByEventId(events[i].cd_event);
+                const event_team = await AccessRepository.findAccessByEventId(event.cd_event);
 
                 for (let i = 0; i < access.length; i++) {
-                    const role = await RoleRepository.findRole(access[i].sg_role);
-                    const user = await UserRepository.findUserById(access[i].cd_user);
+                    const role = await RoleRepository.findRole(event_team[i].sg_role);
+                    const user = await UserRepository.findUserById(event_team[i].cd_user);
 
                     team.push({
                         id: user.cd_user,
@@ -281,27 +283,27 @@ class EventController {
                         });
                 });
 
-                const startDate = new Date(events[i].dt_start);
-                const endDate = new Date(events[i].dt_end);
+                const startDate = new Date(event.dt_start);
+                const endDate = new Date(event.dt_end);
 
-                events[i].dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
-                events[i].dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
+                event.dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+                event.dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
 
-                if (events[i].hr_start)
-                    events[i].hr_start = events[i].hr_start.slice(0, 5);
+                if (event.hr_start)
+                    event.hr_start = event.hr_start.slice(0, 5);
 
-                if (events[i].hr_end)
-                    events[i].hr_end = events[i].hr_end.slice(0, 5);
+                if (event.hr_end)
+                    event.hr_end = event.hr_end.slice(0, 5);
 
                 eventResponse.push({
-                    id: events[i].cd_event,
-                    name: events[i].nm_event,
-                    description: events[i].ds_event,
-                    start_date: events[i].dt_start,
-                    end_date: events[i].dt_end,
-                    start_time: events[i].hr_start,
-                    end_time: events[i].hr_end,
-                    type: events[i].nm_type,
+                    id: event.cd_event,
+                    name: event.nm_event,
+                    description: event.ds_event,
+                    start_date: event.dt_start,
+                    end_date: event.dt_end,
+                    start_time: event.hr_start,
+                    end_time: event.hr_end,
+                    type: event.nm_type,
                     location: {
                         street: locationEvent.nm_street,
                         neighborhood: locationEvent.nm_neighborhood,

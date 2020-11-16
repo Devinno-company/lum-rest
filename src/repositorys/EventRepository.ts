@@ -90,22 +90,10 @@ class EventRepository {
         });
     }
 
-    public static async findEventByUserId(user_id: number): Promise<Array<Event>> {
-
-        return new Promise(async (resolve) => {
-            const events = 
-                await db('tb_event as e')
-                    .select('*')
-                    .where('e.cd_user', '=', user_id);
-
-            resolve(events);
-        });
-    }
-
     public static async findEventById(idEvent: number): Promise<Event> {
 
         return new Promise(async (resolve) => {
-            const event = 
+            const event =
                 await db('tb_event as e')
                     .select('*')
                     .where('e.cd_event', '=', idEvent);
@@ -115,7 +103,7 @@ class EventRepository {
     }
 
     public static async deleteEventById(idEvent: number): Promise<any> {
-        
+
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
