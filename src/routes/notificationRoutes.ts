@@ -2,9 +2,11 @@ import NotificationController from "../controller/NotificationController";
 import express from 'express';
 import verifyToken from "../middleware/verifyToken";
 import getUserByRequest from "../utils/getUserByRequest";
+import NotificationsMercadoPagoController from "../controller/NotificationsMercadoPagoController";
 
 const notificationRoutes = express.Router();
 const controller = new NotificationController();
+const notificationsMP = new NotificationsMercadoPagoController();
 
 /**
  * @api {get} notifications 3.1. Get all notifications from the user
@@ -119,14 +121,14 @@ notificationRoutes.get('/notifications', verifyToken, (request, response) => {
 notificationRoutes.get('/notifications/:idNotification', verifyToken, (request, response) => {
     const idNotification = request.params['idNotification'];
 
-    if(!Number(idNotification))
-        response.status(400).json({status: 400, message: 'Id invalid.'});
+    if (!Number(idNotification))
+        response.status(400).json({ status: 400, message: 'Id invalid.' });
 
     getUserByRequest(request)
         .then(user => {
             controller.readNotification(user, Number(idNotification))
                 .then((notification) => response.status(200).json(notification))
-                .catch((err) => response.status(err.status | 400). json(err));
+                .catch((err) => response.status(err.status | 400).json(err));
         })
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
@@ -227,8 +229,8 @@ notificationRoutes.delete('/notifications/:idNotification', verifyToken, (reques
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
-notificationRoutes.get('/notifications_mercado_pago', (request, response) => {
-    console.log(request.body);
+notificationRoutes.get('/notifications_mercado_pago', async (request, response) => {
+    notificationsMP.whatIsAction(request.body);
     response.status(200).json();
 });
 

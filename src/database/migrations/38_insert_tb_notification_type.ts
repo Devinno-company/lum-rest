@@ -10,7 +10,9 @@ export function up(knex: Knex) {
         { sg_type: 'MTA', nm_type: 'Material Adicionado', ds_type: 'Notificação de que um novo material foi adicionado'},
         { sg_type: 'RET', nm_type: 'Removido de um evento', ds_type: 'Notificação de que o usuário doi removido de um evento'},
         { sg_type: 'MSE', nm_type: 'Nova mensagem de um evento', ds_type: 'O suporte de um evento te respondeu'},
-        { sg_type: 'MSU', nm_type: 'Nova mensagem de um usuário', ds_type: 'Um usuário mandou mensagem para o evento'}
+        { sg_type: 'MSU', nm_type: 'Nova mensagem de um usuário', ds_type: 'Um usuário mandou mensagem para o evento'},
+        { sg_type: 'NCI', nm_type: 'Nova compra de ingresso', ds_type: 'Um usuário compro um ingresso para seu evento'}
+
     ];
 
     return knex.insert(notification_type).into('tb_notification_type');

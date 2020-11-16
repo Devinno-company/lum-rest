@@ -61,6 +61,18 @@ class PurchaseRepository {
         });
     }
 
+    public static async findPurchaseByMercadoPagoId(idPurchaseMercadoPago: number): Promise<Purchase> {
+
+        return new Promise(async (resolve) => {
+            const purchase =
+            await db('tb_purchase as p')
+                .select('*')
+                .where('p.cd_purchase_mercado_pago', '=', idPurchaseMercadoPago);
+
+            resolve(purchase[0]);
+        });
+    }
+
     public static async findPurchasesByUserId(idUser: number): Promise<Array<Purchase>> {
 
         return new Promise(async (resolve) => {
