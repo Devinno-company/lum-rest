@@ -37,6 +37,8 @@ app.use(chatUserRoutes);
 app.use(ticketRoutes);
 app.use(purchaseRoutes);
 
+
+
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
 });

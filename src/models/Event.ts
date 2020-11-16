@@ -6,6 +6,7 @@ interface Event {
     ds_event: string,
     hr_start: string,
     hr_end: string,
+    im_banner: string,
     nm_type: string,
     cd_location_event: number,
     sg_privacy: string,

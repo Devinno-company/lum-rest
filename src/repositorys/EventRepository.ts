@@ -48,6 +48,7 @@ class EventRepository {
                     dt_end: updateEvent.date_end_to,
                     hr_start: updateEvent.hour_start_to,
                     hr_end: updateEvent.hour_end_to,
+                    im_banner: updateEvent.im_banner_to,
                     nm_type: updateEvent.type_to,
                     sg_privacy: updateEvent.privacy_to,
                     sg_category: updateEvent.category_to
@@ -89,9 +90,21 @@ class EventRepository {
         });
     }
 
+    public static async findEventByUserId(user_id: number): Promise<Array<Event>> {
+
+        return new Promise(async (resolve) => {
+            const events = 
+                await db('tb_event as e')
+                    .select('*')
+                    .where('e.cd_user', '=', user_id);
+
+            resolve(events);
+        });
+    }
+
     public static async findEventById(idEvent: number): Promise<Event> {
 
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async (resolve) => {
             const event = 
                 await db('tb_event as e')
                     .select('*')

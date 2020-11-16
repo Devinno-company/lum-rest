@@ -164,7 +164,7 @@ class ProfileController {
                 type = '.jpg';
 
             // Gera o nome do arquivo e o link que o arquivo será disponibilizado
-            const fileName: string = genNameFile(user, type);
+            const fileName: string = genNameFile('profile', user.cd_user, type);
             const link = `https://${process.env.BUCKET_NAME}.s3-${process.env.BUCKET_REGION}.amazonaws.com/image/profile/${fileName}`;
 
             // Configura a request de upload

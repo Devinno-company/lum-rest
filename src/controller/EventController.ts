@@ -21,6 +21,9 @@ import havePermission from "../utils/havePermission";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
 import Axios from "axios";
 import updateLinkMercadoPago from "../interfaces/inputRepository/updateLinkMercadoPago";
+import s3 from "../aws/S3";
+import { DeleteObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
+import genNameFile from "../utils/genNameFile";
 
 class EventController {
 
@@ -150,7 +153,7 @@ class EventController {
         });
     }
 
-    async deleteEvent(idEvent: number, user: User) {
+    async deleteEvent(user: User, idEvent: number) {
 
         return new Promise(async (resolve, reject) => {
 
@@ -225,6 +228,106 @@ class EventController {
                 }
 
             }
+        });
+    }
+
+    public readEvents(user: User): Promise<Array<EventResponse>> {
+        return new Promise(async (resolve) => {
+            const events = await EventRepository.findEventByUserId(user.cd_user);
+            const eventResponse: Array<EventResponse> = [];
+
+            for (let i = 0; events.length < i; i++) {
+                const locationEvent = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);
+                const geolocation = await GeolocationRepository.findGeolocationById(locationEvent.cd_geolocation);
+                const category = await CategoryRepository.findCategoryById(events[i].sg_category);
+                const city = await CityRepository.findCityById(locationEvent.cd_city);
+                const privacy = await PrivacyRepository.findPrivacyById(events[i].sg_privacy);
+
+                const team: Array<TeamMember> = [];
+                const access = await AccessRepository.findAccessByEventId(events[i].cd_event);
+
+                for (let i = 0; i < access.length; i++) {
+                    const role = await RoleRepository.findRole(access[i].sg_role);
+                    const user = await UserRepository.findUserById(access[i].cd_user);
+
+                    team.push({
+                        id: user.cd_user,
+                        name: user.nm_user,
+                        surname: user.nm_surname_user,
+                        image: user.im_user,
+                        role: {
+                            name: role.nm_role,
+                            description: role.ds_role
+                        }
+                    });
+                }
+
+                access.forEach(item => {
+                    RoleRepository.findRole(item.sg_role)
+                        .then(role => {
+                            UserRepository.findUserById(item.cd_user)
+                                .then(user => {
+                                    team.push({
+                                        id: user.cd_user,
+                                        name: user.nm_user,
+                                        surname: user.nm_surname_user,
+                                        image: user.im_user,
+                                        role: {
+                                            name: role.nm_role,
+                                            description: role.ds_role
+                                        }
+                                    })
+                                });
+                        });
+                });
+
+                const startDate = new Date(events[i].dt_start);
+                const endDate = new Date(events[i].dt_end);
+
+                events[i].dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+                events[i].dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
+
+                if (events[i].hr_start)
+                    events[i].hr_start = events[i].hr_start.slice(0, 5);
+
+                if (events[i].hr_end)
+                    events[i].hr_end = events[i].hr_end.slice(0, 5);
+
+                eventResponse.push({
+                    id: events[i].cd_event,
+                    name: events[i].nm_event,
+                    description: events[i].ds_event,
+                    start_date: events[i].dt_start,
+                    end_date: events[i].dt_end,
+                    start_time: events[i].hr_start,
+                    end_time: events[i].hr_end,
+                    type: events[i].nm_type,
+                    location: {
+                        street: locationEvent.nm_street,
+                        neighborhood: locationEvent.nm_neighborhood,
+                        number: locationEvent.cd_number,
+                        cep: locationEvent.cd_cep,
+                        complement: locationEvent.nm_complement,
+                        geolocation: {
+                            latitude: geolocation.cd_latitude,
+                            longitude: geolocation.cd_longitude,
+                        },
+                        city: city.nm_city,
+                        uf: city.sg_uf
+                    },
+                    privacy: {
+                        name: privacy.nm_privacy,
+                        description: privacy.ds_privacy
+                    },
+                    category: {
+                        name: category.nm_category,
+                        description: category.ds_category
+                    },
+                    team
+                });
+            }
+
+            resolve(eventResponse);
         });
     }
 
@@ -465,6 +568,111 @@ class EventController {
                         LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, event.cd_event)
                             .then(() => resolve({ link }))
                             .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                    }
+                }
+            }
+        });
+    }
+
+    uploadBanner(user: User, idEvent: number, banner: Express.Multer.File): Promise<EventResponse> {
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: "This events doesn't exists" });
+            else {
+                const isAllowed = await havePermission(user.cd_user, idEvent, 'CRI')
+                    .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) })
+
+                if (!isAllowed)
+                    reject({ status: 401, message: "You are not allowed to do so" })
+                else {
+                    let type = '';
+                    // Verifica se o formato está certo
+                    if (banner.mimetype == 'image/png')
+                        type = '.png';
+                    else
+                        type = '.jpg';
+
+
+                    const eventName = event.nm_event.toLowerCase().replace(' ', '-');
+                    // Gera o nome do arquivo e o link que o arquivo será disponibilizado
+                    const fileName: string = genNameFile('event', user.cd_user, type);
+                    const link = `https://${process.env.BUCKET_NAME}.s3-${process.env.BUCKET_REGION}.amazonaws.com/image/event/${eventName}/banner/${fileName}`;
+
+                    // Configura a request de upload
+                    const putObjectRequest: PutObjectRequest =
+                    {
+                        Bucket: process.env.BUCKET_NAME as string + `/image/event/${eventName}/banner/`,
+                        Key: fileName,
+                        Body: banner.buffer,
+                        ContentLength: banner.size,
+                        ACL: 'public-read',
+                        ContentType: (type == 'image/jpeg') ? 'image/jpeg' : 'image/png'
+                    };
+
+                    // Faz o upload o arquivo
+                    s3.upload(putObjectRequest, async (err: Error) => {
+                        if (err) {
+                            reject({ message: 'Unknown error. Try again later.', error: err });
+                        } else {
+                            // Persiste o link no banco e retorna o link para o usuário
+                            EventRepository.updateEvent(event.cd_event, { im_banner_to: link })
+                                .then(async (event) => {
+                                    resolve(await this.readEvent(event.cd_event, user));
+                                })
+                                .catch(e => {
+                                    reject({ message: 'Unknown error. Try again later.', error: e })
+                                });
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    removeBanner(user: User, idEvent: number): Promise<EventResponse> {
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: "This events doesn't exists" });
+            else {
+                if (!event.im_banner || event.im_banner == '')
+                    reject({ status: 400, message: "This event doesn't have banner" })
+                else {
+                    const isAllowed = await havePermission(user.cd_user, idEvent, 'CRI')
+                        .catch(() => { reject({ status: 401, message: "You are not allowed to do so" }) })
+
+                    if (!isAllowed)
+                        reject({ status: 401, message: "You are not allowed to do so" })
+                    else {
+                        // Gera o nome do arquivo e o link que o arquivo será disponibilizado
+                        const eventName = event.nm_event.toLowerCase().replace(' ', '-');
+                        const link = event.im_banner;
+                        const filename = link.slice(link.search('banner') + 7);
+
+                        // Configura a request de upload
+                        const deleteObjectRequest: DeleteObjectRequest =
+                        {
+                            Bucket: process.env.BUCKET_NAME as string + `/image/event/${eventName}/banner/`,
+                            Key: filename
+                        };
+
+                        // Faz o upload o arquivo
+                        s3.deleteObject(deleteObjectRequest, async (err: Error) => {
+                            if (err) {
+                                reject({ message: 'Unknown error. Try again later.', error: err });
+                            } else {
+                                EventRepository.updateEvent(event.cd_event, { im_banner_to: '' })
+                                    .then(async (event) => {
+                                        resolve(await this.readEvent(event.cd_event, user));
+                                    })
+                                    .catch(e => {
+                                        reject({ message: 'Unknown error. Try again later.', error: e })
+                                    });
+                            }
+                        });
                     }
                 }
             }

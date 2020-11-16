@@ -6,14 +6,16 @@ import verifyToken from '../middleware/verifyToken';
 import getUserByRequest from '../utils/getUserByRequest';
 import UpdateEvent from "../interfaces/request/UpdateEventRequest";
 import EventResponse from '../interfaces/response/EventResponse';
+import multer from 'multer';
 
 const eventRoutes = express.Router();
 const controller = new EventController();
+const formData = multer();
 
 /**
  * @api {post} events 5.1. Create event
  * 
- * @apiVersion 1.5.2
+ * @apiVersion 1.31.0
  * @apiGroup 5. Events
  * 
  * @apiUse tokenHeader
@@ -291,6 +293,155 @@ eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
 });
 
 /**
+ * @api {get} events/:id 5.2. Get user events
+ * 
+ * @apiVersion 1.5.2
+ * @apiGroup 5. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiSuccess (200) {Number} id Event identification code.
+ * @apiSuccess (200) {String{3..100}} name Event name.
+ * @apiSuccess (200) {Date} start_date Start date of the event. (Format: yyyy-mm-dd).
+ * @apiSuccess (200) {Date} end_date End date of the event. (Format: yyyy-mm-dd).
+ * @apiSuccess (200) {String{..255}} [description] Event description.
+ * @apiSuccess (200) {Time} [start_time] Start time of the event. (Format: hh:mm).
+ * @apiSuccess (200) {Time} [end_time] End time of the event. (Format: hh:mm).
+ * @apiSuccess (200) {String{0..100}} [type] Event type.
+ * @apiSuccess (200) {Object} location Event location.
+ * @apiSuccess (200) {String{3}} privacy Event privacy.
+ * @apiSuccess (200) {String{3}} category Event category.
+ * @apiSuccess (200) {String{3..120}} location[street] Event street.
+ * @apiSuccess (200) {String{3..100}} location[neighborhood] Event neighborhood.
+ * @apiSuccess (200) {Number} location[number] Event establishment number
+ * @apiSuccess (200) {String{8}} location[cep] Event zip code. (Only numbers).
+ * @apiSuccess (200) {String{0..100}} [location[complement]] Additional event location information.
+ * @apiSuccess (200) {String{3..100}} location[city] Location Event city.
+ * @apiSuccess (200) {String{2}} location[uf] Event federative unit. (uppercase).
+ * @apiSuccess (200) {Object} location[geolocation] Event geolocation.
+ * @apiSuccess (200) {Number} geolocation[latitude] Event latitude.
+ * @apiSuccess (200) {Number} geolocation[longitude] Event longitude.
+ * @apiSuccess (200) {Object[user]} team Users responsible for organizing the event.
+ * @apiSuccess (200) {Number} team[id] User identification code.
+ * @apiSuccess (200) {String} team[name] User name.
+ * @apiSuccess (200) {String} team[surname] User surname.
+ * @apiSuccess (200) {String} team[image] User image
+ * @apiSuccess (200) {Object} team[role] User name.
+ * @apiSuccess (200) {String} role[name] Role name.
+ * @apiSuccess (200) {String} role[description] Role description.
+ * 
+ * @apiSuccessExample Success Response:
+ *  HTTPS/1.1 201 Created
+ *  [
+ *      {
+ *       "name": "Flores e frutas",
+ *       "start_date": "2020-10-22",
+ *       "end_date": "2020-10-25",
+ *       "description": "Venha participar do maior evento sobre flores e frutas da América Latina.",
+ *       "start_time": "15:00",
+ *       "end_time": "20:00",
+ *       "privacy": "PUB",
+ *       "category": "NAT"
+ *       "location": {
+ *           "street": "Rua rubi",
+ *           "neighborhood": "Cidade da criança",
+ *           "number": 202,
+ *           "cep": "11710210",
+ *           "complement": "Espaço B",
+ *           "geolocation": {
+ *                "latitude": 1.534,
+ *                "longitude": 3.123,
+ *           },
+ *           "city": "Praia Grande",
+ *           "uf": "SP"
+ *       },
+ *       "team": [
+ *          {
+ *              "id": 1,
+ *              "name": "João",
+ *              "surname": "Silva",
+ *              "image": null,
+ *              "role": {
+ *                  "name": "Criador",
+ *                  "description": "Responsável pela criação e toda organização do evento."
+ *           },
+ *           {
+ *              "id": 2,
+ *              "name": "Marcos",
+ *              "surname": "Oliveira",
+ *              "image": "https://www.images.com/2",
+ *              "role": {
+ *                  "name": "Coordenador",
+ *                  "description": "Responsável por auxiliar o criador a organizar o evento."
+ *           },
+ *           {
+ *              "id": 3,
+ *              "name": "Fernanda",
+ *              "surname": "Oliveira",
+ *              "image": "https://www.images.com/4",
+ *              "role": {
+ *                  "name": "Membro da equipe",
+ *                  "description": "Responsável por realizar as tarefas atribuídas a ele."
+ *           }
+ *        ]
+ *      },
+ *      {
+ *       "name": "Doces da baixada santista",
+ *       "start_date": "2020-11-10",
+ *       "end_date": "2020-11-12",
+ *       "description": "Venha participar do maior evento de doces de toda baixada santista.",
+ *       "start_time": "15:00",
+ *       "end_time": "20:00",
+ *       "privacy": "PUB",
+ *       "category": "NAT"
+ *       "location": {
+ *           "street": "Rua rubi",
+ *           "neighborhood": "Cidade da criança",
+ *           "number": 202,
+ *           "cep": "11710210",
+ *           "complement": "Espaço B",
+ *           "geolocation": {
+ *                "latitude": 1.534,
+ *                "longitude": 3.123,
+ *           },
+ *           "city": "Praia Grande",
+ *           "uf": "SP"
+ *       },
+ *       "team": [
+ *          {
+ *              "id": 1,
+ *              "name": "João",
+ *              "surname": "Silva",
+ *              "image": null,
+ *              "role": {
+ *                  "name": "Criador",
+ *                  "description": "Responsável pela criação e toda organização do evento."
+ *           }
+ *        ]
+ *      }
+ *  ]
+ * 
+ *  @apiUse noTokenError
+ *  @apiUse noTokenErrorExample
+ *  @apiUse notAllowedError
+ *  @apiUse notAllowedErrorExample
+ *  @apiUse invalidTokenError
+ *  @apiUse invalidTokenErrorExample
+ *  @apiUse incorrectFieldsError
+ */
+eventRoutes.get('/events', verifyToken, async (request, response) => {
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.readEvents(user)
+                .then((result) => response.status(200).json(result))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
+/**
  * @api {put} events/:id 5.3. Update event
  * 
  * @apiVersion 1.7.0
@@ -459,7 +610,7 @@ eventRoutes.delete('/events/:idEvent', verifyToken, (request, response) => {
 
     getUserByRequest(request)
         .then(user => {
-            controller.deleteEvent(Number(idEvent), user)
+            controller.deleteEvent(user, Number(idEvent))
                 .then((result) => response.status(200).json(result))
                 .catch((err: any) => response.status(err.status || 400).json(err));
         })
@@ -553,6 +704,86 @@ eventRoutes.post('/events/:idEvent/link_mercado_pago', verifyToken, (request, re
         .then((user) => {
             controller.linkMercadoPagoAccount(user, Number(idEvent))
                 .then((result) => response.status(201).json(result))
+                .catch((err) => response.status(err.status || 400).json(err));
+        })
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
+/**
+ * @api {post} events/:idEvent/banner 5.6. Upload the event banner
+ * 
+ * @apiVersion 1.31.0
+ * @apiGroup 5. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} id Event identification code.
+ * @apiParam (Form data params) {image} banner Event banner.
+ * 
+ * @apiSuccessExample {json} Success Response:
+ *  HTTPS/1.1 200 OK
+ * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ */
+eventRoutes.post('/events/:idEvent/banner', verifyToken, formData.single('banner'), (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const banner = request.file;
+
+    if(!Number(idEvent))
+        response.status(400).json({status:400, message: 'Id invalid'});
+    if(!banner)
+        response.status(400).json({status:400, message: 'Ther banner field in form data is required'});
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.uploadBanner(user, Number(idEvent), banner)
+                .then((result) => response.status(201).json(result))
+                .catch((err) => response.status(err.status || 400).json(err));
+        })
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
+/**
+ * @api {delete} events/:idEvent/banner 5.6. Remove the event banner
+ * 
+ * @apiVersion 1.31.0
+ * @apiGroup 5. Events
+ * 
+ * @apiUse tokenHeader
+ * @apiUse tokenExample
+ * 
+ * @apiParam (Path Params) {Number} id Event identification code.
+ * 
+ * @apiSuccessExample {json} Success Response:
+ *  HTTPS/1.1 200 OK
+ * 
+ * @apiUse eventNotFoundError
+ * @apiUse eventNotFoundErrorExample
+ * @apiUse notAllowedError
+ * @apiUse notAllowedErrorExample
+ * @apiUse noTokenError
+ * @apiUse noTokenErrorExample
+ * @apiUse invalidTokenError
+ * @apiUse invalidTokenErrorExample
+ */
+eventRoutes.delete('/events/:idEvent/banner', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+
+    if(!Number(idEvent))
+        response.status(400).json({status:400, message: 'Id invalid'});
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.removeBanner(user, Number(idEvent))
+                .then((result) => response.status(200).json(result))
                 .catch((err) => response.status(err.status || 400).json(err));
         })
         .catch((err) => response.status(err.status || 400).json(err));
