@@ -235,10 +235,9 @@ class EventController {
         return new Promise(async (resolve) => {
             const access = await AccessRepository.findAccessByUserId(user.cd_user);
             const eventResponse: Array<EventResponse> = [];
-
-            for (let i = 0; access.length < i; i++) {
+            
+            for (let i = 0; access.length > i; i++) {
                 const event = await EventRepository.findEventById(access[i].cd_event);
-                
                 const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
                 const geolocation = await GeolocationRepository.findGeolocationById(locationEvent.cd_geolocation);
                 const category = await CategoryRepository.findCategoryById(event.sg_category);
@@ -248,7 +247,7 @@ class EventController {
                 const team: Array<TeamMember> = [];
                 const event_team = await AccessRepository.findAccessByEventId(event.cd_event);
 
-                for (let i = 0; i < access.length; i++) {
+                for (let i = 0; i < event_team.length; i++) {
                     const role = await RoleRepository.findRole(event_team[i].sg_role);
                     const user = await UserRepository.findUserById(event_team[i].cd_user);
 
@@ -328,7 +327,7 @@ class EventController {
                     team
                 });
             }
-
+            
             resolve(eventResponse);
         });
     }
