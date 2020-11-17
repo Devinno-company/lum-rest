@@ -51,6 +51,19 @@ class InviteRepository {
         });
     }
 
+    public static async findInvitesByEventId(event_id: number): Promise<Array<Invite>> {
+
+        return new Promise(async (resolve) => {
+
+            const invites: Array<Invite> =
+                await db('tb_invite as i')
+                    .select('*')
+                    .where('i.cd_event', '=', event_id);
+
+            resolve(invites);
+        });
+    }
+
     public static async updateStatusInvite(idInvite: number, status_id: 'ACE' | 'REC'): Promise<Invite> {
 
         return new Promise(async (resolve, reject) => {

@@ -6,10 +6,17 @@ import updatePassword from '../interfaces/request/UpdatePasswordRequest';
 import UpdateUser from '../interfaces/request/UpdateUserRequest';
 import UserResponse from '../interfaces/response/UserResponse';
 import User from "../models/User";
+import AccessRepository from '../repositorys/AccessRepository';
 import CityRepository from '../repositorys/CityRepository';
 import GeolocationRepository from '../repositorys/GeolocationRepository';
+import InviteRepository from '../repositorys/InviteRepository';
 import LocationUserRepository from '../repositorys/LocationUserRepository';
 import LoginRepository from '../repositorys/LoginRepository';
+import MessageRepository from '../repositorys/MessageRepository';
+import NotificationRepository from '../repositorys/NotificationRepository';
+import PurchaseRepository from '../repositorys/PurchaseRepository';
+import RoomRepository from '../repositorys/RoomRepository';
+import TaskRepository from '../repositorys/TaskRepository';
 import UserRepository from '../repositorys/UserRepository';
 import genNameFile from '../utils/genNameFile';
 
@@ -108,19 +115,65 @@ class ProfileController {
                     if (user.cd_login != login.cd_login)
                         reject({ message: 'Is necessary be logged with user for delete your account' })
                     else {
-                        UserRepository.deleteUserById(user.cd_user)
-                            .then(async () => {
-                                if (user.cd_location_user) {
-                                    const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
-                                    LocationUserRepository.deleteLocationUserById(user.cd_location_user);
-                                    GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation);
+                        if ((await PurchaseRepository.findPurchasesByUserId(user.cd_user)).length > 0) {
+                            reject({ status: 403, message: "You can't delete a user that already has purchases."});
+                        }
+                        else {
+                            /* Deleta todos convites (invites) relacionados ao usuário */
+                            const invites = await InviteRepository.findInvitesByUserId(user.cd_user);
+                            if (invites) {
+                                invites.map(async item => {
+                                    await InviteRepository.deleteInviteById(item.cd_invite)
+                                });
+                            }
+                            /* Deleta todas salas de conversa (rooms) relacionadas ao usuário */
+                            const rooms = await RoomRepository.findRoomsByUserId(user.cd_user);
+                            if (rooms) {
+                                rooms.map(async item => {
+                                    const messages = await MessageRepository.findMessagesByRoomId(item.cd_room);
+                                    if (messages) {
+                                        messages.map(async item => {
+                                            await MessageRepository.deleteMessageById(item.cd_message)
+                                        });
                                 }
-                                await LoginRepository.deleteLoginById(user.cd_login);
-                                resolve();
-                            })
-                            .catch((err) => {
-                                reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
-                            });
+                                    await RoomRepository.deleteRoomById(item.cd_room)
+                                });
+                            }
+                            /* Deleta todas notificações (notifications) relacionadas ao usuário */
+                            const notifications = await NotificationRepository.findNotificationByUserId(user.cd_user);
+                            if (notifications) {
+                                notifications.map(async item => {
+                                    await NotificationRepository.deleteNotificationById(item.cd_notification)
+                                });
+                            }
+                            /* Deleta todos acessos (accesses) relacionados ao usuário */
+                            const accesses = await AccessRepository.findAccessByUserId(user.cd_user);
+                            if (accesses) {
+                                accesses.map(async item => {
+                                    const tasks = await TaskRepository.findTaskByAccessId(item.cd_access)
+                                    if (tasks.length > 0) {
+                                        tasks.map(async item => {
+                                            await TaskRepository.removeUserFromTask(item.cd_task)
+                                        })
+                                    }
+                                    await AccessRepository.deleteAccessById(item.cd_access)
+                                });
+                            }
+
+                            UserRepository.deleteUserById(user.cd_user)
+                                .then(async () => {
+                                    if (user.cd_location_user) {
+                                        const locationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                                        LocationUserRepository.deleteLocationUserById(user.cd_location_user);
+                                        GeolocationRepository.deleteGeolocation(locationUser.cd_geolocation);
+                                    }
+                                    await LoginRepository.deleteLoginById(user.cd_login);
+                                    resolve();
+                                })
+                                .catch((err) => {
+                                    reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
+                                });
+                        }
                     }
                 }
             }

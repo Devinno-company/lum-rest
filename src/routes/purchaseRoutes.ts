@@ -35,30 +35,30 @@ const controller = new PurchaseController();
  * 
  * @apiExample {json} Request body:
  * {
- *   ticket_id: 1,
- *   quantity_ticket: 1,
- *   cpf_payer: "25654817051",
- *   type_payment: "billet",
- *   billet: {
- *       zip_code: "71015070",
- *       street_name: "Quadra QI 14 Bloco G",
- *       street_number: "443",
- *       neighborhood: "Guará I",
- *       city: "Brasília",
- *       federal_unit: "DF"
+ *   "ticket_id": 1,
+ *   "quantity_ticket": 1,
+ *   "cpf_payer": "25654817051",
+ *   "type_payment": "billet",
+ *   "billet": {
+ *       "zip_code": "71015070",
+ *       "street_name": "Quadra QI 14 Bloco G",
+ *       "street_number": "443",
+ *       "neighborhood": "Guará I",
+ *       "city": "Brasília",
+ *       "federal_unit": "DF"
  *   }
  * }
  * @apiExample {json} Request body:
  * {
- *   ticket_id: 3,
- *   quantity_ticket: 4,
- *   cpf_payer: "46423980071",
- *   type_payment: "credit-card",
- *   credit_card: {
- *       payment_method_id: "",
- *       token: "",
- *       installments: 2,
- *       issuer: ""
+ *   "ticket_id": 3,
+ *   "quantity_ticket": 4,
+ *   "cpf_payer": "46423980071",
+ *   "type_payment": "credit-card",
+ *   "credit_card": {
+ *       "payment_method_id": "",
+ *       "token": "",
+ *       "installments": 2,
+ *       "issuer": ""
  *   }
  * }
  * 

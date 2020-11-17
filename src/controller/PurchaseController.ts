@@ -383,7 +383,15 @@ class PurchaseController {
                 reject({ status: 401, message: "You are not allowed to do so" });
             else {
                 PurchaseRepository.deletePurchaseById(idPurchase)
-                    .then(() => { resolve() })
+                    .then(() => { 
+                        if(purchase.cd_purchase_billet) {
+                            PurchaseBilletRepository.deletePurchaseBillet(purchase.cd_purchase_billet);
+                        }
+                        if(purchase.cd_purchase_credit_card) {
+                            PurchaseCreditCardRepository.deletePurchaseCreditCard(purchase.cd_purchase_credit_card);
+                        }
+                        
+                        resolve() })
                     .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }); })
             }
         });

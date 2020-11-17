@@ -3,6 +3,7 @@ import UpdateTicketRequest from "../interfaces/request/UpdateTicketRequest";
 import TicketResponse from "../interfaces/response/TicketResponse";
 import User from "../models/User";
 import EventRepository from "../repositorys/EventRepository";
+import PurchaseRepository from "../repositorys/PurchaseRepository";
 import TicketRepository from "../repositorys/TicketRepository";
 import havePermission from "../utils/havePermission";
 
@@ -180,11 +181,16 @@ class TicketController {
                     if (ticket.cd_event != event.cd_event)
                         reject({ status: 400, message: "This ticket does not belong to this event" });
                     else {
-                        TicketRepository.deleteTicketById(ticket.cd_ticket)
-                            .then(() => {
-                                resolve();
-                            })
-                            .catch((err) => { reject({ status: 400, message: "Unknown erro. Try again later.", err }) });
+                        if ((await PurchaseRepository.findPurchasesByTicketId(ticket.cd_ticket)).length == 0) {
+                            reject({ status: 403, message: "You can't delete a ticket that already has purchases" });
+                        }
+                        else {
+                            TicketRepository.deleteTicketById(ticket.cd_ticket)
+                                .then(() => {
+                                    resolve();
+                                })
+                                .catch((err) => { reject({ status: 400, message: "Unknown erro. Try again later.", err }) });
+                        }
                     }
                 }
             }

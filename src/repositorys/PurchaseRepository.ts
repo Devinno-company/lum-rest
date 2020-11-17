@@ -85,6 +85,18 @@ class PurchaseRepository {
         });
     }
 
+    public static async findPurchasesByTicketId(idTicket: number): Promise<Array<Purchase>> {
+
+        return new Promise(async (resolve) => {
+            const purchase =
+            await db('tb_purchase as p')
+                .select('*')
+                .where('p.cd_ticket', '=', idTicket);
+
+            resolve(purchase);
+        });
+    }
+
     public static async deletePurchaseById(idPurchase: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();

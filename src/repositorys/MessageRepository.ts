@@ -39,6 +39,23 @@ class MessageRepository {
             resolve(messages);
         });
     }
+
+    public static async deleteMessageById(message_id: number): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_message')
+                .where('cd_message', '=', message_id)
+                .delete();
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
 }
 
 export default MessageRepository;

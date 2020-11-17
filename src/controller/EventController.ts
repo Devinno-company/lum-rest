@@ -24,6 +24,12 @@ import updateLinkMercadoPago from "../interfaces/inputRepository/updateLinkMerca
 import s3 from "../aws/S3";
 import { DeleteObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
 import genNameFile from "../utils/genNameFile";
+import TicketRepository from "../repositorys/TicketRepository";
+import PurchaseRepository from "../repositorys/PurchaseRepository";
+import purchaseRoutes from "../routes/purchaseRoutes";
+import InviteRepository from "../repositorys/InviteRepository";
+import MessageRepository from "../repositorys/MessageRepository";
+import RoomRepository from "../repositorys/RoomRepository";
 
 class EventController {
 
@@ -168,51 +174,85 @@ class EventController {
                     reject({ status: 401, message: "You are not allowed to do so" })
                 }
                 else {
-
+                    /* Deleta todos bilhetes(tickets) relacionados ao evento */
+                    const tickets = await TicketRepository.findTicketsByEventId(event.cd_event);
+                    if (tickets) {
+                        tickets.map(item => {
+                            if (PurchaseRepository.findPurchasesByTicketId(item.cd_ticket)) {
+                                reject({ status: 403, message: "You can't delete events that already have purchases."});
+                            }
+                        });
+                        tickets.map(async item => {
+                            await TicketRepository.deleteTicketById(item.cd_ticket)
+                        });
+                    }
                     /* Deleta todas tasks relacionadas ao evento */
                     const tasks = await TaskRepository.findTaskByEventId(event.cd_event);
                     if (tasks) {
-                        tasks.map(item => {
-                            TaskRepository.deleteTaskById(item.cd_task)
-                        });
-                    }
-                    /* Deleta todos acessos relacionados ao evento */
-                    const accesses = await AccessRepository.findAccessByEventId(event.cd_event);
-                    if (accesses) {
-                        accesses.map(item => {
-                            AccessRepository.deleteAccessById(item.cd_access)
+                        tasks.map(async item => {
+                            await TaskRepository.deleteTaskById(item.cd_task)
                         });
                     }
                     /* Deleta todos tempos(times) relacionados ao evento */
                     const times = await TimeRepository.findTimeByEventId(event.cd_event);
                     if (times) {
-                        times.map(item => {
-                            TimeRepository.deleteTimeById(item.cd_time)
+                        times.map(async item => {
+                            await TimeRepository.deleteTimeById(item.cd_time)
                         });
                     }
                     /* Deleta todos avisos(notices) relacionados ao evento */
                     const notices = await NoticeRepository.findNoticeByEventId(event.cd_event);
                     if (notices) {
-                        notices.map(item => {
-                            NoticeRepository.deleteNoticeById(item.cd_notice)
+                        notices.map(async item => {
+                            await NoticeRepository.deleteNoticeById(item.cd_notice)
                         });
                     }
                     /* Deleta todos mapas(maps) relacionados ao evento */
                     const maps = await MapRepository.findMapByEventId(event.cd_event);
                     if (maps) {
-                        maps.map(item => {
-                            MapRepository.deleteMapById(item.cd_map)
+                        maps.map(async item => {
+                            await MapRepository.deleteMapById(item.cd_map)
                         });
                     }
                     /* Deleta todos materiais(materials) relacionados ao evento */
                     const materials = await MaterialRepository.findMaterialByEventId(event.cd_event);
                     if (materials) {
-                        materials.map(item => {
-                            MaterialRepository.deleteMaterialById(item.cd_material)
+                        materials.map(async item => {
+                            await MaterialRepository.deleteMaterialById(item.cd_material)
                         });
                     }
-
-
+                    /* Deleta o link do mercado pago(link_mercado_pago) relacionado ao evento */
+                    const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(event.cd_event);
+                    if (linkMercadoPago) {
+                            await LinkMercadoPagoRepository.deleteLinkMercadoPagoById(linkMercadoPago.cd_link_mercado_pago)
+                    }
+                    /* Deleta todos convites(invites) relacionados ao evento */
+                    const invites = await InviteRepository.findInvitesByEventId(event.cd_event);
+                    if (invites) {
+                        invites.map(async item => {
+                            await InviteRepository.deleteInviteById(item.cd_invite)
+                        });
+                    }
+                    /* Deleta todas as salas de chat(rooms) relacionados ao evento */
+                    const rooms = await RoomRepository.findRoomsByEventId(event.cd_event);
+                    if (rooms) {
+                        rooms.map(async item => {
+                            const messages = await MessageRepository.findMessagesByRoomId(item.cd_room);
+                            if (messages) {
+                                messages.map(async item => {
+                                   await MessageRepository.deleteMessageById(item.cd_message)
+                                });
+                        }
+                            await RoomRepository.deleteRoomById(item.cd_room)
+                        });
+                    }
+                    /* Deleta todos acessos relacionados ao evento */
+                    const accesses = await AccessRepository.findAccessByEventId(event.cd_event);
+                    if (accesses) {
+                        accesses.map(async item => {
+                            await AccessRepository.deleteAccessById(item.cd_access)
+                        });
+                    }
                     EventRepository.deleteEventById(event.cd_event)
                         .then(async () => {
                             if (event.cd_location_event) {
@@ -226,7 +266,6 @@ class EventController {
                             reject({ status: 400, message: 'Unknown error. Try again later.', error: err });
                         });
                 }
-
             }
         });
     }

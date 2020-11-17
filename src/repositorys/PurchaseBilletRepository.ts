@@ -40,6 +40,25 @@ class PurchaseBilletRepository {
                 });
         });
     }
+
+    public static deletePurchaseBillet(idPurchaseBillet: number): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_purchase_billet')
+                .where('cd_purchase_billet', '=', idPurchaseBillet)
+                .delete();
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
 }
 
 export default PurchaseBilletRepository;

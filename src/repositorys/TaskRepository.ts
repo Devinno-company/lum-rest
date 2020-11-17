@@ -50,6 +50,18 @@ class TaskRepository {
         });
     }
 
+    public static async findTaskByAccessId(idAccess: number): Promise<Array<Task>> {
+
+        return new Promise(async (resolve) => {
+            const task =
+                await db('tb_task as t')
+                    .select('*')
+                    .where('t.cd_access_user', '=', idAccess);
+
+            resolve(task);
+        });
+    }
+
     public static async updateTaskById(idTask: number, updateTask: UpdateTaskRequest): Promise<Task> {
 
         return new Promise(async (resolve, reject) => {
@@ -60,6 +72,28 @@ class TaskRepository {
                     .update({
                         nm_task: updateTask.name_to,
                         ds_task: updateTask.description_to
+                    })
+                    .where('cd_task', '=', idTask)
+                    .returning('*');
+
+            trx.commit()
+                .then(() => { resolve(updatedTask[0]); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
+    public static async removeUserFromTask(idTask: number): Promise<Task> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            const updatedTask =
+                await trx('tb_task')
+                    .update({
+                        cd_access_user: null
                     })
                     .where('cd_task', '=', idTask)
                     .returning('*');

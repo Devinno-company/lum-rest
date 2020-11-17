@@ -40,6 +40,24 @@ class PurchaseCreditCardRepository {
                 });
         });
     }
+
+    public static deletePurchaseCreditCard(idPurchaseCreditCard: number): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_purchase_credit_card')
+                .where('cd_purchase_credit_card', '=', idPurchaseCreditCard)
+                .delete();
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
 }
 
 export default PurchaseCreditCardRepository;

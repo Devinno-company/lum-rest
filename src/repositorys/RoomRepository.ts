@@ -78,6 +78,23 @@ class RoomRepository {
             resolve(room[0]);
         });
     }
+
+    public static async deleteRoomById(room_id: number): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_room')
+                .where('cd_room', '=', room_id)
+                .delete();
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
 }
 
 export default RoomRepository;
