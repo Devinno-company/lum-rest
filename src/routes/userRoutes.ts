@@ -1,4 +1,5 @@
 import express, { request } from 'express';
+import multer, { Field } from 'multer';
 import UserController from "../controller/UserController";
 import Credentials from '../interfaces/request/CredentialsRequest';
 import NewUser from "../interfaces/request/NewUserRequest";

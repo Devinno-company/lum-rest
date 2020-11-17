@@ -14,6 +14,7 @@ import chatEventRoutes from './routes/chatEventRoutes';
 import chatUserRoutes from './routes/chatUserRoutes';
 import ticketRoutes from './routes/TicketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
+import bodyparser from 'body-parser';
 const cors = require('cors');
 
 const listen = process.env.PORT || 3000;
@@ -21,7 +22,8 @@ const listen = process.env.PORT || 3000;
 const app = express();
 
 app.use(cors({ origin: '*' }));
-app.use(express.json());
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use(userRoutes);
 app.use(profileRoutes);
 app.use(eventRoutes);
@@ -36,8 +38,6 @@ app.use(chatEventRoutes);
 app.use(chatUserRoutes);
 app.use(ticketRoutes);
 app.use(purchaseRoutes);
-
-
 
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
