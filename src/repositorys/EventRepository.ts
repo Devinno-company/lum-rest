@@ -119,6 +119,116 @@ class EventRepository {
                 });
         });
     }
+
+    public static async findEventsByNameAndUfAndCity(name: string, uf: string, city: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.sg_uf', '=', uf)
+                    .andWhere('c.nm_city', '=', city)
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
+                    
+            resolve(events);
+        })
+    }
+
+    public static async findEventsByUfAndCity(uf: string, city: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.sg_uf', '=', uf)
+                    .andWhere('c.nm_city', '=', city)
+
+
+            resolve(events);
+        })
+    }
+
+    public static async findEventsByNameAndCity(name: string, city: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.nm_city', '=', city)
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
+
+
+            resolve(events);
+        })
+    }
+
+    public static async findEventsByNameAndUf(name: string, uf: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.sg_uf', '=', uf)
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
+
+            resolve(events);
+        })
+    }
+
+    public static async findEventsByUf(uf: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.sg_uf', '=', uf);
+
+            resolve(events);
+        });
+    }
+
+    public static async findEventsByCity(city: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
+                    .join('tb_city as c', 'le.cd_city', 'c.cd_city')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhere('c.nm_city', '=', city);
+
+            resolve(events);
+        });
+    }
+
+    public static async findEventsByName(name: string): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+
+            const events =
+                await db('tb_event as e')
+                    .select('*')
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`)
+
+            resolve(events);
+        });
+    }
 }
 
 export default EventRepository;

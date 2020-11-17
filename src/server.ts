@@ -23,7 +23,7 @@ const app = express();
 
 app.use(cors({ origin: '*' }));
 app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use(userRoutes);
 app.use(profileRoutes);
 app.use(eventRoutes);

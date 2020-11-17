@@ -353,7 +353,7 @@ profileRoutes.post('/profile', formData.single('imageProfile'), validateImage, (
  */
 profileRoutes.put('/profile', validate, (request, response) => {
     const updateUser: UpdateUserRequest = request.body;
-
+    
     getUserByRequest(request).then(user => {
         controller.updateUser(user, updateUser)
             .then((result: UserResponse) => response.status(200).json(result))

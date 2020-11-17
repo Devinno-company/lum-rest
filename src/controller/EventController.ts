@@ -30,6 +30,9 @@ import purchaseRoutes from "../routes/purchaseRoutes";
 import InviteRepository from "../repositorys/InviteRepository";
 import MessageRepository from "../repositorys/MessageRepository";
 import RoomRepository from "../repositorys/RoomRepository";
+import Event from "../models/Event";
+import LocationUserRepository from "../repositorys/LocationUserRepository";
+import haversine from "../utils/haversine";
 
 class EventController {
 
@@ -179,7 +182,7 @@ class EventController {
                     if (tickets) {
                         tickets.map(item => {
                             if (PurchaseRepository.findPurchasesByTicketId(item.cd_ticket)) {
-                                reject({ status: 403, message: "You can't delete events that already have purchases."});
+                                reject({ status: 403, message: "You can't delete events that already have purchases." });
                             }
                         });
                         tickets.map(async item => {
@@ -224,7 +227,7 @@ class EventController {
                     /* Deleta o link do mercado pago(link_mercado_pago) relacionado ao evento */
                     const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(event.cd_event);
                     if (linkMercadoPago) {
-                            await LinkMercadoPagoRepository.deleteLinkMercadoPagoById(linkMercadoPago.cd_link_mercado_pago)
+                        await LinkMercadoPagoRepository.deleteLinkMercadoPagoById(linkMercadoPago.cd_link_mercado_pago)
                     }
                     /* Deleta todos convites(invites) relacionados ao evento */
                     const invites = await InviteRepository.findInvitesByEventId(event.cd_event);
@@ -240,9 +243,9 @@ class EventController {
                             const messages = await MessageRepository.findMessagesByRoomId(item.cd_room);
                             if (messages) {
                                 messages.map(async item => {
-                                   await MessageRepository.deleteMessageById(item.cd_message)
+                                    await MessageRepository.deleteMessageById(item.cd_message)
                                 });
-                        }
+                            }
                             await RoomRepository.deleteRoomById(item.cd_room)
                         });
                     }
@@ -274,7 +277,7 @@ class EventController {
         return new Promise(async (resolve) => {
             const access = await AccessRepository.findAccessByUserId(user.cd_user);
             const eventResponse: Array<EventResponse> = [];
-            
+
             for (let i = 0; access.length > i; i++) {
                 const event = await EventRepository.findEventById(access[i].cd_event);
                 const locationEvent = await LocationEventRepository.findLocationEventById(event.cd_location_event);
@@ -366,7 +369,7 @@ class EventController {
                     team
                 });
             }
-            
+
             resolve(eventResponse);
         });
     }
@@ -716,6 +719,145 @@ class EventController {
                     }
                 }
             }
+        });
+    }
+
+    searchEvent(user: User, _name?: string, _uf?: string, _city?: string, _distanceMin?: number): Promise<Array<EventResponse>> {
+
+        return new Promise(async (resolve, reject) => {
+            let events: Array<Event> = [];
+            const eventsResponse: Array<EventResponse> = [];
+
+            _name = (_name === 'undefined' ? undefined : _name);
+            _city = (_city === 'undefined' ? undefined : _city);
+            _uf = (_uf === 'undefined' ? undefined : _uf);
+            _distanceMin = (Number(_distanceMin) ? _distanceMin : undefined);
+
+            if (_name && !_uf && !_city)
+                events = await EventRepository.findEventsByName(_name);
+
+            else if (_name && _uf && !_city)
+                events = await EventRepository.findEventsByNameAndUf(_name, _uf);
+
+            else if (_name && _city && !_uf)
+                events = await EventRepository.findEventsByNameAndCity(_name, _city);
+
+            else if (!_name && _uf && _city)
+                events = await EventRepository.findEventsByUfAndCity(_uf, _city);
+
+            else if (!_name && !_uf && _city)
+                events = await EventRepository.findEventsByCity(_city);
+
+            else if (!_name && !_city && _uf)
+                events = await EventRepository.findEventsByUf(_uf);
+            else
+                events = await EventRepository.findEventsByNameAndUfAndCity(_name as string, _uf as string, _city as string);;
+            console.log('--------------------');
+            
+            if (_distanceMin) {
+                if (!user.cd_location_user)
+                    reject({ status: 400, message: 'Unable to filter events near you without the user having a registered location' });
+                else {
+                    const location_user = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                    const geolocation_user = await GeolocationRepository.findGeolocationById(location_user.cd_geolocation);
+    
+                    for (let i = 0; i < events.length; i++) {
+                        const location_event = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);
+                        const geolocation_event = await GeolocationRepository.findGeolocationById(location_event.cd_geolocation);
+
+                        const diffDistance =
+                            haversine(geolocation_user.cd_latitude, geolocation_user.cd_longitude,
+                                geolocation_event.cd_latitude, geolocation_event.cd_longitude);
+                        
+                        /* Removes the event from the search array if the distance is greater than the requested */
+                        if (diffDistance > _distanceMin) {
+                            events.splice(i, 1);
+                            // Restart distance verification
+                            i=-1;
+                        }
+                    }
+                }
+            }
+
+            console.log('tamanho atual', events.length)
+            events.map(event => {
+                console.log('sobrou', event.cd_event, event.nm_event);
+                
+            })
+
+            for (let i = 0; events.length > i; i++) {
+                const locationEvent = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);
+                const geolocation = await GeolocationRepository.findGeolocationById(locationEvent.cd_geolocation);
+                const category = await CategoryRepository.findCategoryById(events[i].sg_category);
+                const city = await CityRepository.findCityById(locationEvent.cd_city);
+                const privacy = await PrivacyRepository.findPrivacyById(events[i].sg_privacy);
+
+                const team: Array<TeamMember> = [];
+                const event_team = await AccessRepository.findAccessByEventId(events[i].cd_event);
+
+                for (let i = 0; i < event_team.length; i++) {
+                    const role = await RoleRepository.findRole(event_team[i].sg_role);
+                    const user = await UserRepository.findUserById(event_team[i].cd_user);
+
+                    team.push({
+                        id: user.cd_user,
+                        name: user.nm_user,
+                        surname: user.nm_surname_user,
+                        image: user.im_user,
+                        role: {
+                            name: role.nm_role,
+                            description: role.ds_role
+                        }
+                    });
+                }
+
+                const startDate = new Date(events[i].dt_start);
+                const endDate = new Date(events[i].dt_end);
+
+                events[i].dt_start = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+                events[i].dt_end = `${endDate.getFullYear()}-${endDate.getMonth() + 1}-${endDate.getDate()}`;
+
+                if (events[i].hr_start)
+                    events[i].hr_start = events[i].hr_start.slice(0, 5);
+
+                if (events[i].hr_end)
+                    events[i].hr_end = events[i].hr_end.slice(0, 5);
+
+                eventsResponse.push({
+                    id: events[i].cd_event,
+                    name: events[i].nm_event,
+                    description: events[i].ds_event,
+                    start_date: events[i].dt_start,
+                    end_date: events[i].dt_end,
+                    start_time: events[i].hr_start,
+                    end_time: events[i].hr_end,
+                    type: events[i].nm_type,
+                    location: {
+                        street: locationEvent.nm_street,
+                        neighborhood: locationEvent.nm_neighborhood,
+                        number: locationEvent.cd_number,
+                        cep: locationEvent.cd_cep,
+                        complement: locationEvent.nm_complement,
+                        geolocation: {
+                            latitude: geolocation.cd_latitude,
+                            longitude: geolocation.cd_longitude,
+                        },
+                        city: city.nm_city,
+                        uf: city.sg_uf
+                    },
+                    privacy: {
+                        name: privacy.nm_privacy,
+                        description: privacy.ds_privacy
+                    },
+                    category: {
+                        name: category.nm_category,
+                        description: category.ds_category
+                    },
+                    team
+                });
+            }
+
+            resolve(eventsResponse)
         });
     }
 }

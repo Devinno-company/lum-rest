@@ -661,14 +661,14 @@ eventRoutes.get('/get_code_mercado_pago', (request, response) => {
     const authorization_code = request.query.code as string;
     const random_id = request.query.state as string;
 
-    if(!authorization_code)
-        response.status(400).json({status:400, message: 'Authotization code is required'})
-    if(!random_id)
-        response.status(400).json({status:400, message: 'Id is required'})
+    if (!authorization_code)
+        response.status(400).json({ status: 400, message: 'Authotization code is required' })
+    if (!random_id)
+        response.status(400).json({ status: 400, message: 'Id is required' })
 
     controller.getLinkMercadoPagoAccount(authorization_code, random_id)
         .then(() => response.status(201).json())
-        .catch((err) => response.status(err.status || 400).json(err));  
+        .catch((err) => response.status(err.status || 400).json(err));
 });
 
 /**
@@ -697,8 +697,8 @@ eventRoutes.get('/get_code_mercado_pago', (request, response) => {
 eventRoutes.post('/events/:idEvent/link_mercado_pago', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if(!Number(idEvent))
-        response.status(400).json({status:400, message: 'Id invalid'});
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Id invalid' });
 
     getUserByRequest(request)
         .then((user) => {
@@ -737,10 +737,10 @@ eventRoutes.post('/events/:idEvent/banner', verifyToken, formData.single('banner
     const idEvent = request.params['idEvent'];
     const banner = request.file;
 
-    if(!Number(idEvent))
-        response.status(400).json({status:400, message: 'Id invalid'});
-    if(!banner)
-        response.status(400).json({status:400, message: 'Ther banner field in form data is required'});
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Id invalid' });
+    if (!banner)
+        response.status(400).json({ status: 400, message: 'Ther banner field in form data is required' });
 
     getUserByRequest(request)
         .then((user) => {
@@ -777,8 +777,8 @@ eventRoutes.post('/events/:idEvent/banner', verifyToken, formData.single('banner
 eventRoutes.delete('/events/:idEvent/banner', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if(!Number(idEvent))
-        response.status(400).json({status:400, message: 'Id invalid'});
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Id invalid' });
 
     getUserByRequest(request)
         .then((user) => {
@@ -787,6 +787,28 @@ eventRoutes.delete('/events/:idEvent/banner', verifyToken, (request, response) =
                 .catch((err) => response.status(err.status || 400).json(err));
         })
         .catch((err) => response.status(err.status || 400).json(err));
+});
+
+eventRoutes.get('/search_events', verifyToken, (request, response) => {
+    const name = request.query.name;
+    const city = request.query.city;
+    const uf = request.query.uf;
+    const distance = request.query.distance;
+    
+    if (name != 'undefined' && !String(name))
+        response.status(400).json({ status: 400, message: 'Name invalid' });
+    if (city != 'undefined' && !String(city))
+        response.status(400).json({ status: 400, message: 'City invalid' });
+    if (uf != 'undefined' && !String(uf))
+        response.status(400).json({ status: 400, message: 'UF invalid' });
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.searchEvent(user, String(name), String(uf), String(city), Number(distance))
+                .then(result => { response.status(200).json(result) })
+                .catch((err) => { response.status(err.status || 400).json(err) })
+        })
+        .catch((err) => { response.status(err.status || 400).json(err) })
 });
 
 export default eventRoutes;
