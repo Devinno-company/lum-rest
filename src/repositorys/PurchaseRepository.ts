@@ -97,6 +97,32 @@ class PurchaseRepository {
         });
     }
 
+    public static async findApprovedPurchasesByTicketId(idTicket: number): Promise<Array<Purchase>> {
+
+        return new Promise(async (resolve) => {
+            const purchase =
+            await db('tb_purchase as p')
+                .select('*')
+                .where('p.cd_ticket', '=', idTicket)
+                .andWhere('p.cd_status', '=', 'approved')
+
+            resolve(purchase);
+        });
+    }
+
+    public static async findPendentPurchasesByTicketId(idTicket: number): Promise<Array<Purchase>> {
+
+        return new Promise(async (resolve) => {
+            const purchase =
+            await db('tb_purchase as p')
+                .select('*')
+                .where('p.cd_ticket', '=', idTicket)
+                .andWhere('p.cd_status', '=', 'pending')
+
+            resolve(purchase);
+        });
+    }
+
     public static async deletePurchaseById(idPurchase: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
