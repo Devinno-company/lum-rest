@@ -176,6 +176,7 @@ export default class UserController {
                     LoginRepository.updatePassword(decoded.login_id, passwordEnc)
                         .then(() => resolve())
                         .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }))
+                    resolve();
                 }
             }
 

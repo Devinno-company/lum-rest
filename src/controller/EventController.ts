@@ -573,7 +573,7 @@ class EventController {
         });
     }
 
-    linkMercadoPagoAccount(user: User, idEvent: number) {
+    linkMercadoPagoAccount(user: User, idEvent: number): Promise<string> {
         return new Promise(async (resolve, reject) => {
             const event = await EventRepository.findEventById(idEvent);
 
@@ -609,7 +609,7 @@ class EventController {
                         const link = `https://auth.mercadopago.com.br/authorization?client_id=${app_id}&response_type=code&platform_id=mp&redirect_uri=${redirect_uri}&state=${random_id}`;
 
                         LinkMercadoPagoRepository.insertLinkMercadoPago(random_id, event.cd_event)
-                            .then(() => resolve({ link }))
+                            .then(() => resolve(link))
                             .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
                     }
                 }
@@ -778,12 +778,6 @@ class EventController {
                     }
                 }
             }
-
-            console.log('tamanho atual', events.length)
-            events.map(event => {
-                console.log('sobrou', event.cd_event, event.nm_event);
-                
-            })
 
             for (let i = 0; events.length > i; i++) {
                 const locationEvent = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);

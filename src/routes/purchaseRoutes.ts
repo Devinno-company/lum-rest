@@ -299,4 +299,20 @@ purchaseRoutes.get('/purchases', verifyToken, async (request, response) => {
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
+purchaseRoutes.get('/purchases/:idPurchase/download', (request, response) => {
+    const idPurchase = request.params['idPurchase'];
+
+    if (!Number(idPurchase)) {
+        response.status(400).json({ message: 'Purchase Id invalid.' });
+    }
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.downloadPurchase(user, Number(idPurchase))
+                .then((result) => response.status(200).contentType('application/pdf').sendFile(result.filename))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
 export default purchaseRoutes;

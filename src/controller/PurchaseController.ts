@@ -13,7 +13,12 @@ import insertPurchase from "../interfaces/inputRepository/insertPurchase";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
 import Axios from "axios";
 import updateLinkMercadoPago from "../interfaces/inputRepository/updateLinkMercadoPago";
+import pdf from 'html-pdf';
+import qrcode from 'qrcode';
+import getTicketHtml from "../utils/getTicketHtml";
+
 const mercadopago = require('mercadopago');
+
 
 class PurchaseController {
 
@@ -383,19 +388,59 @@ class PurchaseController {
                 reject({ status: 401, message: "You are not allowed to do so" });
             else {
                 PurchaseRepository.deletePurchaseById(idPurchase)
-                    .then(() => { 
-                        if(purchase.cd_purchase_billet) {
+                    .then(() => {
+                        if (purchase.cd_purchase_billet) {
                             PurchaseBilletRepository.deletePurchaseBillet(purchase.cd_purchase_billet);
                         }
-                        if(purchase.cd_purchase_credit_card) {
+                        if (purchase.cd_purchase_credit_card) {
                             PurchaseCreditCardRepository.deletePurchaseCreditCard(purchase.cd_purchase_credit_card);
                         }
-                        
-                        resolve() })
+
+                        resolve()
+                    })
                     .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }); })
             }
         });
     }
+
+    async downloadPurchase(user: User, idPurchase: number): Promise<any> {
+        return new Promise(async (resolve, reject) => {
+            const purchase = await PurchaseRepository.findPurchaseById(idPurchase);
+
+            if (!purchase)
+                reject({ status: 404, message: "This purchase doesn't exist" })
+            else if (purchase.cd_user != user.cd_user)
+                reject({ status: 401, message: "You are not allowed to do so" });
+            else if (purchase.cd_status != 'approved')
+                reject({ status: 401, message: 'This purchase has not yet been approved' });
+            else {
+                const login = await LoginRepository.findLoginById(user.cd_login);
+                const ticket = await TicketRepository.findTicketById(purchase.cd_ticket);
+                const event = await EventRepository.findEventById(ticket.cd_event);
+                const files: Array<any> = [];
+
+
+                const qr = await qrcode.toDataURL('http://link?token=', { errorCorrectionLevel: 'L' });
+                const html = getTicketHtml(user, login, ticket, purchase, event, qr);
+
+                pdf.create(html, {
+                    type: 'pdf',
+                    format: 'A4',
+                    orientation: 'portrait'
+                }).toFile((err, file) => {
+                    if (!err) {
+                        
+                        resolve(file);
+                    }
+                    else
+                        reject({ status: 400, message: 'Unknown error. Try again later', err })
+                });
+
+
+            }
+        });
+    }
 }
+
 
 export default PurchaseController;

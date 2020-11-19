@@ -1,5 +1,5 @@
 require('dotenv-safe').config();
-import express from 'express';
+import express, { request } from 'express';
 import eventRoutes from './routes/eventRoutes';
 import inviteRoutes from './routes/inviteRoutes';
 import notificationRoutes from './routes/notificationRoutes';
@@ -16,11 +16,34 @@ import ticketRoutes from './routes/ticketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import bodyparser from 'body-parser';
+import qrcode from 'qrcode';
+import pdf from 'html-pdf';
+
 const cors = require('cors');
 
 const listen = process.env.PORT || 3000;
 
 const app = express();
+
+app.get('/', (request, response) => {
+    
+    qrcode.toDataURL('batata', {
+        errorCorrectionLevel: 'L'
+    })
+        .then((qr) => {
+            const html = `<H1>SALVE</H1><img src="${qr}"/>`;
+
+            pdf.create(html, {
+                type: 'pdf',
+                format: 'A4',
+                orientation: 'portrait'
+            }).toFile((err, pdf) => {
+                response.setHeader('Content-Type', 'application/pdf')
+                response.download(pdf.filename);
+            })
+        });
+});
+
 
 app.use(cors({ origin: '*' }));
 app.use(bodyparser.json());
