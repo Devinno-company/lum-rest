@@ -9,9 +9,8 @@ import UserResponse from '../interfaces/response/UserResponse';
 import LocationUserRepository from '../repositorys/LocationUserRepository';
 import CityRepository from '../repositorys/CityRepository';
 import GeolocationRepository from '../repositorys/GeolocationRepository';
-import LinkMercadoPagoRepository from '../repositorys/LinkMercadoPagoRepository';
-import Axios from 'axios';
-import updateLinkMercadoPago from '../interfaces/inputRepository/updateLinkMercadoPago';
+import Nodemailer from 'nodemailer';
+import jwt from 'jsonwebtoken';
 
 export default class UserController {
 
@@ -119,5 +118,67 @@ export default class UserController {
                 });
             }
         });
+    }
+
+    async forgotPassword(email: string) {
+        return new Promise(async (resolve, reject) => {
+            const user = await UserRepository.findUserByEmail(email);
+
+            if (!user)
+                reject({ status: 404, message: 'this email does not belong to a user' })
+            else {
+                const transporter = Nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: 'company.devinno@gmail.com',
+                        pass: 'devinno2020etec#G'
+                    }
+                });
+
+                const payload = {
+                    function: 'RECOVERY_PASSWORD',
+                    login_id: user.cd_login
+                }
+
+                const token = jwt.sign(payload, 'lum_recovery_password', { expiresIn: '10m' });
+                const link = `http://localhost:3000/recoveryPassword?token=${token}`;
+
+                transporter.sendMail({
+                    from: 'no-reply@devinno',
+                    to: email,
+                    subject: 'Recuperação de senha',
+                    text: 'salve',
+                    html: `<h1>Accesse o link para recuperação de senha:</h1><h3>${link}</h3>`
+                })
+                    .then(() => {
+                        resolve();
+                    })
+                    .catch((err) => console.log(err));
+            }
+        });
+    }
+
+    recoveryPassword(token: string, newPassword: string) {
+        return new Promise(async (resolve, reject) => {
+            const verify = jwt.verify(token, 'lum_recovery_password')
+
+            if (!verify)
+                reject({ status: 401, message: 'Link de recuperação de senha inválido' })
+            else {
+                const decoded: any = jwt.decode(token);
+                if (decoded.function != 'RECOVERY_PASSWORD')
+                    reject({ status: 401, message: 'Invalid token.' })
+                else {
+                    const passwordEnc = bcrypt.hashSync(newPassword, bcrypt.genSaltSync());
+
+                    LoginRepository.updatePassword(decoded.login_id, passwordEnc)
+                        .then(() => resolve())
+                        .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }))
+                }
+            }
+
+        })
     }
 }

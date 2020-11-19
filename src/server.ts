@@ -12,7 +12,7 @@ import noticeRoutes from './routes/noticeRoutes';
 import taskRoutes from './routes/taskRoutes';
 import chatEventRoutes from './routes/chatEventRoutes';
 import chatUserRoutes from './routes/chatUserRoutes';
-import ticketRoutes from './routes/TicketRoutes';
+import ticketRoutes from './routes/ticketRoutes';
 import purchaseRoutes from './routes/purchaseRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 import bodyparser from 'body-parser';

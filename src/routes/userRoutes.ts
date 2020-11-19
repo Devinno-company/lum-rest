@@ -163,4 +163,19 @@ userRoutes.get('/users', validate, (request, response) => {
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
+userRoutes.post('/forgotPassword', (request, response) => {
+
+    controller.forgotPassword(request.body.email)
+        .then((result) => response.status(200).json(result))
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
+userRoutes.post('/recoveryPassword', (request, response) => {
+
+    controller.recoveryPassword(request.query.token as string, request.body.newPassword)
+        .then(() => response.status(200).json())
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
+
 export default userRoutes;
