@@ -132,8 +132,8 @@ export default class UserController {
                     port: 587,
                     secure: false,
                     auth: {
-                        user: 'company.devinno@gmail.com',
-                        pass: 'devinno2020etec#G'
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASSWORD
                     }
                 });
 
@@ -142,7 +142,7 @@ export default class UserController {
                     login_id: user.cd_login
                 }
 
-                const token = jwt.sign(payload, 'lum_recovery_password', { expiresIn: '10m' });
+                const token = jwt.sign(payload, process.env.SECRET_RECOVERY_PASSWORD as string, { expiresIn: '10m' });
                 const link = `http://localhost:3000/recoveryPassword?token=${token}`;
 
                 transporter.sendMail({
@@ -162,7 +162,7 @@ export default class UserController {
 
     recoveryPassword(token: string, newPassword: string) {
         return new Promise(async (resolve, reject) => {
-            const verify = jwt.verify(token, 'lum_recovery_password')
+            const verify = jwt.verify(token, process.env.SECRET_RECOVERY_PASSWORD as string)
 
             if (!verify)
                 reject({ status: 401, message: 'Link de recuperação de senha inválido' })
