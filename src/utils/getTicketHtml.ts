@@ -4,13 +4,34 @@ import Purchase from "../models/Purchase";
 import Ticket from "../models/Ticket";
 import User from "../models/User";
 
-function getTicketHtml(user: User, login: Login, ticket: Ticket, purchase: Purchase, event: Event, qrcode: string) {
-    const html =
-        `
-    <html>
-        <head>
-        </head>
-        <body>
+function getTicketHtml(user: User, login: Login, ticket: Ticket, purchase: Purchase, event: Event, qrcodes: Array<string>) {
+    let html =
+        `<html>
+            <head>
+                <style>
+                    @media print {
+                        .new-page {
+                            page-break-before: always;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+        `;
+
+    for (let i = 0; i < qrcodes.length; i++) {
+        let page = '';
+        if (i == 0)
+            page = 'first'
+        else if (i == (qrcodes.length - 1))
+            page = 'last'
+        else
+            page = String(i + 1);
+
+        html +=
+            `
+            <div id="pageHeader-${page}">Ingresso ${i + 1}</div>
+            <div class="${(i != 0 ? 'new-page' : '')}">
             <h2>Informações do ingresso</h2>
             <ul>
                 <li>Código: ${ticket.cd_ticket} </li>
@@ -31,11 +52,14 @@ function getTicketHtml(user: User, login: Login, ticket: Ticket, purchase: Purch
                 <li>Nome: ${user.nm_user} ${user.nm_surname_user}</li>
             </ul>
 
-            <img src="${qrcode}" />
-        </body>
-    </html>
-    `
-
+            <img src="${qrcodes[i]}" />
+            </div>
+            <div id="pageFooter-${page}">Fim ingresso ${i + 1}</div>
+            
+    `     
+    }
+    html += '</body> </html>'
+    
     return html;
 }
 

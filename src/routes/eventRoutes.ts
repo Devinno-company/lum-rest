@@ -794,7 +794,7 @@ eventRoutes.get('/search_events', verifyToken, (request, response) => {
     const city = request.query.city;
     const uf = request.query.uf;
     const distance = request.query.distance;
-    
+
     if (name != 'undefined' && !String(name))
         response.status(400).json({ status: 400, message: 'Name invalid' });
     if (city != 'undefined' && !String(city))
@@ -809,6 +809,27 @@ eventRoutes.get('/search_events', verifyToken, (request, response) => {
                 .catch((err) => { response.status(err.status || 400).json(err) })
         })
         .catch((err) => { response.status(err.status || 400).json(err) })
+});
+
+eventRoutes.get('/events/:idEvent/checkin', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+    const idTicket = request.query.ticket_id;
+    const token = request.query.token;
+
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Event id invalid' });
+    if (!Number(idTicket))
+        response.status(400).json({ status: 400, message: 'Ticket id invalid' });
+    if (!String(token))
+        response.status(400).json({ status: 400, message: 'Token invalid' });
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.checkin(user, Number(idEvent), Number(idTicket), String(token))
+                .then((result) => response.status(200).json(result))
+                .catch((err) => response.status(err.status || 400).json(err));
+        })
+        .catch((err) => response.status(err.status || 400).json(err));
 });
 
 export default eventRoutes;

@@ -26,13 +26,13 @@ import { DeleteObjectRequest, PutObjectRequest } from "aws-sdk/clients/s3";
 import genNameFile from "../utils/genNameFile";
 import TicketRepository from "../repositorys/TicketRepository";
 import PurchaseRepository from "../repositorys/PurchaseRepository";
-import purchaseRoutes from "../routes/purchaseRoutes";
 import InviteRepository from "../repositorys/InviteRepository";
 import MessageRepository from "../repositorys/MessageRepository";
 import RoomRepository from "../repositorys/RoomRepository";
 import Event from "../models/Event";
 import LocationUserRepository from "../repositorys/LocationUserRepository";
 import haversine from "../utils/haversine";
+import jwt from 'jsonwebtoken';
 
 class EventController {
 
@@ -753,14 +753,14 @@ class EventController {
             else
                 events = await EventRepository.findEventsByNameAndUfAndCity(_name as string, _uf as string, _city as string);;
             console.log('--------------------');
-            
+
             if (_distanceMin) {
                 if (!user.cd_location_user)
                     reject({ status: 400, message: 'Unable to filter events near you without the user having a registered location' });
                 else {
                     const location_user = await LocationUserRepository.findLocationUserById(user.cd_location_user);
                     const geolocation_user = await GeolocationRepository.findGeolocationById(location_user.cd_geolocation);
-    
+
                     for (let i = 0; i < events.length; i++) {
                         const location_event = await LocationEventRepository.findLocationEventById(events[i].cd_location_event);
                         const geolocation_event = await GeolocationRepository.findGeolocationById(location_event.cd_geolocation);
@@ -768,12 +768,12 @@ class EventController {
                         const diffDistance =
                             haversine(geolocation_user.cd_latitude, geolocation_user.cd_longitude,
                                 geolocation_event.cd_latitude, geolocation_event.cd_longitude);
-                        
+
                         /* Removes the event from the search array if the distance is greater than the requested */
                         if (diffDistance > _distanceMin) {
                             events.splice(i, 1);
                             // Restart distance verification
-                            i=-1;
+                            i = -1;
                         }
                     }
                 }
@@ -853,6 +853,42 @@ class EventController {
 
             resolve(eventsResponse)
         });
+    }
+    checkin(user: User, event_id: number, ticket_id: number, token: string) {
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(event_id);
+
+            if (!event)
+                reject({ status: 404, message: "This event doesn't exists" })
+            else {
+                const isAllowed = havePermission(user.cd_user, event_id, 'EQP')
+                    .catch((err) => reject({ status: 401, message: 'You are not allowed to do so', err }))
+
+                if (!isAllowed)
+                    reject({ status: 401, message: 'You are not allowed to do so' })
+                else {
+                    const ticket = await TicketRepository.findTicketById(ticket_id);
+
+                    if (!ticket)
+                        reject({ status: 404, message: "This token doesn't exists" })
+                    else if (ticket.cd_event != event.cd_event)
+                        reject({ status: 409, message: "This ticket doesn't belong to the event" })
+                    else {
+                        jwt.verify(token, process.env.SECRET_TICKET as string, (err, result) => {
+                            if (!result || err)
+                            reject({ status: 400, message: 'Invalid token.', err });
+                        else {
+                            const payload: any = jwt.decode(token);
+                            if (event.cd_event != payload.event_id || ticket.cd_ticket != payload.ticket_id)
+                                reject({ status: 400, message: "This ticket doesn't belong to the event" })
+                            else 
+                                resolve();
+                        }
+                        });
+                    }
+                }
+            }
+        })
     }
 }
 

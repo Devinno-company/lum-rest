@@ -13,9 +13,10 @@ import insertPurchase from "../interfaces/inputRepository/insertPurchase";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";
 import Axios from "axios";
 import updateLinkMercadoPago from "../interfaces/inputRepository/updateLinkMercadoPago";
-import pdf from 'html-pdf';
 import qrcode from 'qrcode';
 import getTicketHtml from "../utils/getTicketHtml";
+import jwt from 'jsonwebtoken';
+import pdf from 'html-pdf';
 
 const mercadopago = require('mercadopago');
 
@@ -364,7 +365,7 @@ class PurchaseController {
         });
     }
 
-    async updateStatus(user: User, idPurchase: number, status: 'pending' | 'approved' | 'authorized' | 'in_process' | '_in_mediation' | 'reject' | 'cancelled' | 'refund' | 'charged_back'): Promise<PurchaseResponse> {
+    async updateStatus(idPurchase: number, status: 'pending' | 'approved' | 'authorized' | 'in_process' | '_in_mediation' | 'reject' | 'cancelled' | 'refund' | 'charged_back'): Promise<PurchaseResponse> {
 
         return new Promise(async (resolve, reject) => {
 
@@ -417,19 +418,33 @@ class PurchaseController {
                 const login = await LoginRepository.findLoginById(user.cd_login);
                 const ticket = await TicketRepository.findTicketById(purchase.cd_ticket);
                 const event = await EventRepository.findEventById(ticket.cd_event);
-                const files: Array<any> = [];
+                const qrcodes: Array<string> = [];
 
+                for (let i = 0; i < purchase.qt_ticket; i++) {
+                    var today = new Date();
+                    var event_date = new Date(event.dt_end);
 
-                const qr = await qrcode.toDataURL('http://link?token=', { errorCorrectionLevel: 'L' });
-                const html = getTicketHtml(user, login, ticket, purchase, event, qr);
+                    var timeDiff = Math.abs(event_date.getTime() - today.getTime());
+                    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                    const token = jwt.sign({
+                        event_id: event.cd_event,
+                        ticket_id: ticket.cd_ticket
+                    }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
+
+                    const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${token}&ticket_id=${ticket.cd_ticket}`;
+
+                    qrcodes.push(await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
+                }
+
+                const html = getTicketHtml(user, login, ticket, purchase, event, qrcodes);
 
                 pdf.create(html, {
                     type: 'pdf',
                     format: 'A4',
-                    orientation: 'portrait'
+                    orientation: 'portrait',
                 }).toFile((err, file) => {
                     if (!err) {
-                        
                         resolve(file);
                     }
                     else
