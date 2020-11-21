@@ -210,13 +210,6 @@ class EventController {
                             await NoticeRepository.deleteNoticeById(item.cd_notice)
                         });
                     }
-                    /* Deleta todos mapas(maps) relacionados ao evento */
-                    const maps = await MapRepository.findMapByEventId(event.cd_event);
-                    if (maps) {
-                        maps.map(async item => {
-                            await MapRepository.deleteMapById(item.cd_map)
-                        });
-                    }
                     /* Deleta todos materiais(materials) relacionados ao evento */
                     const materials = await MaterialRepository.findMaterialByEventId(event.cd_event);
                     if (materials) {
