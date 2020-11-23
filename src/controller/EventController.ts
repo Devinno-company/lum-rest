@@ -15,7 +15,6 @@ import UserRepository from "../repositorys/UserRepository";
 import TaskRepository from "../repositorys/TaskRepository";
 import TimeRepository from "../repositorys/TimeRepository";
 import NoticeRepository from "../repositorys/NoticeRepository";
-import MapRepository from "../repositorys/MapRepository";
 import MaterialRepository from "../repositorys/MaterialRepository";
 import havePermission from "../utils/havePermission";
 import LinkMercadoPagoRepository from "../repositorys/LinkMercadoPagoRepository";

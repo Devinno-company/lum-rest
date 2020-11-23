@@ -1,19 +1,16 @@
 import db from "../database/connection";
 import Purchase from "../models/Purchase";
-import InsertPurchase from "../interfaces/inputRepository/insertPurchase";
 
 class PurchaseRepository {
 
-    public static insertPurchase(insertPurchase: InsertPurchase, status_id: string, user_id: number, purchase_billet_id?: number, purchase_credit_card_id?: number): Promise<Purchase> {
+    public static insertPurchase(cd_purchase_mercado_pago: number, status_id: string, user_id: number, purchase_billet_id?: number, purchase_credit_card_id?: number): Promise<Purchase> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 
             const insertedPurchase =
                 await trx('tb_purchase')
                     .insert({
-                        cd_ticket: insertPurchase.ticket_id,
-                        qt_ticket: insertPurchase.quantity_ticket,
-                        cd_purchase_mercado_pago: insertPurchase.cd_purchase_mercado_pago,
+                        cd_purchase_mercado_pago: cd_purchase_mercado_pago,
                         cd_status: status_id,
                         cd_user: user_id,
                         cd_purchase_billet: purchase_billet_id,
@@ -91,7 +88,8 @@ class PurchaseRepository {
             const purchase =
             await db('tb_purchase as p')
                 .select('*')
-                .where('p.cd_ticket', '=', idTicket);
+                .join('item_ticket_purchase as i', 'i.cd_purchase', 'p.cd_purchase')
+                .where('i.cd_ticket', '=', idTicket)
 
             resolve(purchase);
         });
@@ -103,7 +101,8 @@ class PurchaseRepository {
             const purchase =
             await db('tb_purchase as p')
                 .select('*')
-                .where('p.cd_ticket', '=', idTicket)
+                .join('item_ticket_purchase as i', 'i.cd_purchase', 'p.cd_purchase')
+                .where('i.cd_ticket', '=', idTicket)
                 .andWhere('p.cd_status', '=', 'approved')
 
             resolve(purchase);
@@ -116,7 +115,8 @@ class PurchaseRepository {
             const purchase =
             await db('tb_purchase as p')
                 .select('*')
-                .where('p.cd_ticket', '=', idTicket)
+                .join('item_ticket_purchase as i', 'i.cd_purchase', 'p.cd_purchase')
+                .where('i.cd_ticket', '=', idTicket)
                 .andWhere('p.cd_status', '=', 'pending')
 
             resolve(purchase);

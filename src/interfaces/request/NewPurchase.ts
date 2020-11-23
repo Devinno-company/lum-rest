@@ -1,21 +1,21 @@
+import TicketRequest from "./TicketRequest";
+
 interface NewPurchase {
-    ticket_id: number,
-    quantity_ticket: number,
+    tickets: Array<TicketRequest>,
+    email: String,
     cpf_payer: string,
-    type_payment: string,
-    credit_card?: {
-        payment_method_id: string,
-        token: string,
-        installments: number,
-        issuer?: string,
+    address?: { // Only for billet
+        zip_code: String,
+        street_name: String,
+        street_number: String
     },
-    billet?: {
-        zip_code: string,
-        street_name: string,
-        street_number: string,
-        neighborhood: string,
-        city: string,
-        federal_unit: string
+    payments: {
+        payment_method_id: String,
+        payment_type_id: String,
+        token: String,
+        installments?: Number, //Only for Credit Card
+        issuer_id?: String, //Only for Credit Card
+        description: String
     }
 }
 

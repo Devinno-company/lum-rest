@@ -6,9 +6,7 @@ export function up(knex: Knex) {
         table.timestamp('dt_purchase').defaultTo(knex.fn.now());
         table.string('cd_status', 12);
         table.integer('cd_user').notNullable();
-        table.integer('qt_ticket').notNullable();
         table.integer('cd_purchase_mercado_pago').notNullable();
-        table.integer('cd_ticket').notNullable();
         table.integer('cd_purchase_billet');
         table.integer('cd_purchase_credit_card');
 
@@ -20,10 +18,6 @@ export function up(knex: Knex) {
         table.foreign('cd_user')
             .references('cd_user')
             .inTable('tb_user');
-
-        table.foreign('cd_ticket')
-            .references('cd_ticket')
-            .inTable('tb_ticket');
 
         table.foreign('cd_purchase_billet')
             .references('cd_purchase_billet')

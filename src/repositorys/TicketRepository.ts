@@ -41,13 +41,13 @@ class TicketRepository {
         });
     }
 
-    public static findTicketById(event_id: number): Promise<Ticket> {
+    public static findTicketById(idTicket: number): Promise<Ticket> {
         return new Promise(async (resolve) => {
 
             const tickets =
                 await db('tb_ticket as t')
                     .select('*')
-                    .where('t.cd_ticket', '=', event_id);
+                    .where('t.cd_ticket', '=', idTicket);
 
             resolve(tickets[0])
         });
