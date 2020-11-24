@@ -15,7 +15,7 @@ import getTicketHtml from "../utils/getTicketHtml";
 import jwt from 'jsonwebtoken';
 import pdf from 'html-pdf';
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
-import { array } from "joi";
+import { array, link } from "joi";
 import TicketResponse from "../interfaces/response/TicketResponse";
 import PurchaseTicketResponse from "../interfaces/response/PurchaseTicketResponse";
 import ticketRoutes from "../routes/TicketRoutes";
@@ -54,29 +54,30 @@ class PurchaseController {
                 let disbursements: Array<DisbursementsMercadoPago> = [];
 
                 for (let i = 0; i < purchase.tickets.length; i++) { 
-                
+
                     if (!TicketRepository.findTicketById(purchase.tickets[i].id)) {
                         reject({ status: 400, message: "This ticket id doesn't exist" });
                     }
                     const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
 
+
                     const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
                     const event = await EventRepository.findEventById(ticket.cd_event);
-                    
+
                     const event_date = new Date(event.dt_start);
                     const today = new Date();
-
+                    
                     const timeDiff = Math.abs(event_date.getTime() - today.getTime());
                     const daysDiff = Math.ceil((timeDiff / (3600 * 1000 * 24)));
                     
                     if (purchase.payments.payment_type_id == 'credit_card') {
                         if (today > event_date)
-                            reject({ status: 400, message: 'it is not possible to buy tickets to an event already held' })
+                        reject({ status: 400, message: 'it is not possible to buy tickets to an event already held' })
                     }
                     else if (purchase.payments.payment_type_id == 'billet')
-                        if (daysDiff < 3) {   
-                            reject({ status: 400, message: 'To make a ticket purchase you must have at least 3 days difference between today and the start date of the event' })
-                        }
+                    if (daysDiff < 3) {   
+                        reject({ status: 400, message: 'To make a ticket purchase you must have at least 3 days difference between today and the start date of the event' })
+                    }
                     else {
                         // Checks whether you need to refresh the token
                         if (!linkMercadoPago.id_valid) {
@@ -138,24 +139,24 @@ class PurchaseController {
                         {reject({ status: 400, message: 'Please Specify the issuer' })}
                     else {
                             const payment_data: PaymentData = {
-                                payer = {
-                                    email = purchase.email,
-                                    identification = {
-                                        type = 'CPF',
-                                        number = purchase.cpf_payer
+                                payer: {
+                                    email: purchase.email,
+                                    identification: {
+                                        type: 'CPF',
+                                        number: purchase.cpf_payer
                                     }
                                 },
-                                payment = {
-                                    payment_method_id = purchase.payments.payment_method_id,
-                                    payment_type_id = purchase.payments.payment_type_id,
-                                    token = purchase.payments.token,
-                                    transaction_amount = transaction_amount,
-                                    processing_mode = 'aggregator',
-                                    installments = purchase.payments.installments,
-                                    issuer_id = purchase.payments.issuer_id,
-                                    description = purchase.payments.description
+                                payment: {
+                                    payment_method_id: purchase.payments.payment_method_id,
+                                    payment_type_id: purchase.payments.payment_type_id,
+                                    token: purchase.payments.token,
+                                    transaction_amount: transaction_amount,
+                                    processing_mode: 'aggregator',
+                                    installments: purchase.payments.installments,
+                                    issuer_id: purchase.payments.issuer_id,
+                                    description: purchase.payments.description
                                 },
-                                dispursements = disbursements
+                                dispursements: disbursements
                             };
                             let config = {
                                 headers: {
@@ -207,32 +208,32 @@ class PurchaseController {
                                     reject({ status: 400, message: 'Unknown error. Try again later.', err })
                                 });
                         }
-                        } else {
+                } else {
                             if (!purchase.address)
                                 reject({ status: 400, message: 'You need to send a location.' });
                             else {
                                 const payment_data: PaymentData = {
-                                    payer = {
-                                        email = purchase.email,
-                                        identification = {
-                                            type = 'CPF',
-                                            number = purchase.cpf_payer
+                                    payer: {
+                                        email: purchase.email,
+                                        identification: {
+                                            type: 'CPF',
+                                            number: purchase.cpf_payer
                                         },
-                                        address = {
-                                            zip_code = purchase.address.zip_code,
-                                            street_name = purchase.address.street_name,
-                                            street_number = purchase.address.street_number
+                                        address: {
+                                            zip_code: purchase.address.zip_code,
+                                            street_name: purchase.address.street_name,
+                                            street_number: purchase.address.street_number
                                         }
                                     },
-                                    payment = {
-                                        payment_method_id = purchase.payments.payment_method_id,
-                                        payment_type_id = purchase.payments.payment_type_id,
-                                        token = purchase.payments.token,
-                                        transaction_amount = transaction_amount,
-                                        processing_mode = 'aggregator',
-                                        description = purchase.payments.description
+                                    payment: {
+                                        payment_method_id: purchase.payments.payment_method_id,
+                                        payment_type_id: purchase.payments.payment_type_id,
+                                        token: purchase.payments.token,
+                                        transaction_amount: transaction_amount,
+                                        processing_mode: 'aggregator',
+                                        description: purchase.payments.description
                                     },
-                                    dispursements = disbursements
+                                    dispursements: disbursements
                                 };     
                                 let config = {
                                     headers: {
@@ -242,7 +243,7 @@ class PurchaseController {
                                 await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
                                 .then((result) => {
                                     const paymentResponse = (result.data as any);
-
+                                    console.log(result.data);
                                     const datePayment = new Date((paymentResponse.payments[0].date_created).substr(0, 10));
                                     PurchaseBilletRepository.insertPurchaseBillet({
                                         link_billet: paymentResponse.payments[0].external_reference,
@@ -302,10 +303,18 @@ class PurchaseController {
             else if (user.cd_user != purchase.cd_user)
                 reject({ status: 401, message: 'You can only see your own purchases' });
             else {
-                const tickets = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase);
-                for (let i = 0; i < tickets.length; i++) {
-                    const ticket = await EventRepository.findEventById(tickets[i].cd_ticket);
-                    
+                const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase);
+                let ticketResponse: Array<PurchaseTicketResponse> = [];
+                for (let i = 0; i < items.length; i++) {
+                    const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
+                    const event = await EventRepository.findEventById(ticket.cd_event);
+                    ticketResponse.push({
+                        idTicket: ticket.cd_ticket,
+                        TicketName: ticket.nm_ticket,
+                        TicketEvent: event.nm_event,
+                        TicketQuantity: items[i].qt_ticket_sell,
+                        TicketValue: ticket.vl_ticket
+                    });
                 }
 
                 let billet
@@ -344,7 +353,7 @@ class PurchaseController {
                     idMercadoPago: purchase.cd_purchase_mercado_pago,
                     PurchaseDate: purchase.dt_purchase,
                     PurchaseStatus: purchase.cd_status,
-                    ticket: ticketResponse,
+                    tickets: ticketResponse,
                     billet: billet,
                     credit_card: credit_card
                 });
@@ -367,52 +376,57 @@ class PurchaseController {
 
                 for (let i = 0; i < purchases.length; i++) {
 
-                    const ticket = await TicketRepository.findTicketById(purchases[i].cd_ticket);
+                const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchases[i].cd_purchase);
+                let ticketResponse: Array<PurchaseTicketResponse> = [];
+                for (let i = 0; i < items.length; i++) {
+                    const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
+                    ticketResponse.push({
+                        idTicket: ticket.cd_ticket,
+                        TicketName: ticket.nm_ticket,
+                        TicketEvent: event.nm_event,
+                        TicketQuantity: items[i].qt_ticket_sell,
+                        TicketValue: ticket.vl_ticket
+                    });
+                }
 
-                    let billet
-                    let credit_card;
+                let billet
+                let credit_card;
 
-                    const billetCode = purchases[i].cd_purchase_billet;
-                    if (billetCode) {
-                        const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
+                const billetCode = purchases[i].cd_purchase_billet;
+                if (billetCode) {
+                    const searchBillet = await PurchaseBilletRepository.findPurchaseBilletById(billetCode)
 
-                        billet = {
-                            idBillet: searchBillet.cd_purchase_billet,
-                            BilletImage: searchBillet.im_billet,
-                            BilletPurchaseDate: searchBillet.dt_purchase
-                        }
+                    billet = {
+                        idBillet: searchBillet.cd_purchase_billet,
+                        BilletImage: searchBillet.im_billet,
+                        BilletPurchaseDate: searchBillet.dt_purchase
                     }
-                    else {
-                        billet = null;
-                    };
+                }
+                else {
+                    billet = null;
+                };
 
-                    const creditCode = purchases[i].cd_purchase_credit_card;
-                    if (creditCode) {
-                        const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
+                const creditCode = purchases[i].cd_purchase_credit_card;
+                if (creditCode) {
+                    const searchCreditCard = await PurchaseCreditCardRepository.findPurchaseCreditCardById(creditCode)
 
-                        credit_card = {
-                            idCreditCard: searchCreditCard.cd_purchase_credit_card,
-                            CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
-                            CreditCardApprovedDate: searchCreditCard.dt_approved
-                        }
+                    credit_card = {
+                        idCreditCard: searchCreditCard.cd_purchase_credit_card,
+                        CreditCardPaymentMethod: searchCreditCard.cd_payment_method,
+                        CreditCardApprovedDate: searchCreditCard.dt_approved
                     }
-                    else {
-                        credit_card = null;
-                    };
+                }
+                else {
+                    credit_card = null;
+                };
 
                     purchasesResponse.push({
                         id: purchases[i].cd_purchase,
                         idMercadoPago: purchases[i].cd_purchase_mercado_pago,
                         PurchaseDate: purchases[i].dt_purchase,
                         PurchaseStatus: purchases[i].cd_status,
-                        ticket: {
-                            idTicket: ticket.cd_ticket,
-                            TicketName: ticket.nm_ticket,
-                            TicketEvent: event.nm_event,
-                            TicketQuantity: purchases[i].qt_ticket,
-                            TicketValue: ticket.vl_ticket
-                        },
+                        tickets: ticketResponse,
                         billet: billet,
                         credit_card: credit_card
                     });
@@ -439,51 +453,53 @@ class PurchaseController {
     async downloadPurchase(user: User, idPurchase: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const purchase = await PurchaseRepository.findPurchaseById(idPurchase);
-
+            
             if (!purchase)
-                reject({ status: 404, message: "This purchase doesn't exist" })
+            reject({ status: 404, message: "This purchase doesn't exist" })
             else if (purchase.cd_user != user.cd_user)
-                reject({ status: 401, message: "You are not allowed to do so" });
+            reject({ status: 401, message: "You are not allowed to do so" });
             else if (purchase.cd_status != 'approved')
-                reject({ status: 401, message: 'This purchase has not yet been approved' });
+            reject({ status: 401, message: 'This purchase has not yet been approved' });
             else {
                 const login = await LoginRepository.findLoginById(user.cd_login);
-                const ticket = await TicketRepository.findTicketById(purchase.);
-                const event = await EventRepository.findEventById(ticket.cd_event);
+                const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase);
                 const qrcodes: Array<string> = [];
+                
+                for (let i = 0; i < items.length; i++) {
+                    const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
+                    const event = await EventRepository.findEventById(ticket.cd_event);
 
-                for (let i = 0; i < purchase.qt_ticket; i++) {
-                    var today = new Date();
-                    var event_date = new Date(event.dt_end);
+                    for (let i = 0; i < items[i].qt_ticket_sell; i++) {
+                        var today = new Date();
+                        var event_date = new Date(event.dt_end);
 
-                    var timeDiff = Math.abs(event_date.getTime() - today.getTime());
-                    var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                        var timeDiff = Math.abs(event_date.getTime() - today.getTime());
+                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-                    const token = jwt.sign({
-                        event_id: event.cd_event,
-                        ticket_id: ticket.cd_ticket
-                    }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
+                        const token = jwt.sign({
+                            event_id: event.cd_event,
+                            ticket_id: ticket.cd_ticket
+                        }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
 
-                    const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${token}&ticket_id=${ticket.cd_ticket}`;
+                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${token}&ticket_id=${ticket.cd_ticket}`;
 
-                    qrcodes.push(await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
-                }
-
-                const html = getTicketHtml(user, login, ticket, purchase, event, qrcodes);
-
-                pdf.create(html, {
-                    type: 'pdf',
-                    format: 'A4',
-                    orientation: 'portrait',
-                }).toFile((err, file) => {
-                    if (!err) {
-                        resolve(file);
+                        qrcodes.push(await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
                     }
-                    else
+                    const html = getTicketHtml(user, login, ticket, purchase, event, qrcodes);
+                    
+                    
+                    pdf.create(html, {
+                        type: 'pdf',
+                        format: 'A4',
+                        orientation: 'portrait',
+                    }).toFile((err, file) => {
+                        if (!err) {
+                            resolve(file);
+                        }
+                        else
                         reject({ status: 400, message: 'Unknown error. Try again later', err })
-                });
-
-
+                    });  
+                }
             }
         });
     }
