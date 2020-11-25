@@ -35,7 +35,7 @@ import jwt from 'jsonwebtoken';
 
 class EventController {
 
-    public insertEvent(newEvent: NewEvent, user: User) {
+    public insertEvent(newEvent: NewEvent, user: User): Promise<EventResponse> {
 
         return new Promise(async (resolve, reject) => {
 
@@ -169,7 +169,7 @@ class EventController {
         });
     }
 
-    async deleteEvent(user: User, idEvent: number) {
+    async deleteEvent(user: User, idEvent: number): Promise<void> {
 
         return new Promise(async (resolve, reject) => {
 
@@ -347,6 +347,7 @@ class EventController {
                     type: event.nm_type,
                     location: {
                         street: locationEvent.nm_street,
+                        name_establishment: locationEvent.nm_establishment,
                         neighborhood: locationEvent.nm_neighborhood,
                         number: locationEvent.cd_number,
                         cep: locationEvent.cd_cep,
@@ -464,6 +465,7 @@ class EventController {
                         location: {
                             street: locationEvent.nm_street,
                             neighborhood: locationEvent.nm_neighborhood,
+                            name_establishment: locationEvent.nm_establishment,
                             number: locationEvent.cd_number,
                             cep: locationEvent.cd_cep,
                             complement: locationEvent.nm_complement,
@@ -539,7 +541,7 @@ class EventController {
         });
     }
 
-    getLinkMercadoPagoAccount(authorization_code: string, state_id: string) {
+    getLinkMercadoPagoAccount(authorization_code: string, state_id: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
 
             const link = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(state_id)
@@ -828,6 +830,7 @@ class EventController {
                     type: events[i].nm_type,
                     location: {
                         street: locationEvent.nm_street,
+                        name_establishment: locationEvent.nm_establishment,
                         neighborhood: locationEvent.nm_neighborhood,
                         number: locationEvent.cd_number,
                         cep: locationEvent.cd_cep,
@@ -854,7 +857,7 @@ class EventController {
             resolve(eventsResponse)
         });
     }
-    checkin(user: User, event_id: number, ticket_id: number, token: string) {
+    checkin(user: User, event_id: number, ticket_id: number, token: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const event = await EventRepository.findEventById(event_id);
 

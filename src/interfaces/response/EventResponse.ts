@@ -12,6 +12,7 @@ interface EventResponse {
     location: {
         street: string,
         neighborhood: string,
+        name_establishment: string,
         number: number,
         cep: string,
         complement?: string,
