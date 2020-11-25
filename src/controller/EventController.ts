@@ -57,7 +57,7 @@ class EventController {
                 const insertedLocationEvent = await LocationEventRepository.insertLocationEvent({
                     street: newEvent.location.street,
                     neighborhood: newEvent.location.neighborhood,
-                    name_establishment: newEvent.name_establishment,
+                    name_establishment: newEvent.location.name_establishment,
                     cep: newEvent.location.cep,
                     number: newEvent.location.number,
                     complement: newEvent.location.complement
