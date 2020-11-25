@@ -12,6 +12,7 @@ class LocationEventRepository {
                 await trx('tb_location_event')
                     .insert({
                         nm_street: newLocationEvent.street,
+                        nm_establishment: newLocationEvent.name_establishment,
                         nm_neighborhood: newLocationEvent.neighborhood,
                         cd_number: newLocationEvent.number,
                         cd_cep: newLocationEvent.cep,
@@ -50,6 +51,7 @@ class LocationEventRepository {
                 .update({
                     nm_street: updateLocationEvent.street_to,
                     nm_neighborhood: updateLocationEvent.neighborhood_to,
+                    nm_establishment: updateLocationEvent.establishment_to,
                     nm_complement: updateLocationEvent.complement_to,
                     cd_number: updateLocationEvent.number_to,
                     cd_cep: updateLocationEvent.cep_to

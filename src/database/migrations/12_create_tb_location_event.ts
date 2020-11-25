@@ -3,6 +3,7 @@ import Knex from 'knex';
 export function up(knex: Knex) {
     return knex.schema.createTable('tb_location_event', table => {
         table.increments('cd_location_event').primary();
+        table.string('nm_establishment', 120).notNullable();
         table.string('nm_street', 120).notNullable();
         table.string('nm_neighborhood', 100).notNullable();
         table.integer('cd_number').notNullable();

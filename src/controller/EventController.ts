@@ -57,6 +57,7 @@ class EventController {
                 const insertedLocationEvent = await LocationEventRepository.insertLocationEvent({
                     street: newEvent.location.street,
                     neighborhood: newEvent.location.neighborhood,
+                    name_establishment: newEvent.name_establishment,
                     cep: newEvent.location.cep,
                     number: newEvent.location.number,
                     complement: newEvent.location.complement
@@ -141,7 +142,14 @@ class EventController {
                         if (!searchCity)
                             reject({ status: 400, message: 'This city does not exist' });
                         else if (insertedGeolocation) {
-                            let locationParams = { street: updateEvent.location_to.street_to, neighborhood: updateEvent.location_to.street_to, number: updateEvent.location_to.number_to, cep: String(updateEvent.location_to.cep_to), complement: updateEvent.location_to.complement_to };
+                            let locationParams = { 
+                                street: updateEvent.location_to.street_to, 
+                                neighborhood: updateEvent.location_to.street_to, 
+                                number: updateEvent.location_to.number_to, 
+                                cep: String(updateEvent.location_to.cep_to), 
+                                complement: updateEvent.location_to.complement_to,
+                                name_establishment: updateEvent.location_to.establishment_to
+                            };
                             await LocationEventRepository.insertLocationEvent(locationParams, insertedGeolocation.cd_geolocation, searchCity.cd_city)
                                 .then((locationEvent) => {
                                     EventRepository.updateLocationEvent(event.cd_event, locationEvent.cd_location_event);

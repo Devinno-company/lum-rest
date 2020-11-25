@@ -1,5 +1,6 @@
 interface LocationEvent {
     cd_location_event: number,
+    nm_establishment: string,
     nm_street: string,
     nm_neighborhood: string,
     cd_number: number,

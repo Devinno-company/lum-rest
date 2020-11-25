@@ -2,6 +2,7 @@ interface NewEvent {
     name: string,
     start_date: string,
     end_date: string,
+    name_establishment: string,
     description?: string,
     start_time?: string,
     end_time?: string,

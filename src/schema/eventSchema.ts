@@ -6,6 +6,11 @@ export const newEventSchema = Joi.object({
         .max(100)
         .required(),
 
+    name_establishment: Joi.string()
+    .min(3)
+    .max(100)
+    .required(),
+
     start_date: Joi.string()
         .regex(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
         .required(),
@@ -143,6 +148,11 @@ export const updateEventSchema = Joi.object({
         street_to: Joi.string()
             .min(3)
             .max(120)
+            .required(),
+
+        establishment_to: Joi.string()
+            .min(3)
+            .max(100)
             .required(),
 
         neighborhood_to: Joi.string()
