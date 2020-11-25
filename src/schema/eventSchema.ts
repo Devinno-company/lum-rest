@@ -6,11 +6,6 @@ export const newEventSchema = Joi.object({
         .max(100)
         .required(),
 
-    name_establishment: Joi.string()
-    .min(3)
-    .max(100)
-    .required(),
-
     start_date: Joi.string()
         .regex(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/)
         .required(),
@@ -51,6 +46,11 @@ export const newEventSchema = Joi.object({
             .max(120)
             .required(),
 
+        name_establishment: Joi.string()
+            .min(3)
+            .max(100)
+            .required(),
+
         neighborhood: Joi.string()
             .min(3)
             .max(100)
@@ -89,7 +89,7 @@ export const newEventSchema = Joi.object({
             .case("upper")
             .required()
     })
-    .required(),
+        .required(),
 
     privacy: Joi.string()
         .regex(/^PRI\b$|^PUB\b$/)
@@ -103,12 +103,12 @@ export const newEventSchema = Joi.object({
         .required()
 })
     .strict();
-    
+
 export const updateEventSchema = Joi.object({
     name_to: Joi.string()
-    .min(3)
-    .max(100)
-    .optional(),
+        .min(3)
+        .max(100)
+        .optional(),
 
     description_to: Joi.string()
         .min(0)
@@ -193,7 +193,7 @@ export const updateEventSchema = Joi.object({
             .case("upper")
             .required()
     })
-    .optional(),
+        .optional(),
 
     privacy_to: Joi.string()
         .regex(/^PRI\b$|^PUB\b$/)
@@ -206,4 +206,4 @@ export const updateEventSchema = Joi.object({
         .max(3)
         .optional()
 })
-.strict();
+    .strict();
