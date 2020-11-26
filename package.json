@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.39.4",
+  "version": "1.39.5",
   "main": "./src/server.ts",
   "engines": {
     "node": "12.18.3",
@@ -17,7 +17,7 @@
   "author": "Devinno-company <company.devinno@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node --optimize_for_size --max-old-space-size=512 dist/src/server.js",
     "postinstall": "tsc",
     "watch-ts": "tsc -w",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env production",

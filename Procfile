@@ -1,1 +1,1 @@
-web: node dist/src/server.js
+web: node --optimize_for_size --max_old_space_size=512 dist/src/server.js
