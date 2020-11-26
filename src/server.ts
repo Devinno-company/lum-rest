@@ -67,3 +67,6 @@ app.use(dashboardRoutes);
 app.listen(listen, () => {
     console.log(`------RODANDO NA PORTA ${listen}------`);
 });
+
+const used = process.memoryUsage().heapUsed / 1024 / 1024;
+console.log(`A API está usando ${used} MB`);
