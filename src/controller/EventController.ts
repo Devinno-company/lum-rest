@@ -601,7 +601,8 @@ class EventController {
                         let continue_process = false;
 
                         do {
-                            random_id = `${Math.random() * 100}`;
+                            random_id = (Math.random() * 10000).toFixed(0);
+                            
                             const searchLink = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(random_id);
 
                             if (!searchLink)

@@ -703,7 +703,7 @@ eventRoutes.post('/events/:idEvent/link_mercado_pago', verifyToken, (request, re
     getUserByRequest(request)
         .then((user) => {
             controller.linkMercadoPagoAccount(user, Number(idEvent))
-                .then((result) => response.status(201).redirect(result))
+                .then((result) => response.status(201).json({link: result}))
                 .catch((err) => response.status(err.status || 400).json(err));
         })
         .catch((err) => response.status(err.status || 400).json(err));

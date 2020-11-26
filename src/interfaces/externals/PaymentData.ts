@@ -16,7 +16,7 @@ interface PaymentData {
     payment: {
         payment_method_id: String,
         payment_type_id: String,
-        token: String,
+        token?: String,
         transaction_amount: Number,
         processing_mode: String,
         installments?: Number,

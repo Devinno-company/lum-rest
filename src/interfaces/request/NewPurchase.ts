@@ -12,7 +12,7 @@ interface NewPurchase {
     payments: {
         payment_method_id: String,
         payment_type_id: String,
-        token: String,
+        token?: String, //Only for Credit Card
         installments?: Number, //Only for Credit Card
         issuer_id?: String, //Only for Credit Card
         description: String
