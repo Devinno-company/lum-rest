@@ -4,6 +4,7 @@ import EventRepository from "../repositorys/EventRepository";
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
 import LinkNotificationRepository from "../repositorys/LinkNotificationRepository";
 import NotificationRepository from "../repositorys/NotificationRepository";
+import PurchaseCreditCardRepository from "../repositorys/PurchaseCreditCardRepository";
 import PurchaseRepository from "../repositorys/PurchaseRepository";
 import TicketRepository from "../repositorys/TicketRepository";
 import UserRepository from "../repositorys/UserRepository";
@@ -38,16 +39,19 @@ class NotificationsMercadoPagoController {
                         const creator = UserRepository.findUserById(creator_id);
                         LinkNotificationRepository.insertLinkNotification(ticket.cd_event, 'NCI')
                         .then(async (link) => {
-                                NotificationRepository.insertNotification({
-                                    notification_title: 'Nova compra de ingresso no seu evento!',
-                                    notification_content: `O evento "${(await event).nm_event}" realizou uma venda!`,
-                                    notification_read: false
-                                }, (await creator).cd_user, link.cd_link)
-                                
-                                TicketRepository.updateTicketById(ticket.cd_ticket, { quantity_available_to: ticket.qt_ticket_available-- });
-                            });
+                            NotificationRepository.insertNotification({
+                                notification_title: 'Nova compra de ingresso no seu evento!',
+                                notification_content: `O evento "${(await event).nm_event}" realizou uma venda!`,
+                                notification_read: false
+                            }, (await creator).cd_user, link.cd_link)
+                            
+                            TicketRepository.updateTicketById(ticket.cd_ticket, { quantity_available_to: ticket.qt_ticket_available-- });
+                        });
                             
                     });
+                }
+                if (purchase.cd_purchase_credit_card) {
+                    PurchaseCreditCardRepository.updateApprovedPurchaseCreditCard(purchase.cd_purchase_credit_card, String(new Date()));
                 }
             });
     }

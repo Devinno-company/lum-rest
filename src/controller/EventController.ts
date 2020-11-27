@@ -560,6 +560,8 @@ class EventController {
                 })
                     .then((response) => {
 
+                        console.log(response);
+
                         const updateLink: updateLinkMercadoPago = {
                             refresh_token: response.data.refresh_token,
                             cd_public_key: response.data.public_key,

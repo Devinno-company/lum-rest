@@ -15,14 +15,15 @@ import getTicketHtml from "../utils/getTicketHtml";
 import jwt from 'jsonwebtoken';
 import pdf from 'html-pdf';
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
-import { array, link } from "joi";
-import TicketResponse from "../interfaces/response/TicketResponse";
+
 import PurchaseTicketResponse from "../interfaces/response/PurchaseTicketResponse";
-import ticketRoutes from "../routes/TicketRoutes";
 import Ticket from "../models/Ticket";
 import DisbursementsMercadoPago from "../interfaces/externals/DisbursementsMercadoPago";
 import SellerSplit from "../interfaces/request/SellerSplitRequest";
 import PaymentData from "../interfaces/externals/PaymentData";
+import PaymentBillet from "../interfaces/externals/PaymentBillet";
+import PaymentCreditCard from "../interfaces/externals/PaymentCreditCard";
+import PayerPayment from "../interfaces/externals/PayerPayment";
 
 const mercadopago = require('mercadopago');
 
@@ -42,248 +43,205 @@ class PurchaseController {
                 let sellerSplits: Array<SellerSplit> = [];
                 let ticketsPurchase: Array<Ticket> = [];
                 let disbursements: Array<DisbursementsMercadoPago> = [];
+                const payments: Array<PaymentBillet | PaymentCreditCard> = [];
+
+                let payer: PayerPayment;
+                if (!purchase.billet) {
+                    payer = {
+                        first_name: user.nm_user,
+                        last_name: user.nm_surname_user,
+                        email: purchase.email,
+                        identification: {
+                            type: 'CPF',
+                            number: purchase.cpf_payer
+                        },
+                        id: user.cd_user
+                    }
+                } else {
+                    payer = {
+                        first_name: user.nm_user,
+                        last_name: user.nm_surname_user,
+                        email: purchase.email,
+                        identification: {
+                            type: 'CPF',
+                            number: purchase.cpf_payer
+                        },
+                        address: purchase.billet.address,
+                        id: user.cd_user
+                    }
+                }
 
                 for (let i = 0; i < purchase.tickets.length; i++) {
 
-                    if (!TicketRepository.findTicketById(purchase.tickets[i].id)) {
-                        reject({ status: 400, message: "This ticket id doesn't exist" });
-                    }
                     const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
+                    if (!ticket)
+                        return reject({ status: 400, message: "This ticket id doesn't exist" });
+
+
                     const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
+                    // Checks whether you need to refresh the token
+                    if (!linkMercadoPago.id_valid) {
+                        const data = {
+                            client_secret: process.env.ACCESS_TOKEN_MP,
+                            grant_type: 'refresh_token',
+                            refresh_token: linkMercadoPago.cd_refresh_token
+                        };
+
+                        await Axios.post('https://api.mercadopago.com/oauth/token', data)
+                            .then((response) => {
+                                const updateLink: updateLinkMercadoPago = {
+                                    refresh_token: response.data.refresh_token,
+                                    cd_public_key: response.data.public_key,
+                                    authorization_code: response.data.authorization_code,
+                                    id_valid: true,
+                                    cd_access_token: response.data.access_token,
+                                }
+                                LinkMercadoPagoRepository.updateLinkMercadoPago(linkMercadoPago.cd_link_mercado_pago, updateLink)
+                                    .then()
+                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
+                            })
+                            .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }));
+                    }
+
+                    if (!sellerSplits.some(e => e.code == linkMercadoPago.cd_link_mercado_pago)) {
+
+                        sellerSplits.push({
+                            code: Number(linkMercadoPago.cd_link_mercado_pago),
+                            identification: Number(linkMercadoPago.cd_identification),
+                            split: Number(ticket.vl_ticket * purchase.tickets[i].quantity)
+                        });
+                    }
+                    else {
+                        const sellerIndex = sellerSplits.findIndex(e => e.code == linkMercadoPago.cd_link_mercado_pago);
+                        sellerSplits[sellerIndex].split += Number(ticket.vl_ticket * purchase.tickets[i].quantity);
+                    };
+                    transaction_amount += Number(ticket.vl_ticket * purchase.tickets[i].quantity);
+
+                    for (let i = 0; i < sellerSplits.length; i++) {
+                        if (disbursements.some(e => e.id == sellerSplits[i].code)) {
+                            disbursements.push({
+                                id: sellerSplits[i].code,
+                                amount: Number(sellerSplits[i].split.toFixed(2)),
+                                external_reference: `${sellerSplits[i].identification}`,
+                                collector_id: 671993915,
+                                application_fee: Number(((valueAmount) * 0.03).toFixed(2)),
+                                money_release_days: 30
+                            });
+                        } else {
+                            const disbursementIndex = disbursements.findIndex(e => e.id == sellerSplits[i].code);
+                            const oldAmount = disbursements[disbursementIndex].amount;
+                            const newAmount = Number((Number(oldAmount) + Number(sellerSplits[i].split)).toFixed(2));
+                            disbursements[disbursementIndex].amount = newAmount;
+                        }
+                    }
+
                     const event = await EventRepository.findEventById(ticket.cd_event);
 
                     const event_date = new Date(event.dt_start);
-                    const today = new Date();
+                    const today = new Date('2020-10-20');
 
                     const timeDiff = Math.abs(event_date.getTime() - today.getTime());
                     const daysDiff = Math.ceil((timeDiff / (3600 * 1000 * 24)));
 
-                    if (purchase.payments.payment_type_id == 'credit_card') {
-                        if (today > event_date)
-                            reject({ status: 400, message: 'it is not possible to buy tickets to an event already held' })
+                    if (today > event_date) {
+                        return reject({ status: 400, message: 'it is not possible to buy tickets to an event already held' })
                     }
-                    else if (purchase.payments.payment_type_id == 'ticket')
-                        if (daysDiff < 3) {
-                            reject({ status: 400, message: 'To make a ticket purchase you must have at least 3 days difference between today and the start date of the event' })
-                        }
-                        else {
-                            // Checks whether you need to refresh the token
-                            if (!linkMercadoPago.id_valid) {
-                                const data = {
-                                    client_secret: process.env.ACCESS_TOKEN_MP,
-                                    grant_type: 'refresh_token',
-                                    refresh_token: linkMercadoPago.cd_refresh_token
-                                };
-
-                                await Axios.post('https://api.mercadopago.com/oauth/token', data)
-                                    .then((response) => {
-                                        const updateLink: updateLinkMercadoPago = {
-                                            refresh_token: response.data.refresh_token,
-                                            cd_public_key: response.data.public_key,
-                                            authorization_code: response.data.authorization_code,
-                                            id_valid: true,
-                                            cd_access_token: response.data.access_token,
-                                        }
-                                        LinkMercadoPagoRepository.updateLinkMercadoPago(linkMercadoPago.cd_link_mercado_pago, updateLink)
-                                            .then()
-                                            .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
-                                    })
-                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }));
-                            }
-        
-                            mercadopago.configurations.setAccessToken(linkMercadoPago.cd_access_token);
-
-                            ticketsPurchase.push(ticket);
-
-                            if (!sellerSplits.some(e => e.code == linkMercadoPago.cd_link_mercado_pago)) {
-                                
-                                sellerSplits.push({
-                                    code: Number(linkMercadoPago.cd_link_mercado_pago),
-                                    identification: Number(linkMercadoPago.cd_identification),
-                                    split: Number(ticket.vl_ticket * purchase.tickets[i].quantity)
-                                });
-                            }
+                    else {
+                        if (purchase.billet) {
+                            if (daysDiff < 3)
+                                return reject({ status: 400, message: 'To make a ticket purchase you must have at least 3 days difference between today and the start date of the event' })
                             else {
-                                const sellerIndex = sellerSplits.findIndex(e => e.code == linkMercadoPago.cd_link_mercado_pago);
-                                sellerSplits[sellerIndex].split += Number(ticket.vl_ticket * purchase.tickets[i].quantity);
-                            };
-                            transaction_amount += Number(ticket.vl_ticket * purchase.tickets[i].quantity)
+                                const paymentBillet: PaymentBillet = {
+                                    payment_type_id: 'ticket',
+                                    payment_method_id: 'bolbradesco',
+                                    date_of_expiration: new Date('2020-12-20').toISOString(),
+                                    transaction_amount: Number((ticket.vl_ticket * purchase.tickets[i].quantity).toFixed(2)),
+                                    description: `${ticket.nm_ticket} - ${ticket.ds_ticket}`,
+                                    processing_mode: 'aggregator'
+                                }
 
+                                payments.push(paymentBillet);
+                            }
+                        } else {
+                            const paymentCreditCard: PaymentCreditCard = {
+                                payment_type_id: 'credit_card',
+                                payment_method_id: purchase.credit_card.payment_method_id,
+                                token: purchase.credit_card.token,
+                                transaction_amount: Number((ticket.vl_ticket * purchase.tickets[i].quantity).toFixed(2)),
+                                installments: purchase.credit_card.installments,
+                                issuer_id: purchase.credit_card.issuer_id,
+                                description: `${ticket.nm_ticket} - ${ticket.ds_ticket}`,
+                                processing_mode: 'agreggator'
+                            }
+
+                            payments.push(paymentCreditCard);
                         }
+                    }
                 }
 
-                for (let i = 0; i < sellerSplits.length; i++) {
-                    
-                    disbursements.push({
-                        amount: Number(sellerSplits[i].split),
-                        external_reference: `${sellerSplits[i].identification}`,
-                        collector_id: 671993915,
-                        application_fee: Number(((valueAmount) * 0.03).toFixed(2)),
-                        money_release_days: 30
+                const config = {
+                    headers: {
+                        Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
+                    }
+                }
+                payments.splice(1, 1);
+                disbursements.splice(1, 1);
+                const payment_data: PaymentData = {
+                    payer,
+                    payments,
+                    application_id: Number(process.env.APP_ID_MP),
+                    disbursements,
+                    external_reference: 'ref-transaction-1'
+                }
+
+                console.log(payment_data);
+
+                await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
+                    .then((result) => {
+                        const paymentResponse = (result.data as any);
+                        console.log(result.data);
+                        PurchaseCreditCardRepository.insertPurchaseCreditCard({
+                            dt_approved: null,
+                            payment_method: paymentResponse.payments[0].payment_method_id
+                        })
+                            .then((purchaseCreditCard) => {
+                                PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
+                                    .then(async (result) => {
+                                        const ticketsResponse: Array<PurchaseTicketResponse> = [];
+                                        for (let i = 0; i < purchase.tickets.length; i++) {
+                                            const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
+                                            const event = await EventRepository.findEventById(ticket.cd_event);
+                                            ticketsResponse.push({
+                                                idTicket: purchase.tickets[i].id,
+                                                TicketName: ticket.nm_ticket,
+                                                TicketEvent: event.nm_event,
+                                                TicketQuantity: purchase.tickets[i].quantity,
+                                                TicketValue: ticket.vl_ticket
+                                            });
+                                        }
+                                        resolve({
+                                            id: result.cd_purchase,
+                                            idMercadoPago: result.cd_purchase_mercado_pago,
+                                            PurchaseStatus: result.cd_status,
+                                            PurchaseDate: result.dt_purchase,
+                                            tickets: ticketsResponse,
+                                            billet: null,
+                                            credit_card: {
+                                                idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
+                                                CreditCardApprovedDate: purchaseCreditCard.dt_approved,
+                                                CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
+                                            },
+                                        })
+                                    })
+                                    .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                            })
+                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
+                    })
+                    .catch((err: any) => {
+                        console.log(err.response.data);
+                        reject({ status: 400, message: 'Unknown error. Try again later.', err })
                     });
-                }
 
-                if (purchase.payments.payment_type_id == 'credit_card') {
-                    if (!purchase.payments.installments) { reject({ status: 400, message: 'Please Specify the installment number' }) }
-                    else if (!purchase.payments.issuer_id) { reject({ status: 400, message: 'Please Specify the issuer' }) }
-                    else {
-                        const payment_data: PaymentData = {
-                            payer: {
-                                email: purchase.email,
-                                identification: {
-                                    type: 'CPF',
-                                    number: purchase.cpf_payer
-                                }
-                            },
-                            payment: {
-                                payment_method_id: purchase.payments.payment_method_id,
-                                payment_type_id: purchase.payments.payment_type_id,
-                                token: purchase.payments.token,
-                                transaction_amount: transaction_amount,
-                                processing_mode: 'aggregator',
-                                installments: purchase.payments.installments,
-                                issuer_id: purchase.payments.issuer_id,
-                                description: purchase.payments.description
-                            },
-                            dispursements: disbursements
-                        };
-                        let config = {
-                            headers: {
-                                Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
-                            }
-                        }
-                        await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
-                            .then((result) => {
-                                const paymentResponse = (result.data as any);
-                                PurchaseCreditCardRepository.insertPurchaseCreditCard({
-                                    dt_approved: null,
-                                    payment_method: paymentResponse.payments[0].payment_method_id
-                                })
-                                    .then((purchaseCreditCard) => {
-                                        PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
-                                            .then(async (result) => {
-                                                const ticketsResponse: Array<PurchaseTicketResponse> = [];
-                                                for (let i = 0; i < purchase.tickets.length; i++) {
-                                                    const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
-                                                    const event = await EventRepository.findEventById(ticket.cd_event);
-                                                    ticketsResponse.push({
-                                                        idTicket: purchase.tickets[i].id,
-                                                        TicketName: ticket.nm_ticket,
-                                                        TicketEvent: event.nm_event,
-                                                        TicketQuantity: purchase.tickets[i].quantity,
-                                                        TicketValue: ticket.vl_ticket
-                                                    });
-                                                }
-                                                resolve({
-                                                    id: result.cd_purchase,
-                                                    idMercadoPago: result.cd_purchase_mercado_pago,
-                                                    PurchaseStatus: result.cd_status,
-                                                    PurchaseDate: result.dt_purchase,
-                                                    tickets: ticketsResponse,
-                                                    billet: null,
-                                                    credit_card: {
-                                                        idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
-                                                        CreditCardApprovedDate: purchaseCreditCard.dt_approved,
-                                                        CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
-                                                    },
-                                                })
-                                            })
-                                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
-                                    })
-                                    .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
-                            })
-                            .catch((err: any) => {
-                                console.log(err.response.data);
-                                reject({ status: 400, message: 'Unknown error. Try again later.', err })
-                            });
-                    }
-                } else {
-                    if (!purchase.address)
-                        reject({ status: 400, message: 'You need to send a location.' });
-                    else {
-                        const payment_data = {
-                            payer: {
-                                first_name: user.nm_user,
-                                last_name: user.nm_surname_user,
-                                email: purchase.email,
-                                identification: {
-                                    type: 'CPF',
-                                    number: purchase.cpf_payer
-                                },
-                                address: {
-                                    zip_code: purchase.address.zip_code,
-                                    street_name: purchase.address.street_name,
-                                    street_number: purchase.address.street_number
-                                }
-                            },
-                            payments: [
-                                {
-                                    payment_method_id: purchase.payments.payment_method_id,
-                                    payment_type_id: purchase.payments.payment_type_id,
-                                    token: purchase.payments.token,
-                                    transaction_amount: transaction_amount,
-                                    date_of_expiration:  new Date('2020-12-10') ,
-                                    processing_mode: 'aggregator',
-                                    description: purchase.payments.description
-                                }
-                            ],
-                            application_id: process.env.APP_ID,
-                            disbursements: disbursements
-                        };
-                        let config = {
-                            headers: {
-                                Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
-                            }
-                        }
-                        await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
-                            .then((result) => {
-                                const paymentResponse = (result.data as any);
-
-                                PurchaseBilletRepository.insertPurchaseBillet({
-                                    link_billet: paymentResponse.payments[0].transaction_details.external_resource_url,
-                                    dt_expiration: paymentResponse.payments[0].date_of_expiration
-                                })
-                                    .then((purchaseBillet) => {
-                                        PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, purchaseBillet.cd_purchase_billet, undefined)
-                                            .then(async (result) => {
-                                                const ticketsResponse: Array<PurchaseTicketResponse> = [];
-                                                for (let i = 0; i < purchase.tickets.length; i++) {
-                                                    const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
-                                                    const event = await EventRepository.findEventById(ticket.cd_event);
-                                                    ticketsResponse.push({
-                                                        idTicket: purchase.tickets[i].id,
-                                                        TicketName: ticket.nm_ticket,
-                                                        TicketEvent: event.nm_event,
-                                                        TicketQuantity: purchase.tickets[i].quantity,
-                                                        TicketValue: ticket.vl_ticket
-                                                    });
-                                                }
-                                                resolve({
-                                                    id: result.cd_purchase,
-                                                    idMercadoPago: result.cd_purchase_mercado_pago,
-                                                    PurchaseStatus: result.cd_status,
-                                                    PurchaseDate: result.dt_purchase,
-                                                    tickets: ticketsResponse,
-                                                    billet: {
-                                                        idBillet: purchaseBillet.cd_purchase_billet,
-                                                        BilletImage: purchaseBillet.im_billet,
-                                                        BilletPurchaseDate: purchaseBillet.dt_purchase
-                                                    },
-                                                    credit_card: null
-                                                })
-                                            })
-                                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
-                                    })
-                                    .catch((err) => {
-                                        reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data });
-                                    })
-                            })
-                            .catch((err: any) => {
-                                console.log(err);
-                                reject({ status: 400, message: 'Unknown error. Try again later.', err });
-                            });
-                    }
-                }
             }
         });
     }

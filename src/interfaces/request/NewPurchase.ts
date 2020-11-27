@@ -3,18 +3,19 @@ import TicketRequest from "./TicketRequest";
 interface NewPurchase {
     tickets: Array<TicketRequest>,
     email: String,
-    cpf_payer: string,
-    address?: { // Only for billet
-        zip_code: String,
-        street_name: String,
-        street_number: String
-    },
-    payments: {
+    cpf_payer: string,   
+    credit_card: {
         payment_method_id: String,
-        payment_type_id: String,
-        token?: String, //Only for Credit Card
-        installments?: Number, //Only for Credit Card
-        issuer_id?: String, //Only for Credit Card
+        token: String,
+        installments: Number,
+        issuer_id?: String,
+    },
+    billet: {
+        address: {
+            zip_code: String,
+            street_name: String,
+            street_number: String
+        },        
         description: String
     }
 }
