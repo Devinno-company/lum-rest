@@ -42,6 +42,7 @@ class TeamController {
                             id: member.cd_user,
                             name: member.nm_user,
                             surname: member.nm_surname_user,
+                            profission: member.nm_profission,
                             image: member.im_user,
                             role: {
                                 name: role.nm_role,
@@ -96,6 +97,7 @@ class TeamController {
                         let response: TeamMember = {
                             id: userResponse.cd_user,
                             name: userResponse.nm_user,
+                            profission: userResponse.nm_profission,
                             surname: userResponse.nm_surname_user,
                             image: userResponse.im_user,
                             role: {

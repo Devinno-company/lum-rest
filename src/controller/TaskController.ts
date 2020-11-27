@@ -40,6 +40,7 @@ class TaskController {
                                     id: teamMember.cd_user,
                                     name: teamMember.nm_user,
                                     surname: teamMember.nm_surname_user,
+                                    profission: teamMember.nm_profission,
                                     image: teamMember.im_user,
                                     role: {
                                         name: role.nm_role,
@@ -93,6 +94,7 @@ class TaskController {
                                 id: teamMember.cd_user,
                                 name: teamMember.nm_user,
                                 surname: teamMember.nm_surname_user,
+                                profission: teamMember.nm_profission,
                                 image: teamMember.im_user,
                                 role: {
                                     name: role.nm_role,
@@ -145,6 +147,7 @@ class TaskController {
                                 id: teamMember.cd_user,
                                 name: teamMember.nm_user,
                                 surname: teamMember.nm_surname_user,
+                                profission: teamMember.nm_profission,
                                 image: teamMember.im_user,
                                 role: {
                                     name: role.nm_role,
@@ -283,6 +286,7 @@ class TaskController {
                                             id: user.cd_user,
                                             name: user.nm_user,
                                             surname: user.nm_surname_user,
+                                            profission: user.nm_profission,
                                             role: {
                                                 name: role.nm_role,
                                                 description: role.ds_role

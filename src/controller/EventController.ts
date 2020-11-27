@@ -297,6 +297,7 @@ class EventController {
                         id: user.cd_user,
                         name: user.nm_user,
                         surname: user.nm_surname_user,
+                        profission: user.nm_profission,
                         image: user.im_user,
                         role: {
                             name: role.nm_role,
@@ -314,6 +315,7 @@ class EventController {
                                         id: user.cd_user,
                                         name: user.nm_user,
                                         surname: user.nm_surname_user,
+                                        profission: user.nm_profission,
                                         image: user.im_user,
                                         role: {
                                             name: role.nm_role,
@@ -413,6 +415,7 @@ class EventController {
                             id: user.cd_user,
                             name: user.nm_user,
                             surname: user.nm_surname_user,
+                            profission: user.nm_profission,
                             image: user.im_user,
                             role: {
                                 name: role.nm_role,
@@ -430,6 +433,7 @@ class EventController {
                                             id: user.cd_user,
                                             name: user.nm_user,
                                             surname: user.nm_surname_user,
+                                            profission: user.nm_profission,
                                             image: user.im_user,
                                             role: {
                                                 name: role.nm_role,
@@ -800,6 +804,7 @@ class EventController {
                         id: user.cd_user,
                         name: user.nm_user,
                         surname: user.nm_surname_user,
+                        profission: user.nm_profission,
                         image: user.im_user,
                         role: {
                             name: role.nm_role,
