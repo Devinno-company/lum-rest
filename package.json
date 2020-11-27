@@ -1,6 +1,6 @@
 {
   "name": "lum_rest",
-  "version": "1.39.8",
+  "version": "1.39.9",
   "main": "./src/server.ts",
   "engines": {"node": "12.x","npm": "6.x" },
   "apidoc": {
@@ -14,7 +14,7 @@
   "author": "Devinno-company <company.devinno@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node --optimize_for_size --max_old_space_size=460 -r ts-node/register ./src/server.ts",
+    "start": "node --optimize_for_size --max_old_space_size=512 -r ts-node/register/transpile-only ./src/server.ts",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest --env production",
     "knex:migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --env production",
     "dev": "tsnd --transpile-only --ignore-watch node_modules --respawn src/server.ts"
