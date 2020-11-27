@@ -104,11 +104,12 @@ class PurchaseController {
                     }
 
                     if (!sellerSplits.some(e => e.code == linkMercadoPago.cd_link_mercado_pago)) {
-
+                        console.log(linkMercadoPago)
                         sellerSplits.push({
                             code: Number(linkMercadoPago.cd_link_mercado_pago),
                             identification: Number(linkMercadoPago.cd_identification),
-                            split: Number(ticket.vl_ticket * purchase.tickets[i].quantity)
+                            split: Number(ticket.vl_ticket * purchase.tickets[i].quantity),
+                            user_id_mercado_pago: linkMercadoPago.cd_user_mercado_pago
                         });
                     }
                     else {
@@ -118,12 +119,12 @@ class PurchaseController {
                     transaction_amount += Number(ticket.vl_ticket * purchase.tickets[i].quantity);
 
                     for (let i = 0; i < sellerSplits.length; i++) {
-                        if (disbursements.some(e => e.id == sellerSplits[i].code)) {
+                        if (!disbursements.some(e => e.id == sellerSplits[i].user_id_mercado_pago)) {
                             disbursements.push({
                                 id: sellerSplits[i].code,
                                 amount: Number(sellerSplits[i].split.toFixed(2)),
                                 external_reference: `${sellerSplits[i].identification}`,
-                                collector_id: 671993915,
+                                collector_id: sellerSplits[i].user_id_mercado_pago,
                                 application_fee: Number(((valueAmount) * 0.03).toFixed(2)),
                                 money_release_days: 30
                             });

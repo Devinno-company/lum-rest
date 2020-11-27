@@ -568,6 +568,7 @@ class EventController {
                             authorization_code: response.data.authorization_code,
                             id_valid: true,
                             cd_access_token: response.data.access_token,
+                            cd_user_mercado_pago: response.data.use
                         }
                         LinkMercadoPagoRepository.updateLinkMercadoPago(link.cd_link_mercado_pago, updateLink)
                             .then(() => resolve())

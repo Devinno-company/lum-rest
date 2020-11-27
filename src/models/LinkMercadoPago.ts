@@ -7,7 +7,7 @@ interface LinkMercadoPago {
     cd_access_token: string,
     id_valid: boolean,
     dt_issue: string,
-    cd_user: number
+    cd_user_mercado_pago: number
 }
 
 export default LinkMercadoPago;

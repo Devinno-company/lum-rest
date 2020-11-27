@@ -7,6 +7,7 @@ export function up(knex: Knex) {
         table.string('cd_refresh_token');
         table.string('cd_access_token');
         table.string('cd_public_key');
+        table.integer('cd_user_mercado_pago')
         table.boolean('id_valid').notNullable().defaultTo(false);
         table.date('dt_issue').notNullable().defaultTo(knex.fn.now());
         table.integer('cd_event').notNullable();
