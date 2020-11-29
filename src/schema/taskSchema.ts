@@ -10,7 +10,7 @@ export const newTaskSchema = Joi.object({
         .min(0)
         .max(255)
         .allow(null, '')
-        .optional()
+        .required()
 })
     .strict();
 
