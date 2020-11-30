@@ -560,12 +560,15 @@ class EventController {
                 })
                     .then((response) => {
 
+                        console.log(response);
+
                         const updateLink: updateLinkMercadoPago = {
                             refresh_token: response.data.refresh_token,
                             cd_public_key: response.data.public_key,
                             authorization_code: response.data.authorization_code,
                             id_valid: true,
                             cd_access_token: response.data.access_token,
+                            cd_user_mercado_pago: response.data.user_id
                         }
                         LinkMercadoPagoRepository.updateLinkMercadoPago(link.cd_link_mercado_pago, updateLink)
                             .then(() => resolve())

@@ -229,7 +229,7 @@ notificationRoutes.delete('/notifications/:idNotification', verifyToken, (reques
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
-notificationRoutes.get('/notifications_mercado_pago', async (request, response) => {
+notificationRoutes.post('/notifications_mercado_pago', async (request, response) => {
     notificationsMP.whatIsAction(request.body);
     response.status(200).json();
 });

@@ -12,7 +12,7 @@ class LinkMercadoPagoRepository {
             await trx('tb_link_mercado_pago')
                 .insert({
                     cd_identification: identificaion_id,
-                    cd_event: event_id
+                    cd_event: event_id,
                 })
                 .returning('*');
 
@@ -34,7 +34,8 @@ class LinkMercadoPagoRepository {
                     id_valid: updateLinkMercadoPago.id_valid,
                     cd_refresh_token: updateLinkMercadoPago.refresh_token,
                     cd_access_token: updateLinkMercadoPago.cd_access_token,
-                    cd_public_key: updateLinkMercadoPago.cd_public_key
+                    cd_public_key: updateLinkMercadoPago.cd_public_key,
+                    cd_user_mercado_pago: updateLinkMercadoPago.cd_user_mercado_pago
                 })
                 .where('cd_link_mercado_pago', '=', idLinkMercadoPago)
                 .returning('*');

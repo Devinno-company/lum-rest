@@ -4,7 +4,8 @@ interface updateLinkMercadoPago {
     refresh_token?: string,
     id_valid?: boolean,
     cd_access_token?: string,
-    cd_public_key?: string
+    cd_public_key?: string,
+    cd_user_mercado_pago?: number
 }
 
 export default updateLinkMercadoPago;

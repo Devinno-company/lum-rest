@@ -1,4 +1,5 @@
 interface DisbursementsMercadoPago {
+    id: number,
     amount: number,
     external_reference: string,
     collector_id: number,

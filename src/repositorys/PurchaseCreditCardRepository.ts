@@ -24,6 +24,26 @@ class PurchaseCreditCardRepository {
         });
     }
 
+    public static updateApprovedPurchaseCreditCard(idPurchaseCreditCard: number, dtApproved: string): Promise<void> {
+
+        return new Promise(async (resolve, reject) => {
+            const trx = await db.transaction();
+
+            await trx('tb_purchase_credit_card')
+                .update({
+                    dt_approved: dtApproved
+                })
+                .where('cd_purchase_credit_card', '=', idPurchaseCreditCard);
+
+            trx.commit()
+                .then(() => { resolve(); })
+                .catch((err) => {
+                    trx.rollback();
+                    reject(err);
+                });
+        });
+    }
+
     public static findPurchaseCreditCardById(idPurchaseCreditCard: number): Promise<PurchaseCreditCard> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
