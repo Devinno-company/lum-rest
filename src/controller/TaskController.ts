@@ -328,21 +328,17 @@ class TaskController {
                         if (task.id_completed)
                             reject({ status: 409, message: "You can't unassign a task that's already completed" })
                         else {
-                            if (task.cd_access_user != user.cd_user)
-                                reject({ status: 401, message: 'You cannot unassign a task that you did not assign' })
-                            else {
-                                TaskRepository.cleanAccessById(idTask)
-                                    .then((result) => {
-                                        resolve({
-                                            id: result.cd_task,
-                                            name: result.nm_task,
-                                            completed: result.id_completed,
-                                            description: result.ds_task,
-                                            user_assigned: null
-                                        });
-                                    })
-                                    .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
-                            }
+                            TaskRepository.cleanAccessById(idTask)
+                                .then((result) => {
+                                    resolve({
+                                        id: result.cd_task,
+                                        name: result.nm_task,
+                                        completed: result.id_completed,
+                                        description: result.ds_task,
+                                        user_assigned: null
+                                    });
+                                })
+                                .catch((err) => reject({ status: 400, message: 'Unknown error. Try again later.', err }));
                         }
                     }
                 }
