@@ -59,7 +59,7 @@ class MaterialRepository {
                 .update({
                     nm_material: UpdateMaterial.name_to,
                     qt_material: UpdateMaterial.quantity_to,
-                    ds_observation: UpdateMaterial.description_to
+                    ds_observation: UpdateMaterial.observation_to
                 })
                 .where('cd_material', '=', idMaterial);
 
