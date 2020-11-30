@@ -4,7 +4,6 @@ interface PaymentCreditCard {
     token: String,
     transaction_amount: Number,
     processing_mode: String,
-    description: String,
     installments: Number,
     issuer_id?: String,
 }
