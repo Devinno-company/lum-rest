@@ -121,6 +121,8 @@ class PurchaseController {
                                     disbursements[disbursementIndex].amount = sellerSplits[j].split;
                                 }
                             }
+
+                            ticketsPurchase.push(ticket);
                         }
                     }
                 }
