@@ -116,7 +116,7 @@ class MaterialController {
         });
     }
 
-    async updateMaterial(user: User, updateMaterial: UpdateMaterial, idEvent: number, idMaterial: number): Promise<MaterialResponse> {
+    async updateMaterial(user: User, updateMaterial: UpdateMaterial, idEvent: number, idMaterial: number): Promise<Array<MaterialResponse>> {
 
         return new Promise(async (resolve, reject) => {
 
@@ -134,12 +134,13 @@ class MaterialController {
                     .then(() => {
                         MaterialRepository.updateMaterial(idMaterial, updateMaterial)
                             .then(async () => {
-                                const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                                let NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
                                     if (NewMaterial.acquired > NewMaterial.quantity) {
                                         MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
-                                        resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
+                                        NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                                        resolve([NewMaterial])
                                     }
-                                resolve(NewMaterial)
+                                resolve([NewMaterial])
                             })
                             .catch(err => reject(err));
                     })
@@ -148,7 +149,7 @@ class MaterialController {
         });
     }
 
-    async updateAcquired(user: User, acquired: number, idEvent: number, idMaterial: number): Promise<MaterialResponse> {
+    async updateAcquired(user: User, acquired: number, idEvent: number, idMaterial: number): Promise<Array<MaterialResponse>> {
 
         return new Promise(async (resolve, reject) => {
 
@@ -163,12 +164,13 @@ class MaterialController {
                 .then(() => {
                     MaterialRepository.updateAcquired(idMaterial, acquired)
                         .then(async () => {
-                            const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                            let NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
                             if (NewMaterial.acquired > NewMaterial.quantity) {
                                 MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
-                                resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
+                                NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                                resolve([NewMaterial])
                             }
-                        resolve(NewMaterial)
+                        resolve([NewMaterial])
                             })
                         .catch(err => reject(err));
                     })
