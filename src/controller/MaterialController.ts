@@ -159,20 +159,24 @@ class MaterialController {
             if (!material)
                 reject({ status: 404, message: 'This material does not exist' });
 
-            await havePermission(user.cd_user, event.cd_event, 'EQP')
-                .then(() => {
-                    MaterialRepository.updateAcquired(idMaterial, acquired)
-                        .then(async () => {
-                            const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
-                            if (NewMaterial.acquired > NewMaterial.quantity) {
-                                MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
-                                resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
-                            }
-                        resolve(NewMaterial)
-                            })
-                        .catch(err => reject(err));
-                    })
-                    .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
+            if (acquired == null || acquired == undefined) {
+                reject({ status: 400, message: 'No field to update' });
+            } else{
+                await havePermission(user.cd_user, event.cd_event, 'EQP')
+                    .then(() => {
+                        MaterialRepository.updateAcquired(idMaterial, acquired)
+                            .then(async () => {
+                                const NewMaterial = await this.readMaterial(user, event.cd_event, material.cd_material)
+                                if (NewMaterial.acquired > NewMaterial.quantity) {
+                                    MaterialRepository.updateStatusMaterial(material.cd_material, "ADQ")
+                                    resolve(await this.readMaterial(user, event.cd_event, material.cd_material))
+                                }
+                            resolve(NewMaterial)
+                                })
+                            .catch(err => reject(err));
+                        })
+                        .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
+            }
         });
     }
 
