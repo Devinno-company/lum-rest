@@ -140,10 +140,22 @@ class PurchaseController {
                         id: user.cd_user
                     }
 
+                    //Sets the expiration date to 3 days before the earliest event.
+                    let earliestEvent = new Date(3000, 0, 0);
+                    for (let i = 0; i < ticketsPurchase.length; i++) {
+                        
+                        let event = await EventRepository.findEventById(ticketsPurchase[i].cd_event)
+                        let eventDate = new Date(event.dt_start)
+                        if (new Date(event.dt_start) < earliestEvent) {
+                            earliestEvent = eventDate;
+                        };
+                    }
+                    const expirationDate = new Date(earliestEvent.setDate(earliestEvent.getDate() - 3))
+
                     const paymentBillet: PaymentBillet = {
                         payment_type_id: 'ticket',
                         payment_method_id: 'bolbradesco',
-                        date_of_expiration: new Date('2020-12-20').toISOString(),
+                        date_of_expiration: expirationDate.toISOString(),
                         transaction_amount,
                         processing_mode: 'aggregator'
                     }
