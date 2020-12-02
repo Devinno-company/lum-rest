@@ -120,6 +120,19 @@ class EventRepository {
         });
     }
 
+    public static async findEvents(): Promise<Array<Event>> {
+        return new Promise(async (resolve) => {
+            const events =
+                await db('tb_event as e')
+                    .select('*')        
+                    .where('e.sg_privacy', '=', 'PUB')
+                    .where('e.dt_start', '>=', db.fn.now())
+                    .orderBy('e.dt_start', 'asc');
+
+            resolve(events);
+        })
+    }
+
     public static async findEventsByNameAndUfAndCity(name: string, uf: string, city: string): Promise<Array<Event>> {
         return new Promise(async (resolve) => {
 
@@ -132,7 +145,7 @@ class EventRepository {
                     .andWhere('c.sg_uf', '=', uf)
                     .andWhere('c.nm_city', '=', city)
                     .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
-                    
+
             resolve(events);
         })
     }

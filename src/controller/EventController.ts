@@ -142,11 +142,11 @@ class EventController {
                         if (!searchCity)
                             reject({ status: 400, message: 'This city does not exist' });
                         else if (insertedGeolocation) {
-                            let locationParams = { 
-                                street: updateEvent.location_to.street_to, 
-                                neighborhood: updateEvent.location_to.street_to, 
-                                number: updateEvent.location_to.number_to, 
-                                cep: String(updateEvent.location_to.cep_to), 
+                            let locationParams = {
+                                street: updateEvent.location_to.street_to,
+                                neighborhood: updateEvent.location_to.street_to,
+                                number: updateEvent.location_to.number_to,
+                                cep: String(updateEvent.location_to.cep_to),
                                 complement: updateEvent.location_to.complement_to,
                                 name_establishment: updateEvent.location_to.establishment_to
                             };
@@ -609,7 +609,7 @@ class EventController {
 
                         do {
                             random_id = (Math.random() * 10000).toFixed(0);
-                            
+
                             const searchLink = await LinkMercadoPagoRepository.findLinkMercadoPagoByIdentificationId(random_id);
 
                             if (!searchLink)
@@ -760,9 +760,24 @@ class EventController {
 
             else if (!_name && !_city && _uf)
                 events = await EventRepository.findEventsByUf(_uf);
-            else
-                events = await EventRepository.findEventsByNameAndUfAndCity(_name as string, _uf as string, _city as string);;
-            console.log('--------------------');
+            else if (_name && _city && _uf)
+                events = await EventRepository.findEventsByNameAndUfAndCity(_name as string, _uf as string, _city as string);
+            // No filters
+            else {
+                if (user.cd_location_user) {
+                    const searchLocationUser = await LocationUserRepository.findLocationUserById(user.cd_location_user);
+                    const city = await CityRepository.findCityById(searchLocationUser.cd_city);
+
+                    events = await EventRepository.findEventsByUfAndCity(city.sg_uf, city.nm_city);
+                    const searchEventsByUf = await EventRepository.findEventsByUf(city.sg_uf);
+
+                    searchEventsByUf.map(searchEvent => {
+                        if (!events.some(event => event.cd_event !== searchEvent.cd_event))
+                            events.push(searchEvent);
+                    })
+                } else
+                    events = await EventRepository.findEvents();
+            }
 
             if (_distanceMin) {
                 if (!user.cd_location_user)
@@ -888,14 +903,14 @@ class EventController {
                     else {
                         jwt.verify(token, process.env.SECRET_TICKET as string, (err, result) => {
                             if (!result || err)
-                            reject({ status: 400, message: 'Invalid token.', err });
-                        else {
-                            const payload: any = jwt.decode(token);
-                            if (event.cd_event != payload.event_id || ticket.cd_ticket != payload.ticket_id)
-                                reject({ status: 400, message: "This ticket doesn't belong to the event" })
-                            else 
-                                resolve();
-                        }
+                                reject({ status: 400, message: 'Invalid token.', err });
+                            else {
+                                const payload: any = jwt.decode(token);
+                                if (event.cd_event != payload.event_id || ticket.cd_ticket != payload.ticket_id)
+                                    reject({ status: 400, message: "This ticket doesn't belong to the event" })
+                                else
+                                    resolve();
+                            }
                         });
                     }
                 }
