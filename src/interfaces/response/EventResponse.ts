@@ -9,6 +9,7 @@ interface EventResponse {
     start_time?: string,
     end_time?: string,
     type?: string,
+    image: string,
     location: {
         street: string,
         neighborhood: string,
