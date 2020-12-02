@@ -144,6 +144,7 @@ class EventRepository {
                     .where('e.sg_privacy', '=', 'PUB')
                     .andWhere('c.sg_uf', '=', uf)
                     .andWhere('c.nm_city', '=', city)
+                    .andWhere('e.dt_start', '>=', db.fn.now())
                     .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
 
             resolve(events);
@@ -161,6 +162,7 @@ class EventRepository {
                     .where('e.sg_privacy', '=', 'PUB')
                     .andWhere('c.sg_uf', '=', uf)
                     .andWhere('c.nm_city', '=', city)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
 
             resolve(events);
@@ -177,7 +179,8 @@ class EventRepository {
                     .join('tb_city as c', 'le.cd_city', 'c.cd_city')
                     .where('e.sg_privacy', '=', 'PUB')
                     .andWhere('c.nm_city', '=', city)
-                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
 
             resolve(events);
@@ -194,7 +197,8 @@ class EventRepository {
                     .join('tb_city as c', 'le.cd_city', 'c.cd_city')
                     .where('e.sg_privacy', '=', 'PUB')
                     .andWhere('c.sg_uf', '=', uf)
-                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`);
+                    .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
             resolve(events);
         })
@@ -209,7 +213,8 @@ class EventRepository {
                     .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
                     .join('tb_city as c', 'le.cd_city', 'c.cd_city')
                     .where('e.sg_privacy', '=', 'PUB')
-                    .andWhere('c.sg_uf', '=', uf);
+                    .andWhere('c.sg_uf', '=', uf)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
             resolve(events);
         });
@@ -224,7 +229,8 @@ class EventRepository {
                     .join('tb_location_event as le', 'e.cd_location_event', 'le.cd_location_event')
                     .join('tb_city as c', 'le.cd_city', 'c.cd_city')
                     .where('e.sg_privacy', '=', 'PUB')
-                    .andWhere('c.nm_city', '=', city);
+                    .andWhere('c.nm_city', '=', city)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
             resolve(events);
         });
@@ -238,6 +244,7 @@ class EventRepository {
                     .select('*')
                     .where('e.sg_privacy', '=', 'PUB')
                     .andWhereRaw(`to_tsvector(e.nm_event) @@ to_tsquery('${name}')`)
+                    .andWhere('e.dt_start', '>=', db.fn.now());
 
             resolve(events);
         });
