@@ -342,12 +342,12 @@ class EventController {
                     id: event.cd_event,
                     name: event.nm_event,
                     description: event.ds_event,
+                    banner: event.im_banner,
                     start_date: event.dt_start,
                     end_date: event.dt_end,
                     start_time: event.hr_start,
                     end_time: event.hr_end,
                     type: event.nm_type,
-                    im_banner: event.im_banner,
                     location: {
                         street: locationEvent.nm_street,
                         name_establishment: locationEvent.nm_establishment,
@@ -468,7 +468,6 @@ class EventController {
                         start_time: event.hr_start,
                         end_time: event.hr_end,
                         type: event.nm_type,
-                        im_banner: event.im_banner,
                         location: {
                             street: locationEvent.nm_street,
                             neighborhood: locationEvent.nm_neighborhood,
@@ -856,7 +855,6 @@ class EventController {
                     start_time: events[i].hr_start,
                     end_time: events[i].hr_end,
                     type: events[i].nm_type,
-                    im_banner: events[i].im_banner,
                     location: {
                         street: locationEvent.nm_street,
                         name_establishment: locationEvent.nm_establishment,
