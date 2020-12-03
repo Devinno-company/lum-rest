@@ -7,7 +7,7 @@ const pg = require('pg');
 
 const db = knex({
     client: 'pg',
-    connection: connection.development.connection,
+    connection: connection.production.connection,
 });
 
 export default db;
