@@ -211,8 +211,17 @@ class PurchaseController {
                             .then((purchaseCreditCard) => {
                                 PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
                                     .then(async (result) => {
+                                        for (let i = 0; i <  purchase.tickets.length; i++) {
+                                            ItemTicketPurchaseRepository.insertItem({
+                                                cd_ticket: purchase.tickets[i].id,
+                                                cd_purchase: result.cd_purchase,
+                                                qt_ticket_sell: purchase.tickets[i].quantity
+                                            })
+                                        }
+                                        const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
+
                                         const ticketsResponse: Array<PurchaseTicketResponse> = [];
-                                        for (let i = 0; i < purchase.tickets.length; i++) {
+                                        for (let i = 0; i < items.length; i++) {
                                             const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
                                             const event = await EventRepository.findEventById(ticket.cd_event);
                                             ticketsResponse.push({
