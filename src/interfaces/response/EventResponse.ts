@@ -4,12 +4,12 @@ interface EventResponse {
     id: number,
     name: string,
     description?: string,
+    banner?: string,
     start_date: string,
     end_date: string,
     start_time?: string,
     end_time?: string,
     type?: string,
-    im_banner?: string,
     location: {
         street: string,
         neighborhood: string,

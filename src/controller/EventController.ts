@@ -347,7 +347,6 @@ class EventController {
                     start_time: event.hr_start,
                     end_time: event.hr_end,
                     type: event.nm_type,
-                    im_banner: event.im_banner,
                     location: {
                         street: locationEvent.nm_street,
                         name_establishment: locationEvent.nm_establishment,
@@ -462,12 +461,12 @@ class EventController {
                         id: event.cd_event,
                         name: event.nm_event,
                         description: event.ds_event,
+                        banner: event.im_banner,
                         start_date: event.dt_start,
                         end_date: event.dt_end,
                         start_time: event.hr_start,
                         end_time: event.hr_end,
                         type: event.nm_type,
-                        im_banner: event.im_banner,
                         location: {
                             street: locationEvent.nm_street,
                             neighborhood: locationEvent.nm_neighborhood,
@@ -649,16 +648,16 @@ class EventController {
                     else
                         type = '.jpg';
 
-
-                    const eventName = event.nm_event.toLowerCase().replace(' ', '-');
+                    const eventName = event.nm_event.toLowerCase().replace(/ /g, '-');
+                    
                     // Gera o nome do arquivo e o link que o arquivo será disponibilizado
                     const fileName: string = genNameFile('event', user.cd_user, type);
                     const link = `https://${process.env.BUCKET_NAME}.s3-${process.env.BUCKET_REGION}.amazonaws.com/image/event/${eventName}/banner/${fileName}`;
-
+                    
                     // Configura a request de upload
                     const putObjectRequest: PutObjectRequest =
                     {
-                        Bucket: process.env.BUCKET_NAME as string + `/image/event/${eventName}/banner/`,
+                        Bucket: process.env.BUCKET_NAME as string + `/image/event/${eventName}/banner`,
                         Key: fileName,
                         Body: banner.buffer,
                         ContentLength: banner.size,
@@ -848,13 +847,13 @@ class EventController {
                 eventsResponse.push({
                     id: events[i].cd_event,
                     name: events[i].nm_event,
+                    banner: events[i].im_banner,
                     description: events[i].ds_event,
                     start_date: events[i].dt_start,
                     end_date: events[i].dt_end,
                     start_time: events[i].hr_start,
                     end_time: events[i].hr_end,
                     type: events[i].nm_type,
-                    im_banner: events[i].im_banner,
                     location: {
                         street: locationEvent.nm_street,
                         name_establishment: locationEvent.nm_establishment,
