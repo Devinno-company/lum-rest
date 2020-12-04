@@ -15,7 +15,6 @@ import getTicketHtml from "../utils/getTicketHtml";
 import jwt from 'jsonwebtoken';
 import pdf from 'html-pdf';
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
-
 import PurchaseTicketResponse from "../interfaces/response/PurchaseTicketResponse";
 import Ticket from "../models/Ticket";
 import DisbursementsMercadoPago from "../interfaces/externals/DisbursementsMercadoPago";
@@ -24,6 +23,7 @@ import PaymentData from "../interfaces/externals/PaymentData";
 import PaymentBillet from "../interfaces/externals/PaymentBillet";
 import PaymentCreditCard from "../interfaces/externals/PaymentCreditCard";
 import PayerPayment from "../interfaces/externals/PayerPayment";
+import CheckinRepository from "../repositorys/CheckinRepository";
 
 class PurchaseController {
 
@@ -47,8 +47,11 @@ class PurchaseController {
                 for (let i = 0; i < purchase.tickets.length; i++) {
 
                     const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
-                    if (!ticket)
+                    if (!ticket) {
                         return reject({ status: 400, message: "This ticket id doesn't exist" });
+                    } else if (purchase.tickets[i].buyers.length != purchase.tickets[i].quantity) {
+                        return reject({ status: 400, message: "Please give the informations for each ticket buyer" });
+                    }
                     else {
                         const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
                         // Checks whether you need to refresh the token
@@ -210,28 +213,71 @@ class PurchaseController {
                         })
                             .then((purchaseCreditCard) => {
                                 PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
-                                    .then(async (result) => {
+                                .then(async (result) => {
+                                    const ticketsResponse: Array<PurchaseTicketResponse> = [];
+    
+                                        const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
                                         for (let i = 0; i <  purchase.tickets.length; i++) {
                                             ItemTicketPurchaseRepository.insertItem({
                                                 cd_ticket: purchase.tickets[i].id,
                                                 cd_purchase: result.cd_purchase,
                                                 qt_ticket_sell: purchase.tickets[i].quantity
                                             })
-                                        }
-                                        const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
 
-                                        const ticketsResponse: Array<PurchaseTicketResponse> = [];
-                                        for (let i = 0; i < items.length; i++) {
+                                            for (let j = 0; j < purchase.tickets[i].quantity; j++) {
+                                                
                                             const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
                                             const event = await EventRepository.findEventById(ticket.cd_event);
-                                            ticketsResponse.push({
-                                                idTicket: purchase.tickets[i].id,
-                                                TicketName: ticket.nm_ticket,
-                                                TicketEvent: event.nm_event,
-                                                TicketQuantity: purchase.tickets[i].quantity,
-                                                TicketValue: ticket.vl_ticket
-                                            });
+
+                                            let newQrcode: string;
+                                                
+                                            var today = new Date();
+                                            var event_date = new Date(event.dt_end);
+                                        
+                                            var timeDiff = Math.abs(event_date.getTime() - today.getTime());
+                                            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                                            
+                                            const newToken = jwt.sign({
+                                                event_id: event.cd_event,
+                                                ticket_id: ticket.cd_ticket
+                                            }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
+                                        
+                                            const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
+                                            
+                                            newQrcode = (await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
+                                            
+                                            var idValid: boolean;
+                                            var QRCode: string;
+                                            
+                                                CheckinRepository.insertCheckin({
+                                                    qr_code: newQrcode,
+                                                    token_qr: newToken,
+                                                    buyer_name: purchase.tickets[i].buyers[j].name,
+                                                    buyer_cpf: purchase.tickets[i].buyers[j].cpf,
+                                                    buyer_phone: purchase.tickets[i].buyers[j].phone,
+                                                }, result.cd_purchase, purchase.tickets[i].id)
+                                                .then((result) => {                                                   
+                                                    
+                                                    ticketsResponse.push({
+                                                        idTicket: purchase.tickets[i].id,
+                                                        TicketName: ticket.nm_ticket,
+                                                        TicketEvent: event.nm_event,
+                                                        TicketValue: ticket.vl_ticket,
+                                                        idValid: result.id_valid,
+                                                        QRCode: result.cd_qr_code,
+                                                        payer: {
+                                                            name: result.nm_buyer,
+                                                            cpf: result.cd_cpf_buyer,
+                                                            phone: result.cd_phone_buyer
+                                                        }
+                                                    });
+                                                })
+                                            }
                                         }
+
+
+                                        
+                                        
                                         resolve({
                                             id: result.cd_purchase,
                                             idMercadoPago: result.cd_purchase_mercado_pago,
@@ -270,16 +316,27 @@ class PurchaseController {
             else {
                 const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase);
                 let ticketResponse: Array<PurchaseTicketResponse> = [];
+
+                
                 for (let i = 0; i < items.length; i++) {
                     const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
-                    ticketResponse.push({
-                        idTicket: ticket.cd_ticket,
-                        TicketName: ticket.nm_ticket,
-                        TicketEvent: event.nm_event,
-                        TicketQuantity: items[i].qt_ticket_sell,
-                        TicketValue: ticket.vl_ticket
-                    });
+                    const checkins = await CheckinRepository.findCheckinsByPurchaseIdAndTicketId(purchase.cd_purchase, ticket.cd_ticket);
+                    for (let j = 0; j < checkins.length; j++) {
+                        ticketResponse.push({
+                            idTicket: ticket.cd_ticket,
+                            TicketName: ticket.nm_ticket,
+                            TicketEvent: event.nm_event,
+                            TicketValue: ticket.vl_ticket,
+                            idValid: checkins[j].id_valid,
+                            QRCode: checkins[j].cd_qr_code,
+                            payer: {
+                                name: checkins[j].nm_buyer,
+                                cpf: checkins[j].cd_cpf_buyer,
+                                phone: checkins[j].cd_phone_buyer
+                            }
+                        });
+                    }
                 }
 
                 let billet
@@ -346,13 +403,22 @@ class PurchaseController {
                     for (let i = 0; i < items.length; i++) {
                         const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
                         const event = await EventRepository.findEventById(ticket.cd_event);
-                        ticketResponse.push({
-                            idTicket: ticket.cd_ticket,
-                            TicketName: ticket.nm_ticket,
-                            TicketEvent: event.nm_event,
-                            TicketQuantity: items[i].qt_ticket_sell,
-                            TicketValue: ticket.vl_ticket
-                        });
+                        const checkins = await CheckinRepository.findCheckinsByPurchaseIdAndTicketId(items[i].cd_purchase, ticket.cd_ticket);
+                        for (let j = 0; j < checkins.length; j++) {
+                            ticketResponse.push({
+                                idTicket: ticket.cd_ticket,
+                                TicketName: ticket.nm_ticket,
+                                TicketEvent: event.nm_event,
+                                TicketValue: ticket.vl_ticket,
+                                idValid: checkins[j].id_valid,
+                                QRCode: checkins[j].cd_qr_code,
+                                payer: {
+                                    name: checkins[j].nm_buyer,
+                                    cpf: checkins[j].cd_cpf_buyer,
+                                    phone: checkins[j].cd_phone_buyer
+                                }
+                            });
+                        }
                     }
 
                     let billet
