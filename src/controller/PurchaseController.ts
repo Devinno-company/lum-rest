@@ -127,7 +127,7 @@ class PurchaseController {
                     }
                 }
 
-                if (purchase.billet) {
+                if (purchase.billet != null && purchase.billet != undefined) {
                     payer = {
                         first_name: user.nm_user,
                         last_name: user.nm_surname_user,
