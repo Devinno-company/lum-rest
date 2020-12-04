@@ -4,7 +4,7 @@ function genNameFile(type: 'profile' | 'event' | 'map', id: number, file_type: s
 
     const data = new Date()
     const fileName: string =
-        `${type}-id-${id}-${data.getDate()}-${data.getMonth()}-${data.getFullYear()}#${data.getHours()}-${data.getMinutes()}-${data.getSeconds()}-${data.getMilliseconds()}${file_type}`;
+        `${type}-id-${id}-${data.getDate()}-${data.getMonth()}-${data.getFullYear()}_${data.getHours()}-${data.getMinutes()}-${data.getSeconds()}-${data.getMilliseconds()}${file_type}`;
 
     return fileName;
 
