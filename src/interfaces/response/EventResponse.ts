@@ -1,4 +1,5 @@
 import TeamMember from "./TeamMember";
+import TicketResponse from "./TicketResponse";
 
 interface EventResponse {
     id: number,
@@ -32,7 +33,8 @@ interface EventResponse {
         name: string,
         description: string
     },
-    team: Array<TeamMember>
+    team: Array<TeamMember>,
+    tickets: Array<TicketResponse>
 }
 
 export default EventResponse;

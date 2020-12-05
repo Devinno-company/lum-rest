@@ -3,7 +3,7 @@ interface TicketResponse {
     name: string,
     description: string,
     price: number,
-    quantity_available: number,
+    quantity_available: number
 }
 
 export default TicketResponse;

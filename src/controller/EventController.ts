@@ -33,6 +33,7 @@ import LocationUserRepository from "../repositorys/LocationUserRepository";
 import haversine from "../utils/haversine";
 import jwt from 'jsonwebtoken';
 import CheckinRepository from "../repositorys/CheckinRepository";
+import TicketResponse from "../interfaces/response/TicketResponse";
 
 class EventController {
 
@@ -327,6 +328,19 @@ class EventController {
                         });
                 });
 
+                const ticketsResponse: Array<TicketResponse> = [];
+                const tickets = await TicketRepository.findTicketsByEventId(event.cd_event);
+
+                for (let j = 0; j < tickets.length; j++) {
+                    ticketsResponse.push({
+                        id: tickets[j].cd_ticket,
+                        name: tickets[j].nm_ticket,
+                        description: tickets[j].ds_ticket,
+                        price: tickets[j].vl_ticket,
+                        quantity_available: tickets[j].qt_ticket_available
+                    })
+                }
+
                 const startDate = new Date(event.dt_start);
                 const endDate = new Date(event.dt_end);
 
@@ -371,7 +385,8 @@ class EventController {
                         name: category.nm_category,
                         description: category.ds_category
                     },
-                    team
+                    team,
+                    tickets: ticketsResponse
                 });
             }
 
@@ -459,6 +474,19 @@ class EventController {
                     if (event.hr_end)
                         event.hr_end = event.hr_end.slice(0, 5);
 
+                    const ticketsResponse: Array<TicketResponse> = [];
+                    const tickets = await TicketRepository.findTicketsByEventId(event.cd_event);
+    
+                    for (let j = 0; j < tickets.length; j++) {
+                        ticketsResponse.push({
+                            id: tickets[j].cd_ticket,
+                            name: tickets[j].nm_ticket,
+                            description: tickets[j].ds_ticket,
+                            price: tickets[j].vl_ticket,
+                            quantity_available: tickets[j].qt_ticket_available
+                        })
+                    }
+
                     const eventResponse: EventResponse = {
                         id: event.cd_event,
                         name: event.nm_event,
@@ -491,7 +519,8 @@ class EventController {
                             name: category.nm_category,
                             description: category.ds_category
                         },
-                        team
+                        team,
+                        tickets: ticketsResponse
                     }
 
                     resolve(eventResponse);
@@ -846,6 +875,19 @@ class EventController {
                 if (events[i].hr_end)
                     events[i].hr_end = events[i].hr_end.slice(0, 5);
 
+                const ticketsResponse: Array<TicketResponse> = [];
+                const tickets = await TicketRepository.findTicketsByEventId(events[i].cd_event);
+
+                for (let j = 0; j < tickets.length; j++) {
+                    ticketsResponse.push({
+                        id: tickets[j].cd_ticket,
+                        name: tickets[j].nm_ticket,
+                        description: tickets[j].ds_ticket,
+                        price: tickets[j].vl_ticket,
+                        quantity_available: tickets[j].qt_ticket_available
+                    })
+                }
+
                 eventsResponse.push({
                     id: events[i].cd_event,
                     name: events[i].nm_event,
@@ -878,7 +920,8 @@ class EventController {
                         name: category.nm_category,
                         description: category.ds_category
                     },
-                    team
+                    team,
+                    tickets: ticketsResponse
                 });
             }
 
