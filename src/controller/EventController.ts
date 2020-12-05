@@ -32,6 +32,7 @@ import Event from "../models/Event";
 import LocationUserRepository from "../repositorys/LocationUserRepository";
 import haversine from "../utils/haversine";
 import jwt from 'jsonwebtoken';
+import CheckinRepository from "../repositorys/CheckinRepository";
 
 class EventController {
 
@@ -904,15 +905,24 @@ class EventController {
                     else if (ticket.cd_event != event.cd_event)
                         reject({ status: 409, message: "This ticket doesn't belong to the event" })
                     else {
-                        jwt.verify(token, process.env.SECRET_TICKET as string, (err, result) => {
+                        jwt.verify(token, process.env.SECRET_TICKET as string, async (err, result) => {
                             if (!result || err)
                                 reject({ status: 400, message: 'Invalid token.', err });
                             else {
-                                const payload: any = jwt.decode(token);
-                                if (event.cd_event != payload.event_id || ticket.cd_ticket != payload.ticket_id)
-                                    reject({ status: 400, message: "This ticket doesn't belong to the event" })
-                                else
-                                    resolve();
+                                let checkin = await CheckinRepository.findCheckinByToken(token)
+                                if (!checkin.id_valid) {
+                                    reject({ status: 401, message: "This ticket isn't valid"});
+                                }
+                                else {
+                                    const payload: any = jwt.decode(token);
+                                    if (event.cd_event != payload.event_id || ticket.cd_ticket != payload.ticket_id) {
+                                        reject({ status: 400, message: "This ticket doesn't belong to the event" })
+                                    }
+                                    else {
+                                        CheckinRepository.updateValid(checkin.cd_checkin, false);
+                                        resolve();
+                                    }
+                                }
                             }
                         });
                     }

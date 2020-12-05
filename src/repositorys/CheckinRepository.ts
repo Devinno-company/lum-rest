@@ -62,7 +62,7 @@ class CheckinRepository {
         });
     }
 
-    public static updateValid(idCheckin: number, valid_id: number): Promise<Checkin> {
+    public static updateValid(idCheckin: number, valid_id: boolean): Promise<Checkin> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -119,6 +119,18 @@ class CheckinRepository {
                     .andWhere('c.cd_ticket', '=', idTicket);
 
             resolve(checkins);
+        });
+    }
+
+    public static async findCheckinByToken(Token: string): Promise<Checkin> {
+
+        return new Promise(async (resolve) => {
+            const checkins =
+                await db('tb_checkin as c')
+                    .select('*')
+                    .where('c.cd_token_qr', '=', Token);
+
+            resolve(checkins[0]);
         });
     }
 

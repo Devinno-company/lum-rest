@@ -1,5 +1,6 @@
 import NotificationMercadoPago from "../interfaces/externals/NotificationMercadoPago";
 import AccessRepository from "../repositorys/AccessRepository";
+import CheckinRepository from "../repositorys/CheckinRepository";
 import EventRepository from "../repositorys/EventRepository";
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
 import LinkNotificationRepository from "../repositorys/LinkNotificationRepository";
@@ -24,6 +25,11 @@ class NotificationsMercadoPagoController {
             .then(async (purchase) => {
                 const itens = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase)
                 for (let i = 0; i < itens.length; i++) {
+
+                    const checkins = await CheckinRepository.findCheckinsByPurchaseIdAndTicketId(itens[i].cd_purchase, itens[i].cd_ticket);
+                    for (let j = 0; j < checkins.length; j++) {
+                        CheckinRepository.updateValid(checkins[j].cd_checkin, true);
+                    }
                     
                     TicketRepository.findTicketById(itens[i].cd_ticket)
                     .then(async (ticket) => {
