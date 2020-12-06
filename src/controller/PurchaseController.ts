@@ -1,5 +1,6 @@
 import PurchaseResponse from "../interfaces/response/PurchaseResponse";
 import User from "../models/User";
+import Event from "../models/Event";
 import PurchaseRepository from "../repositorys/PurchaseRepository";
 import TicketRepository from "../repositorys/TicketRepository";
 import EventRepository from "../repositorys/EventRepository";
@@ -24,6 +25,7 @@ import PaymentBillet from "../interfaces/externals/PaymentBillet";
 import PaymentCreditCard from "../interfaces/externals/PaymentCreditCard";
 import PayerPayment from "../interfaces/externals/PayerPayment";
 import CheckinRepository from "../repositorys/CheckinRepository";
+import DownloadRequest from "../interfaces/request/DownloadRequest";
 
 class PurchaseController {
 
@@ -525,31 +527,34 @@ class PurchaseController {
                 reject({ status: 401, message: 'This purchase has not yet been approved' });
             else {
                 const login = await LoginRepository.findLoginById(user.cd_login);
-                const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(purchase.cd_purchase);
-                const qrcodes: Array<string> = [];
+                const checkins = await CheckinRepository.findCheckinsByPurchaseId(purchase.cd_purchase);
+                let checkinResponse: Array<{
+                    ticket: Ticket,
+                    event: Event,
+                    qrcode: string
+                }> = [];
+                let downloadRequest: DownloadRequest;
 
-                for (let i = 0; i < items.length; i++) {
-                    const ticket = await TicketRepository.findTicketById(items[i].cd_ticket);
+                for (let i = 0; i < checkins.length; i++) {
+                    const ticket = await TicketRepository.findTicketById(checkins[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
 
-                    for (let i = 0; i < items[i].qt_ticket_sell; i++) {
-                        var today = new Date();
-                        var event_date = new Date(event.dt_end);
-
-                        var timeDiff = Math.abs(event_date.getTime() - today.getTime());
-                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-                        const token = jwt.sign({
-                            event_id: event.cd_event,
-                            ticket_id: ticket.cd_ticket
-                        }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
-
-                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${token}&ticket_id=${ticket.cd_ticket}`;
-
-                        qrcodes.push(await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
-                    }
-                    const html = getTicketHtml(user, login, ticket, purchase, event, qrcodes);
-
+                    checkinResponse.push({
+                        ticket: ticket,
+                        event: event,
+                        qrcode: checkins[i].cd_qr_code
+                    })
+                    
+                }
+                    downloadRequest = {
+                        user: user,
+                        login: login,
+                        purchase: purchase,
+                        checkins: checkinResponse
+                    };
+                    
+                    const html = getTicketHtml(downloadRequest);
+                
 
                     pdf.create(html, {
                         type: 'pdf',
@@ -562,7 +567,6 @@ class PurchaseController {
                         else
                             reject({ status: 400, message: 'Unknown error. Try again later', err })
                     });
-                }
             }
         });
     }
