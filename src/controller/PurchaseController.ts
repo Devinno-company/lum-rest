@@ -207,94 +207,126 @@ class PurchaseController {
                     .then((result) => {
                         const paymentResponse = (result.data as any);
                         
-                        PurchaseCreditCardRepository.insertPurchaseCreditCard({
-                            dt_approved: null,
-                            payment_method: paymentResponse.payments[0].payment_method_id
-                        })
+                        let billetResponse: {
+                            idBillet: number,
+                            BilletImage: string,
+                            BilletPurchaseDate: string
+                        } | null;
+                        let creditcardResponse: {
+                            idCreditCard: number,
+                            CreditCardPaymentMethod: string,
+                            CreditCardApprovedDate?: string
+                        } | null;
+
+                        let idCreditCard: number | null = null;
+                        let idBillet: number | null = null;
+
+                        if (purchase.credit_card) {
+                            PurchaseCreditCardRepository.insertPurchaseCreditCard({
+                                dt_approved: null,
+                                payment_method: paymentResponse.payments[0].payment_method_id
+                            })
                             .then((purchaseCreditCard) => {
-                                PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, undefined, purchaseCreditCard.cd_purchase_credit_card)
-                                .then(async (result) => {
-                                    const ticketsResponse: Array<PurchaseTicketResponse> = [];
-    
-                                        const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
-                                        for (let i = 0; i <  purchase.tickets.length; i++) {
-                                            ItemTicketPurchaseRepository.insertItem({
-                                                cd_ticket: purchase.tickets[i].id,
-                                                cd_purchase: result.cd_purchase,
-                                                qt_ticket_sell: purchase.tickets[i].quantity
-                                            })
-
-                                            for (let j = 0; j < purchase.tickets[i].quantity; j++) {
-                                                
-                                            const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
-                                            const event = await EventRepository.findEventById(ticket.cd_event);
-
-                                            let newQrcode: string;
-                                                
-                                            var today = new Date();
-                                            var event_date = new Date(event.dt_end);
-                                        
-                                            var timeDiff = Math.abs(event_date.getTime() - today.getTime());
-                                            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                                            
-                                            const newToken = jwt.sign({
-                                                event_id: event.cd_event,
-                                                ticket_id: ticket.cd_ticket
-                                            }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
-                                        
-                                            const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
-                                            
-                                            newQrcode = (await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
-                                            
-                                            var idValid: boolean;
-                                            var QRCode: string;
-                                            
-                                                CheckinRepository.insertCheckin({
-                                                    qr_code: newQrcode,
-                                                    token_qr: newToken,
-                                                    buyer_name: purchase.tickets[i].buyers[j].name,
-                                                    buyer_cpf: purchase.tickets[i].buyers[j].cpf,
-                                                    buyer_phone: purchase.tickets[i].buyers[j].phone,
-                                                }, result.cd_purchase, purchase.tickets[i].id)
-                                                .then((result) => {                                                   
-                                                    
-                                                    ticketsResponse.push({
-                                                        idTicket: purchase.tickets[i].id,
-                                                        TicketName: ticket.nm_ticket,
-                                                        TicketEvent: event.nm_event,
-                                                        TicketValue: ticket.vl_ticket,
-                                                        idValid: result.id_valid,
-                                                        QRCode: result.cd_qr_code,
-                                                        payer: {
-                                                            name: result.nm_buyer,
-                                                            cpf: result.cd_cpf_buyer,
-                                                            phone: result.cd_phone_buyer
-                                                        }
-                                                    });
-                                                })
-                                            }
-                                        }
-
-
-                                        
-                                        
-                                        resolve({
-                                            id: result.cd_purchase,
-                                            idMercadoPago: result.cd_purchase_mercado_pago,
-                                            PurchaseStatus: result.cd_status,
-                                            PurchaseDate: result.dt_purchase,
-                                            tickets: ticketsResponse,
-                                            billet: null,
-                                            credit_card: {
-                                                idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
-                                                CreditCardApprovedDate: purchaseCreditCard.dt_approved,
-                                                CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
-                                            },
-                                        })
-                                    })
-                                    .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                                creditcardResponse = {
+                                    idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
+                                    CreditCardApprovedDate: purchaseCreditCard.dt_approved,
+                                    CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
+                                };
+                                billetResponse = null;
+                                idCreditCard = purchaseCreditCard.cd_purchase_credit_card; idBillet = null;
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
+                        }
+                        else if (purchase.billet) {
+                            PurchaseBilletRepository.insertPurchaseBillet({
+                                link_billet: paymentResponse.payments[0].transaction_details.external_resource_url,
+                                dt_expiration: paymentResponse.payments[0].date_of_expiration
+                            })
+                            .then((purchaseBillet) => {
+                                billetResponse = {
+                                    idBillet: purchaseBillet.cd_purchase_billet,
+                                    BilletImage: purchaseBillet.im_billet,
+                                    BilletPurchaseDate: purchaseBillet.dt_purchase
+                                };
+                                creditcardResponse = null;
+                                idCreditCard = null; idBillet = purchaseBillet.cd_purchase_billet;
+                            })
+                            .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
+                        }
+                            PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, idBillet, idCreditCard)
+                            .then(async (result) => {
+                                const ticketsResponse: Array<PurchaseTicketResponse> = [];
+
+                                    const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
+                                    for (let i = 0; i <  purchase.tickets.length; i++) {
+                                        ItemTicketPurchaseRepository.insertItem({
+                                            cd_ticket: purchase.tickets[i].id,
+                                            cd_purchase: result.cd_purchase,
+                                            qt_ticket_sell: purchase.tickets[i].quantity
+                                        })
+                                        for (let j = 0; j < purchase.tickets[i].quantity; j++) {
+                                            
+                                        const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
+                                        const event = await EventRepository.findEventById(ticket.cd_event);
+                                        let newQrcode: string;
+                                            
+                                        var today = new Date();
+                                        var event_date = new Date(event.dt_end);
+                                    
+                                        var timeDiff = Math.abs(event_date.getTime() - today.getTime());
+                                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                                        
+                                        const newToken = jwt.sign({
+                                            event_id: event.cd_event,
+                                            ticket_id: ticket.cd_ticket
+                                        }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
+                                    
+                                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
+                                        
+                                        newQrcode = (await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
+                                        
+                                        var idValid: boolean;
+                                        var QRCode: string;
+                                        
+                                            CheckinRepository.insertCheckin({
+                                                qr_code: newQrcode,
+                                                token_qr: newToken,
+                                                buyer_name: purchase.tickets[i].buyers[j].name,
+                                                buyer_cpf: purchase.tickets[i].buyers[j].cpf,
+                                                buyer_phone: purchase.tickets[i].buyers[j].phone,
+                                            }, result.cd_purchase, purchase.tickets[i].id)
+                                            .then((result) => {                                                   
+                                                
+                                                ticketsResponse.push({
+                                                    idTicket: purchase.tickets[i].id,
+                                                    TicketName: ticket.nm_ticket,
+                                                    TicketEvent: event.nm_event,
+                                                    TicketValue: ticket.vl_ticket,
+                                                    idValid: result.id_valid,
+                                                    QRCode: result.cd_qr_code,
+                                                    payer: {
+                                                        name: result.nm_buyer,
+                                                        cpf: result.cd_cpf_buyer,
+                                                        phone: result.cd_phone_buyer
+                                                    }
+                                                });
+                                            })
+                                        }
+                                    }
+                                    
+                                    
+                                    resolve({
+                                        id: result.cd_purchase,
+                                        idMercadoPago: result.cd_purchase_mercado_pago,
+                                        PurchaseStatus: result.cd_status,
+                                        PurchaseDate: result.dt_purchase,
+                                        tickets: ticketsResponse,
+                                        billet: billetResponse,
+                                        credit_card: creditcardResponse
+                                    })
+                                })
+                                .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                            
                     })
                     .catch((err: any) => {
                         console.log(err.response.data);
