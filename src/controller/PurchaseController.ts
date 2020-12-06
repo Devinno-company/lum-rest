@@ -301,6 +301,7 @@ class PurchaseController {
                                                 ticketsResponse.push({
                                                     idTicket: purchase.tickets[i].id,
                                                     TicketName: ticket.nm_ticket,
+                                                    idEvent: event.cd_event,
                                                     TicketEvent: event.nm_event,
                                                     TicketValue: ticket.vl_ticket,
                                                     idValid: result.id_valid,
@@ -359,6 +360,7 @@ class PurchaseController {
                         ticketResponse.push({
                             idTicket: ticket.cd_ticket,
                             TicketName: ticket.nm_ticket,
+                            idEvent: event.cd_event,
                             TicketEvent: event.nm_event,
                             TicketValue: ticket.vl_ticket,
                             idValid: checkins[j].id_valid,
@@ -441,6 +443,7 @@ class PurchaseController {
                             ticketResponse.push({
                                 idTicket: ticket.cd_ticket,
                                 TicketName: ticket.nm_ticket,
+                                idEvent: event.cd_event,
                                 TicketEvent: event.nm_event,
                                 TicketValue: ticket.vl_ticket,
                                 idValid: checkins[j].id_valid,
