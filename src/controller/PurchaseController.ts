@@ -285,13 +285,12 @@ class PurchaseController {
                                     
                                         const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
                                         
-                                        newQrcode = (await qrcode.toDataURL(link, { errorCorrectionLevel: 'L' }));
                                         
                                         var idValid: boolean;
                                         var QRCode: string;
                                         
                                             CheckinRepository.insertCheckin({
-                                                qr_code: newQrcode,
+                                                qr_code: link,
                                                 token_qr: newToken,
                                                 buyer_name: purchase.tickets[i].buyers[j].name,
                                                 buyer_cpf: purchase.tickets[i].buyers[j].cpf,
@@ -539,10 +538,12 @@ class PurchaseController {
                     const ticket = await TicketRepository.findTicketById(checkins[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
 
+                    const newQrcode = (await qrcode.toDataURL(checkins[i].cd_qr_code, { errorCorrectionLevel: 'L' }));
+
                     checkinResponse.push({
                         ticket: ticket,
                         event: event,
-                        qrcode: checkins[i].cd_qr_code
+                        qrcode: newQrcode
                     })
                     
                 }
