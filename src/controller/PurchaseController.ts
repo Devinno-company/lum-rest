@@ -56,8 +56,11 @@ class PurchaseController {
                     }
                     else {
                         const linkMercadoPago = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(ticket.cd_event);
+                        if (!linkMercadoPago) {
+                            return reject({ status: 400, message: "This event wasn't linked to mercado pago yet." });
+                        }
                         // Checks whether you need to refresh the token
-                        if (!linkMercadoPago.id_valid) {
+                        else if (!linkMercadoPago.id_valid) {
                             const data = {
                                 client_secret: process.env.ACCESS_TOKEN_MP,
                                 grant_type: 'refresh_token',
@@ -270,7 +273,6 @@ class PurchaseController {
                                             
                                         const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
                                         const event = await EventRepository.findEventById(ticket.cd_event);
-                                        let newQrcode: string;
                                             
                                         var today = new Date();
                                         var event_date = new Date(event.dt_end);
@@ -285,10 +287,6 @@ class PurchaseController {
                                     
                                         const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
                                         
-                                        
-                                        var idValid: boolean;
-                                        var QRCode: string;
-                                        
                                             CheckinRepository.insertCheckin({
                                                 qr_code: link,
                                                 token_qr: newToken,
@@ -296,8 +294,7 @@ class PurchaseController {
                                                 buyer_cpf: purchase.tickets[i].buyers[j].cpf,
                                                 buyer_phone: purchase.tickets[i].buyers[j].phone,
                                             }, result.cd_purchase, purchase.tickets[i].id)
-                                            .then((result) => {                                                   
-                                                
+                                            .then((result) => {
                                                 ticketsResponse.push({
                                                     idTicket: purchase.tickets[i].id,
                                                     TicketName: ticket.nm_ticket,
