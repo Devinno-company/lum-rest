@@ -3,6 +3,7 @@ interface PurchaseTicketResponse {
     TicketName: string,
     idEvent: number,
     TicketEvent: string,
+    EventBanner: string,
     TicketValue: number,
     idValid: boolean,
     QRCode: string,
