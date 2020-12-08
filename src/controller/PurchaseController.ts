@@ -163,7 +163,7 @@ class PurchaseController {
                                             ticket_id: ticket.cd_ticket
                                         }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
                                     
-                                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
+                                        const link = `https://lum-rest.herokuapp.com/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
                                         
                                             CheckinRepository.insertCheckin({
                                                 qr_code: link,
@@ -267,6 +267,8 @@ class PurchaseController {
 
                 const config = {
                     headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
                         Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
                     }
                 }
