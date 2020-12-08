@@ -354,6 +354,9 @@ class PurchaseController {
                     const event = await EventRepository.findEventById(ticket.cd_event);
                     const checkins = await CheckinRepository.findCheckinsByPurchaseIdAndTicketId(purchase.cd_purchase, ticket.cd_ticket);
                     for (let j = 0; j < checkins.length; j++) {
+
+                        const qrcodeNew = await qrcode.toDataURL(checkins[j].cd_qr_code, { errorCorrectionLevel: 'M' });
+
                         ticketResponse.push({
                             idTicket: ticket.cd_ticket,
                             TicketName: ticket.nm_ticket,
@@ -361,7 +364,7 @@ class PurchaseController {
                             TicketEvent: event.nm_event,
                             TicketValue: ticket.vl_ticket,
                             idValid: checkins[j].id_valid,
-                            QRCode: checkins[j].cd_qr_code,
+                            QRCode: qrcodeNew,
                             payer: {
                                 name: checkins[j].nm_buyer,
                                 cpf: checkins[j].cd_cpf_buyer,
@@ -437,6 +440,9 @@ class PurchaseController {
                         const event = await EventRepository.findEventById(ticket.cd_event);
                         const checkins = await CheckinRepository.findCheckinsByPurchaseIdAndTicketId(items[i].cd_purchase, ticket.cd_ticket);
                         for (let j = 0; j < checkins.length; j++) {
+
+                            const qrcodeNew = await qrcode.toDataURL(checkins[j].cd_qr_code, { errorCorrectionLevel: 'M' });
+
                             ticketResponse.push({
                                 idTicket: ticket.cd_ticket,
                                 TicketName: ticket.nm_ticket,
@@ -444,7 +450,7 @@ class PurchaseController {
                                 TicketEvent: event.nm_event,
                                 TicketValue: ticket.vl_ticket,
                                 idValid: checkins[j].id_valid,
-                                QRCode: checkins[j].cd_qr_code,
+                                QRCode: qrcodeNew,
                                 payer: {
                                     name: checkins[j].nm_buyer,
                                     cpf: checkins[j].cd_cpf_buyer,
@@ -538,7 +544,7 @@ class PurchaseController {
                     const ticket = await TicketRepository.findTicketById(checkins[i].cd_ticket);
                     const event = await EventRepository.findEventById(ticket.cd_event);
 
-                    const newQrcode = (await qrcode.toDataURL(checkins[i].cd_qr_code, { errorCorrectionLevel: 'L' }));
+                    const newQrcode = (await qrcode.toDataURL(checkins[i].cd_qr_code, { errorCorrectionLevel: 'M' }));
 
                     checkinResponse.push({
                         ticket: ticket,
