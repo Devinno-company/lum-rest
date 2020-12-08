@@ -9,8 +9,7 @@ interface PurchaseTicketResponse {
     QRCode: string,
     payer: {
         name: string, 
-        cpf: string,
-        phone: string
+        cpf: string
     }
 }
 

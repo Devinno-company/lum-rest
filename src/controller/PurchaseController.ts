@@ -169,8 +169,7 @@ class PurchaseController {
                                                 qr_code: link,
                                                 token_qr: newToken,
                                                 buyer_name: purchase.tickets[i].buyers[j].name,
-                                                buyer_cpf: purchase.tickets[i].buyers[j].cpf,
-                                                buyer_phone: purchase.tickets[i].buyers[j].phone,
+                                                buyer_cpf: purchase.tickets[i].buyers[j].cpf
                                             }, result.cd_purchase, purchase.tickets[i].id, true)
                                             .then((result) => {
                                                 ticketsResponse.push({
@@ -184,8 +183,7 @@ class PurchaseController {
                                                     QRCode: result.cd_qr_code,
                                                     payer: {
                                                         name: result.nm_buyer,
-                                                        cpf: result.cd_cpf_buyer,
-                                                        phone: result.cd_phone_buyer
+                                                        cpf: result.cd_cpf_buyer
                                                     }
                                                 });
                                             })
@@ -378,8 +376,7 @@ class PurchaseController {
                                                     QRCode: result.cd_qr_code,
                                                     payer: {
                                                         name: result.nm_buyer,
-                                                        cpf: result.cd_cpf_buyer,
-                                                        phone: result.cd_phone_buyer
+                                                        cpf: result.cd_cpf_buyer
                                                     }
                                                 });
                                             })
@@ -441,8 +438,7 @@ class PurchaseController {
                             QRCode: qrcodeNew,
                             payer: {
                                 name: checkins[j].nm_buyer,
-                                cpf: checkins[j].cd_cpf_buyer,
-                                phone: checkins[j].cd_phone_buyer
+                                cpf: checkins[j].cd_cpf_buyer
                             }
                         });
                     }
@@ -528,8 +524,7 @@ class PurchaseController {
                                 QRCode: qrcodeNew,
                                 payer: {
                                     name: checkins[j].nm_buyer,
-                                    cpf: checkins[j].cd_cpf_buyer,
-                                    phone: checkins[j].cd_phone_buyer
+                                    cpf: checkins[j].cd_cpf_buyer
                                 }
                             });
                         }
