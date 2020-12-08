@@ -135,6 +135,76 @@ class PurchaseController {
                     }
                 }
 
+                // Se a transação é gratuita.
+                if (transaction_amount == 0) {
+                    PurchaseRepository.insertPurchase(null, "approved", user.cd_user, null, null)
+                            .then(async (result) => {
+                                const ticketsResponse: Array<PurchaseTicketResponse> = [];
+
+                                    for (let i = 0; i <  purchase.tickets.length; i++) {
+                                        ItemTicketPurchaseRepository.insertItem({
+                                            cd_ticket: purchase.tickets[i].id,
+                                            cd_purchase: result.cd_purchase,
+                                            qt_ticket_sell: purchase.tickets[i].quantity
+                                        })
+                                        for (let j = 0; j < purchase.tickets[i].quantity; j++) {
+                                            
+                                        const ticket = await TicketRepository.findTicketById(purchase.tickets[i].id);
+                                        const event = await EventRepository.findEventById(ticket.cd_event);
+                                            
+                                        var today = new Date();
+                                        var event_date = new Date(event.dt_end);
+                                    
+                                        var timeDiff = Math.abs(event_date.getTime() - today.getTime());
+                                        var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                                        
+                                        const newToken = jwt.sign({
+                                            event_id: event.cd_event,
+                                            ticket_id: ticket.cd_ticket
+                                        }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
+                                    
+                                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
+                                        
+                                            CheckinRepository.insertCheckin({
+                                                qr_code: link,
+                                                token_qr: newToken,
+                                                buyer_name: purchase.tickets[i].buyers[j].name,
+                                                buyer_cpf: purchase.tickets[i].buyers[j].cpf,
+                                                buyer_phone: purchase.tickets[i].buyers[j].phone,
+                                            }, result.cd_purchase, purchase.tickets[i].id, true)
+                                            .then((result) => {
+                                                ticketsResponse.push({
+                                                    idTicket: purchase.tickets[i].id,
+                                                    TicketName: ticket.nm_ticket,
+                                                    idEvent: event.cd_event,
+                                                    TicketEvent: event.nm_event,
+                                                    TicketValue: ticket.vl_ticket,
+                                                    idValid: result.id_valid,
+                                                    QRCode: result.cd_qr_code,
+                                                    payer: {
+                                                        name: result.nm_buyer,
+                                                        cpf: result.cd_cpf_buyer,
+                                                        phone: result.cd_phone_buyer
+                                                    }
+                                                });
+                                            })
+                                        }
+                                    }
+                                    
+                                    
+                                    resolve({
+                                        id: result.cd_purchase,
+                                        idMercadoPago: result.cd_purchase_mercado_pago,
+                                        PurchaseStatus: result.cd_status,
+                                        PurchaseDate: result.dt_purchase,
+                                        tickets: ticketsResponse,
+                                        billet: null,
+                                        credit_card: null
+                                    })
+                                })
+                                .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
+                }
+
                 if (purchase.billet != null && purchase.billet != undefined) {
                     payer = {
                         first_name: user.nm_user,
@@ -262,7 +332,6 @@ class PurchaseController {
                             .then(async (result) => {
                                 const ticketsResponse: Array<PurchaseTicketResponse> = [];
 
-                                    const items = await ItemTicketPurchaseRepository.findItemByPurchaseId(result.cd_purchase)
                                     for (let i = 0; i <  purchase.tickets.length; i++) {
                                         ItemTicketPurchaseRepository.insertItem({
                                             cd_ticket: purchase.tickets[i].id,
@@ -293,7 +362,7 @@ class PurchaseController {
                                                 buyer_name: purchase.tickets[i].buyers[j].name,
                                                 buyer_cpf: purchase.tickets[i].buyers[j].cpf,
                                                 buyer_phone: purchase.tickets[i].buyers[j].phone,
-                                            }, result.cd_purchase, purchase.tickets[i].id)
+                                            }, result.cd_purchase, purchase.tickets[i].id, false)
                                             .then((result) => {
                                                 ticketsResponse.push({
                                                     idTicket: purchase.tickets[i].id,

@@ -3,7 +3,7 @@ import Purchase from "../models/Purchase";
 
 class PurchaseRepository {
 
-    public static insertPurchase(cd_purchase_mercado_pago: number, status_id: string, user_id: number, purchase_billet_id?: number | null, purchase_credit_card_id?: number | null): Promise<Purchase> {
+    public static insertPurchase(cd_purchase_mercado_pago: number | null, status_id: string, user_id: number, purchase_billet_id?: number | null, purchase_credit_card_id?: number | null): Promise<Purchase> {
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
 

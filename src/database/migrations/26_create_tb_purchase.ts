@@ -6,7 +6,7 @@ export function up(knex: Knex) {
         table.timestamp('dt_purchase').defaultTo(knex.fn.now());
         table.string('cd_status', 12);
         table.integer('cd_user').notNullable();
-        table.integer('cd_purchase_mercado_pago').notNullable();
+        table.integer('cd_purchase_mercado_pago');
         table.integer('cd_purchase_billet');
         table.integer('cd_purchase_credit_card');
 

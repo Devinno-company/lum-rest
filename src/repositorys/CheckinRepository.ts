@@ -7,7 +7,7 @@ import Event from '../models/Event';
 
 class CheckinRepository {
 
-    public static async insertCheckin(newCheckin: InsertCheckin, purchase_id: number, ticket_id: number): Promise<Checkin> {
+    public static async insertCheckin(newCheckin: InsertCheckin, purchase_id: number, ticket_id: number, id_valid: boolean): Promise<Checkin> {
 
         return new Promise(async (resolve, reject) => {
             const trx = await db.transaction();
@@ -15,7 +15,7 @@ class CheckinRepository {
             const insertedCheckin =
                 await trx('tb_checkin')
                     .insert({
-                        id_valid: false,
+                        id_valid: id_valid,
                         cd_qr_code: newCheckin.qr_code,
                         cd_token_qr: newCheckin.token_qr,
                         nm_buyer: newCheckin.buyer_name,
