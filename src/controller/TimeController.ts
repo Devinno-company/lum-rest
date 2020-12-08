@@ -23,21 +23,21 @@ class TimeController {
                               TimeRepository.insertTime(time, event.cd_event)
                               .then(async (newTime) => {
                                     const date = new Date(newTime.dt_time);
-                                          
+
                                     newTime.dt_time = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
                                                   
                                     newTime.hr_start = newTime.hr_start.slice(0, 5);
                                     newTime.hr_end = newTime.hr_end.slice(0, 5);
 
-                                  resolve({
+                                    resolve({
                                             cd_time: newTime.cd_time,
                                             nm_time: newTime.nm_time,
                                             ds_time: newTime.ds_time,
                                             dt_time: newTime.dt_time,
                                             hr_start: newTime.hr_start,
-                                            hr_end: newTime.hr_end 
-                                        })
-                                  })
+                                            hr_end: newTime.hr_end
+                                    })
+                                })
                                   .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                         })
                         .catch(() => reject({ status: 401, message: 'You are not allowed do so' }));

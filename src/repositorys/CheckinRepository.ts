@@ -109,6 +109,18 @@ class CheckinRepository {
         });
     }
 
+    public static async findCheckinsByTicketId(idTicket: number): Promise<Array<Checkin>> {
+
+        return new Promise(async (resolve) => {
+            const checkins =
+                await db('tb_checkin as c')
+                    .select('*')
+                    .where('c.cd_ticket', '=', idTicket);
+
+            resolve(checkins);
+        });
+    }
+
     public static async findCheckinsByPurchaseIdAndTicketId(idPurchase: number, idTicket: number): Promise<Array<Checkin>> {
 
         return new Promise(async (resolve) => {

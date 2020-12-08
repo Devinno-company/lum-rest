@@ -1,13 +1,15 @@
+import DashboardCheckinResponse from "../interfaces/response/DashboardCheckinResponse";
 import DashboardResponse from "../interfaces/response/DashboardResponse";
 import TicketSales from "../interfaces/response/TicketSales";
 import User from "../models/User";
+import CheckinRepository from "../repositorys/CheckinRepository";
 import EventRepository from "../repositorys/EventRepository";
 import PurchaseRepository from "../repositorys/PurchaseRepository";
 import TicketRepository from "../repositorys/TicketRepository";
 import havePermission from "../utils/havePermission";
 
 class DashboardController {
-    async getDashboard(user: User, idEvent: number): Promise<DashboardResponse> {
+    async getDashboardEvent(user: User, idEvent: number): Promise<DashboardResponse> {
 
         return new Promise(async (resolve, reject) => {
             const event = await EventRepository.findEventById(idEvent);
@@ -60,6 +62,43 @@ class DashboardController {
                             ClientTotal: clientTotal,
                             AverageRevenuePerUser: averageRevenuePerUser,
                             ticketSales: ticketSales
+                        });
+                    })
+                    .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
+            }
+        });
+    }
+
+    async getDashboardCheckins(user: User, idEvent: number): Promise<DashboardCheckinResponse> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            if (!event)
+                reject({ status: 404, message: 'This event does not exist' });
+            else {
+                await havePermission(user.cd_user, event.cd_event, 'EQP')
+                    .then(async () => {
+                        const tickets = await TicketRepository.findTicketsByEventId(event.cd_event)
+                        
+                        let checkinsDone: number = 0;
+                        let checkinsTotal: number = 0;
+
+                        for (let i = 0; i < tickets.length; i++) {
+                            const checkins = await CheckinRepository.findCheckinsByTicketId(tickets[i].cd_ticket)
+                            for (let j = 0; j < checkins.length; j++) {
+                                if (checkins[j].id_valid == false) {
+                                    checkinsDone++;
+                                }
+                            };
+                            checkinsTotal += checkins.length;
+                        };
+
+                        resolve({
+                            EventName: event.nm_event,
+                            CheckinsDone: checkinsDone,
+                            CheckinsRemaining: (checkinsTotal - checkinsDone),
+                            CheckinsTotal: checkinsTotal
                         });
                     })
                     .catch(() => reject({ status: 401, message: 'You are not allowed to do so' }));
