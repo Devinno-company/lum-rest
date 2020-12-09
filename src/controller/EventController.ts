@@ -764,7 +764,7 @@ class EventController {
         });
     }
 
-    searchEvent(user: User, _name?: string, _uf?: string, _city?: string, _distanceMin?: number): Promise<Array<EventResponse>> {
+    searchEvent(user: User, _name?: string, _uf?: string, _city?: string, _distanceMin?: number, _category?: string): Promise<Array<EventResponse>> {
 
         return new Promise(async (resolve, reject) => {
             let events: Array<Event> = [];
@@ -832,6 +832,16 @@ class EventController {
                             // Restart distance verification
                             i = -1;
                         }
+                    }
+                }
+            }
+
+            if (_category) {
+                for (let i = 0; i < events.length; i++) {                    
+                    if (events[i].sg_category != _category) {
+                        events.splice(i, 1);
+                        // Restart category verification
+                        i = -1;
                     }
                 }
             }

@@ -794,6 +794,7 @@ eventRoutes.get('/search_events', verifyToken, (request, response) => {
     const city = request.query.city;
     const uf = request.query.uf;
     const distance = request.query.distance;
+    const category = request.query.category;
 
     if (name != 'undefined' && !String(name))
         response.status(400).json({ status: 400, message: 'Name invalid' });
@@ -801,10 +802,12 @@ eventRoutes.get('/search_events', verifyToken, (request, response) => {
         response.status(400).json({ status: 400, message: 'City invalid' });
     if (uf != 'undefined' && !String(uf))
         response.status(400).json({ status: 400, message: 'UF invalid' });
+    if (category != 'undefined' && !String(category))
+        response.status(400).json({ status: 400, message: 'Category invalid' });
 
     getUserByRequest(request)
         .then(user => {
-            controller.searchEvent(user, String(name), String(uf), String(city), Number(distance))
+            controller.searchEvent(user, String(name), String(uf), String(city), Number(distance), String(category))
                 .then(result => { response.status(200).json(result) })
                 .catch((err) => { response.status(err.status || 400).json(err) })
         })

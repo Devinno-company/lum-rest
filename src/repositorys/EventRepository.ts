@@ -249,6 +249,18 @@ class EventRepository {
             resolve(events);
         });
     }
+
+    public static async findEventsByCategory(category: string): Promise<Array<Event>> {
+
+        return new Promise(async (resolve) => {
+            const event =
+                await db('tb_event as e')
+                    .select('*')
+                    .where('e.sg_category', '=', category);
+
+            resolve(event);
+        });
+    }
 }
 
 export default EventRepository;
