@@ -370,7 +370,7 @@ console.log('idBoleto:'+idBillet+' . idCredito:'+idCreditCard);
                                             ticket_id: ticket.cd_ticket
                                         }, process.env.SECRET_TICKET as string, { expiresIn: `${diffDays}d` });
                                     
-                                        const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
+                                        const link = `https://lum-rest.herokuapp.com/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
                                         
                                         const qrcodeNew = await qrcode.toDataURL(link, { errorCorrectionLevel: 'M' });
 
