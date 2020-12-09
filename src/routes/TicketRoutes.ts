@@ -12,8 +12,8 @@ ticketRoutes.post('/events/:idEvent/tickets', verifyToken, (request, response) =
     const idEvent = request.params['idEvent'];
     const newTicket: NewTicketRequest = request.body;
 
-    if (!Number(idEvent))
-        response.status(400).json({ status: 400, message: 'Id invalid.' });
+    if (!Number(idEvent) || idEvent == "null")
+        response.status(400).json({ status: 400, message: 'Event Id invalid.' });
 
     getUserByRequest(request)
         .then(user => {
@@ -27,8 +27,8 @@ ticketRoutes.post('/events/:idEvent/tickets', verifyToken, (request, response) =
 ticketRoutes.get('/events/:idEvent/tickets', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if (!Number(idEvent))
-        response.status(400).json({ status: 400, message: 'Id invalid.' });
+    if (!Number(idEvent) || idEvent == "null")
+        response.status(400).json({ status: 400, message: 'Event Id invalid.' });
 
     getUserByRequest(request)
         .then(user => {
