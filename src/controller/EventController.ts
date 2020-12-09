@@ -34,6 +34,7 @@ import haversine from "../utils/haversine";
 import jwt from 'jsonwebtoken';
 import CheckinRepository from "../repositorys/CheckinRepository";
 import TicketResponse from "../interfaces/response/TicketResponse";
+import TimeResponse from "../interfaces/response/TimeResponse";
 
 class EventController {
 
@@ -342,6 +343,20 @@ class EventController {
                     })
                 }
 
+                const timesResponse: Array<TimeResponse> = [];
+                const times = await TimeRepository.findTimeByEventId(event.cd_event);
+
+                for (let j = 0; j < times.length; j++) {
+                    timesResponse.push({
+                        cd_time: times[j].cd_time,
+                        nm_time: times[j].nm_time,
+                        ds_time: times[j].ds_time,
+                        dt_time: times[j].dt_time,
+                        hr_start: times[j].hr_start,
+                        hr_end: times[j].hr_end
+                    })
+                }
+
                 const startDate = new Date(event.dt_start);
                 const endDate = new Date(event.dt_end);
 
@@ -387,7 +402,8 @@ class EventController {
                         description: category.ds_category
                     },
                     team,
-                    tickets: ticketsResponse
+                    tickets: ticketsResponse,
+                    times: timesResponse
                 });
             }
 
@@ -489,6 +505,20 @@ class EventController {
                         })
                     }
 
+                    const timesResponse: Array<TimeResponse> = [];
+                    const times = await TimeRepository.findTimeByEventId(event.cd_event);
+
+                    for (let j = 0; j < times.length; j++) {
+                        timesResponse.push({
+                            cd_time: times[j].cd_time,
+                            nm_time: times[j].nm_time,
+                            ds_time: times[j].ds_time,
+                            dt_time: times[j].dt_time,
+                            hr_start: times[j].hr_start,
+                            hr_end: times[j].hr_end
+                        })
+                    }
+
                     const eventResponse: EventResponse = {
                         id: event.cd_event,
                         name: event.nm_event,
@@ -522,7 +552,8 @@ class EventController {
                             description: category.ds_category
                         },
                         team,
-                        tickets: ticketsResponse
+                        tickets: ticketsResponse,
+                        times: timesResponse
                     }
 
                     resolve(eventResponse);
@@ -889,9 +920,11 @@ class EventController {
                 if (events[i].hr_end)
                     events[i].hr_end = events[i].hr_end.slice(0, 5);
 
+                
+                    
                 const ticketsResponse: Array<TicketResponse> = [];
                 const tickets = await TicketRepository.findTicketsByEventId(events[i].cd_event);
-
+                    
                 for (let j = 0; j < tickets.length; j++) {
                     ticketsResponse.push({
                         id: tickets[j].cd_ticket,
@@ -900,6 +933,20 @@ class EventController {
                         price: tickets[j].vl_ticket,
                         quantity_total: tickets[j].qt_ticket,
                         quantity_available: tickets[j].qt_ticket_available
+                    })
+                }
+                
+                const timesResponse: Array<TimeResponse> = [];
+                const times = await TimeRepository.findTimeByEventId(events[i].cd_event);
+
+                for (let j = 0; j < times.length; j++) {
+                    timesResponse.push({
+                        cd_time: times[j].cd_time,
+                        nm_time: times[j].nm_time,
+                        ds_time: times[j].ds_time,
+                        dt_time: times[j].dt_time,
+                        hr_start: times[j].hr_start,
+                        hr_end: times[j].hr_end
                     })
                 }
 
@@ -936,7 +983,8 @@ class EventController {
                         description: category.ds_category
                     },
                     team,
-                    tickets: ticketsResponse
+                    tickets: ticketsResponse,
+                    times: timesResponse
                 });
             }
 
