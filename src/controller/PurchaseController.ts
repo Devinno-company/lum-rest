@@ -205,6 +205,10 @@ class PurchaseController {
                 }
 
                 if (purchase.billet || !purchase.credit_card) {
+
+console.log("Entrou no Credit_card");
+
+
                     payer = {
                         first_name: user.nm_user,
                         last_name: user.nm_surname_user,
@@ -239,6 +243,9 @@ class PurchaseController {
 
                     payments.push(paymentBillet);
                 } else {
+
+console.log("Entrou no Billet");
+
                     payer = {
                         first_name: user.nm_user,
                         last_name: user.nm_surname_user,
@@ -278,6 +285,8 @@ class PurchaseController {
                     disbursements,
                     external_reference: 'ref-transaction-1'
                 }
+
+console.log(payment_data);
 
                 await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
                     .then((result) => {
@@ -331,6 +340,8 @@ class PurchaseController {
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
+                        console.log('idBoleto:'+idBillet+' . idCredito:'+idCreditCard);
+
                             PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, idBillet, idCreditCard)
                             .then(async (result) => {
                                 const ticketsResponse: Array<PurchaseTicketResponse> = [];
