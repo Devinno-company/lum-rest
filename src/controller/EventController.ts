@@ -776,6 +776,8 @@ class EventController {
             _city = (_city === 'undefined' ? undefined : _city);
             _uf = (_uf === 'undefined' ? undefined : _uf);
             _distanceMin = (Number(_distanceMin) ? _distanceMin : undefined);
+            _category = (_category === 'undefined' ? undefined : _category);
+
 
             if (_name && !_uf && !_city)
                 events = await EventRepository.findEventsByName(_name);
