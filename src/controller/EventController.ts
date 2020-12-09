@@ -337,6 +337,7 @@ class EventController {
                         name: tickets[j].nm_ticket,
                         description: tickets[j].ds_ticket,
                         price: tickets[j].vl_ticket,
+                        quantity_total: tickets[j].qt_ticket,
                         quantity_available: tickets[j].qt_ticket_available
                     })
                 }
@@ -483,6 +484,7 @@ class EventController {
                             name: tickets[j].nm_ticket,
                             description: tickets[j].ds_ticket,
                             price: tickets[j].vl_ticket,
+                            quantity_total: tickets[j].qt_ticket,
                             quantity_available: tickets[j].qt_ticket_available
                         })
                     }
@@ -894,6 +896,7 @@ class EventController {
                         name: tickets[j].nm_ticket,
                         description: tickets[j].ds_ticket,
                         price: tickets[j].vl_ticket,
+                        quantity_total: tickets[j].qt_ticket,
                         quantity_available: tickets[j].qt_ticket_available
                     })
                 }

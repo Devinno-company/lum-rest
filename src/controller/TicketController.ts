@@ -30,6 +30,7 @@ class TicketController {
                                 name: result.nm_ticket,
                                 description: result.ds_ticket,
                                 price: result.vl_ticket,
+                                quantity_total: result.qt_ticket,
                                 quantity_available: result.qt_ticket_available
                             });
                         })
@@ -66,6 +67,7 @@ class TicketController {
                             name: ticket.nm_ticket,
                             description: ticket.ds_ticket,
                             price: ticket.vl_ticket,
+                            quantity_total: ticket.qt_ticket,
                             quantity_available: ticket.qt_ticket_available
                         });
                     });
@@ -151,6 +153,7 @@ class TicketController {
                                         name: result.nm_ticket,
                                         description: result.ds_ticket,
                                         price: result.vl_ticket,
+                                        quantity_total: result.qt_ticket,
                                         quantity_available: result.qt_ticket_available
                                     })
                                 })

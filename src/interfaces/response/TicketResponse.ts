@@ -3,6 +3,7 @@ interface TicketResponse {
     name: string,
     description: string,
     price: number,
+    quantity_total: number,
     quantity_available: number
 }
 
