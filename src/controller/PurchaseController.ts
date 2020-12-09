@@ -204,7 +204,7 @@ class PurchaseController {
                                 .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                 }
 
-                if (purchase.billet && !purchase.credit_card) {
+                if (purchase.billet || !purchase.credit_card) {
                     payer = {
                         first_name: user.nm_user,
                         last_name: user.nm_surname_user,
@@ -297,35 +297,37 @@ class PurchaseController {
                         let idCreditCard: number | null = null;
                         let idBillet: number | null = null;
 
-                        if (purchase.credit_card) {
+                        if (purchase.credit_card || !purchase.billet) {
                             PurchaseCreditCardRepository.insertPurchaseCreditCard({
                                 dt_approved: null,
                                 payment_method: paymentResponse.payments[0].payment_method_id
                             })
-                            .then((purchaseCreditCard) => {
+                            .then((purchaseCreditCardResponse) => {
                                 creditcardResponse = {
-                                    idCreditCard: purchaseCreditCard.cd_purchase_credit_card,
-                                    CreditCardApprovedDate: purchaseCreditCard.dt_approved,
-                                    CreditCardPaymentMethod: purchaseCreditCard.cd_payment_method
+                                    idCreditCard: purchaseCreditCardResponse.cd_purchase_credit_card,
+                                    CreditCardApprovedDate: purchaseCreditCardResponse.dt_approved,
+                                    CreditCardPaymentMethod: purchaseCreditCardResponse.cd_payment_method
                                 };
                                 billetResponse = null;
-                                idCreditCard = purchaseCreditCard.cd_purchase_credit_card; idBillet = null;
+                                idCreditCard = purchaseCreditCardResponse.cd_purchase_credit_card;
+                                idBillet = null;
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
-                        else if (purchase.billet) {
+                        else {
                             PurchaseBilletRepository.insertPurchaseBillet({
                                 link_billet: paymentResponse.payments[0].transaction_details.external_resource_url,
                                 dt_expiration: paymentResponse.payments[0].date_of_expiration
                             })
-                            .then((purchaseBillet) => {
+                            .then((purchaseBilletResponse) => {
                                 billetResponse = {
-                                    idBillet: purchaseBillet.cd_purchase_billet,
-                                    BilletImage: purchaseBillet.im_billet,
-                                    BilletPurchaseDate: purchaseBillet.dt_purchase
+                                    idBillet: purchaseBilletResponse.cd_purchase_billet,
+                                    BilletImage: purchaseBilletResponse.im_billet,
+                                    BilletPurchaseDate: purchaseBilletResponse.dt_purchase
                                 };
                                 creditcardResponse = null;
-                                idCreditCard = null; idBillet = purchaseBillet.cd_purchase_billet;
+                                idCreditCard = null; 
+                                idBillet = purchaseBilletResponse.cd_purchase_billet;
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
@@ -357,6 +359,8 @@ class PurchaseController {
                                     
                                         const link = `http://localhost:3000/events/${event.cd_event}/checkin?token=${newToken}&ticket_id=${ticket.cd_ticket}`;
                                         
+                                        const qrcodeNew = await qrcode.toDataURL(link, { errorCorrectionLevel: 'M' });
+
                                             CheckinRepository.insertCheckin({
                                                 qr_code: link,
                                                 token_qr: newToken,
@@ -373,7 +377,7 @@ class PurchaseController {
                                                     EventBanner: event.im_banner,
                                                     TicketValue: ticket.vl_ticket,
                                                     idValid: result.id_valid,
-                                                    QRCode: result.cd_qr_code,
+                                                    QRCode: qrcodeNew,
                                                     payer: {
                                                         name: result.nm_buyer,
                                                         cpf: result.cd_cpf_buyer
