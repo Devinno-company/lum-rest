@@ -594,6 +594,49 @@ class PurchaseController {
         });
     }
 
+    async cancelPurchase(user: User, idPurchase: number): Promise<PurchaseResponse> {
+
+        return new Promise(async (resolve, reject) => {
+
+            const purchase = await PurchaseRepository.findPurchaseById(idPurchase);
+            if (!purchase) {
+                reject({ status: 404, message: 'This purchase does not exist' });
+            } 
+            else if (purchase.cd_user != user.cd_user) {
+                reject({ status: 401, message: "You are not allowed to do so" });
+            } 
+            else if(purchase.cd_status == 'approved') {
+                reject({ status: 401, message: 'This purchase was already approved' });
+            }
+
+            const data = {
+                "status": "cancelled"
+            };
+            
+            const config = {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
+                }
+            }
+
+            await Axios.put(`https://api.mercadopago.com/v1/advanced_payments/${purchase.cd_purchase}`, data, config)
+                .then(() => {
+                    PurchaseRepository.updatePurchaseStatus(idPurchase, 'cancelled')
+                        .then(() => { resolve() })
+                        .catch(err => reject(err));
+                })
+                .catch((err: any) => {
+                    console.log(err.response.data);
+                    reject({ status: 400, message: 'Unknown error. Try again later.', err })
+                });
+                
+
+            
+        });
+    }
+
     async downloadPurchase(user: User, idPurchase: number): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const purchase = await PurchaseRepository.findPurchaseById(idPurchase);

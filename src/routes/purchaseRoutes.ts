@@ -299,6 +299,18 @@ purchaseRoutes.get('/purchases', verifyToken, async (request, response) => {
         .catch((err: any) => response.status(err.status || 400).json(err));
 });
 
+purchaseRoutes.put('/purchases/:idPurchase/cancel', verifyToken, async (request, response) => {
+    const idPurchase = request.params['idPurchase'];
+
+    getUserByRequest(request)
+        .then(user => {
+            controller.cancelPurchase(user, Number(idPurchase))
+                .then((result) => response.status(200).json(result))
+                .catch((err: any) => response.status(err.status || 400).json(err));
+        })
+        .catch((err: any) => response.status(err.status || 400).json(err));
+});
+
 purchaseRoutes.get('/purchases/:idPurchase/download', (request, response) => {
     const idPurchase = request.params['idPurchase'];
 
