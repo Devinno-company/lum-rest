@@ -206,7 +206,7 @@ class PurchaseController {
 
                 if (purchase.billet || !purchase.credit_card) {
 
-console.log("Entrou no Credit_card");
+console.log("Entrou no Billet");
 
 
                     payer = {
@@ -244,7 +244,7 @@ console.log("Entrou no Credit_card");
                     payments.push(paymentBillet);
                 } else {
 
-console.log("Entrou no Billet");
+console.log("Entrou no Credit Card");
 
                     payer = {
                         first_name: user.nm_user,
@@ -312,6 +312,7 @@ console.log(payment_data);
                                 payment_method: paymentResponse.payments[0].payment_method_id
                             })
                             .then((purchaseCreditCardResponse) => {
+console.log('Entrou no then do Credit Card Response');
                                 creditcardResponse = {
                                     idCreditCard: purchaseCreditCardResponse.cd_purchase_credit_card,
                                     CreditCardApprovedDate: purchaseCreditCardResponse.dt_approved,
@@ -329,6 +330,7 @@ console.log(payment_data);
                                 dt_expiration: paymentResponse.payments[0].date_of_expiration
                             })
                             .then((purchaseBilletResponse) => {
+console.log('Entrou no then do Billet Response');
                                 billetResponse = {
                                     idBillet: purchaseBilletResponse.cd_purchase_billet,
                                     BilletImage: purchaseBilletResponse.im_billet,
@@ -340,7 +342,7 @@ console.log(payment_data);
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
-                        console.log('idBoleto:'+idBillet+' . idCredito:'+idCreditCard);
+console.log('idBoleto:'+idBillet+' . idCredito:'+idCreditCard);
 
                             PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, idBillet, idCreditCard)
                             .then(async (result) => {
