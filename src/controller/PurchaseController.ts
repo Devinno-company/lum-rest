@@ -289,7 +289,7 @@ console.log("Entrou no Credit Card");
 console.log(payment_data);
 
                 await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
-                    .then((result) => {
+                    .then(async (result) => {
                         const paymentResponse = (result.data as any);
                         
                         let billetResponse: {
@@ -307,7 +307,7 @@ console.log(payment_data);
                         let idBillet: number | null = null;
 
                         if (purchase.credit_card || !purchase.billet) {
-                            PurchaseCreditCardRepository.insertPurchaseCreditCard({
+                            await PurchaseCreditCardRepository.insertPurchaseCreditCard({
                                 dt_approved: null,
                                 payment_method: paymentResponse.payments[0].payment_method_id
                             })
@@ -325,7 +325,7 @@ console.log('Entrou no then do Credit Card Response');
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
                         else {
-                            PurchaseBilletRepository.insertPurchaseBillet({
+                            await PurchaseBilletRepository.insertPurchaseBillet({
                                 link_billet: paymentResponse.payments[0].transaction_details.external_resource_url,
                                 dt_expiration: paymentResponse.payments[0].date_of_expiration
                             })

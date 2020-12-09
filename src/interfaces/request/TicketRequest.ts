@@ -4,7 +4,7 @@ interface TicketRequest {
     buyers: Array<{
         name: string,
         cpf: string,
-        phone: string
+        phone?: string
     }>
 }
 
