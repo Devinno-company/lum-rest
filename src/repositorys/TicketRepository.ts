@@ -15,8 +15,8 @@ class TicketRepository {
                         nm_ticket: newTicket.name,
                         ds_ticket: newTicket.description,
                         vl_ticket: newTicket.price,
-                        qt_ticket: newTicket.quantity,
-                        qt_ticket_available: newTicket.quantity,
+                        qt_ticket: newTicket.quantity_total,
+                        qt_ticket_available: newTicket.quantity_total,
                         cd_event: event_id
                     }).returning('*');
 
