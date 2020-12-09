@@ -9,6 +9,7 @@ interface NewPurchase {
         token: String,
         installments: Number,
         issuer_id?: String,
+        date_of_expiration: string
     },
     billet: {
         address: {

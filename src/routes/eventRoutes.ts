@@ -279,7 +279,7 @@ eventRoutes.post('/events', verifyToken, validate, async (request, response) => 
 eventRoutes.get('/events/:idEvent', verifyToken, async (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if (!Number(idEvent)) {
+    if (!Number(idEvent) || idEvent == 'null') {
         response.status(400).json({ message: 'Id invalid.' });
     }
 
@@ -566,7 +566,7 @@ eventRoutes.put('/events/:idEvent', verifyToken, validate, (request, response) =
     const idEvent = request.params['idEvent'];
     const updateEvent: UpdateEvent = request.body;
 
-    if (!Number(idEvent)) {
+    if (!Number(idEvent) || idEvent == 'null') {
         response.status(400).json({ status: 400, message: 'Id invalid.' });
     }
 
@@ -604,7 +604,7 @@ eventRoutes.put('/events/:idEvent', verifyToken, validate, (request, response) =
 eventRoutes.delete('/events/:idEvent', verifyToken, (request, response) => {
     const idEvent = request.params['idEvent'];
 
-    if (!Number(idEvent)) {
+    if (!Number(idEvent) || idEvent == 'null') {
         response.status(400).json({ status: 400, message: 'Id invalid.' });
     }
 
