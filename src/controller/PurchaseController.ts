@@ -257,7 +257,7 @@ class PurchaseController {
                         transaction_amount: Number(transaction_amount.toFixed(2)),
                         installments: purchase.credit_card.installments,
                         issuer_id: purchase.credit_card.issuer_id,
-                        processing_mode: 'agreggator'
+                        processing_mode: 'aggregator'
                     }
 
                     payments.push(paymentCreditCard);
