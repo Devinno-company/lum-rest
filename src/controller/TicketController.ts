@@ -184,7 +184,7 @@ class TicketController {
                     if (ticket.cd_event != event.cd_event)
                         reject({ status: 400, message: "This ticket does not belong to this event" });
                     else {
-                        if ((await PurchaseRepository.findPurchasesByTicketId(ticket.cd_ticket)).length == 0) {
+                        if ((await PurchaseRepository.findPurchasesByTicketId(ticket.cd_ticket)).length > 0) {
                             reject({ status: 403, message: "You can't delete a ticket that already has purchases" });
                         }
                         else {
