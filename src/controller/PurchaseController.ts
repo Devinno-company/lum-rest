@@ -204,7 +204,7 @@ class PurchaseController {
                                 .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                 }
 
-                if (purchase.billet != null && purchase.billet != undefined) {
+                if (purchase.billet && !purchase.credit_card) {
                     payer = {
                         first_name: user.nm_user,
                         last_name: user.nm_surname_user,
