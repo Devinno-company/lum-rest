@@ -3,11 +3,11 @@ import connection from '../../knexfile';
 
 
 const pg = require('pg');
-//pg.defaults.ssl=true;
+pg.defaults.ssl=true;
 
 const db = knex({
     client: 'pg',
-    connection: connection.development.connection,
+    connection: connection.production.connection,
 });
 
 export default db;
