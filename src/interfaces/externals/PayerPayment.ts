@@ -6,6 +6,11 @@ interface PayerPayment {
     identification: {
         type: String,
         number: string
+    },
+    address?: {
+        zip_code: String,
+        street_name: String,
+        street_number: String
     }
 }
 

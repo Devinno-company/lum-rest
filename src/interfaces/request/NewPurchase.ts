@@ -5,20 +5,19 @@ interface NewPurchase {
     email: String,
     cpf_payer: string,   
     credit_card: {
-        payment_method_id: string,
-        token: string,
-        installments: number,
-        issuer_id?: string
+        payment_method_id: String,
+        token: String,
+        installments: Number,
+        issuer_id?: String,
+        date_of_expiration: string
     },
     billet: {
         address: {
             zip_code: String,
             street_name: String,
-            street_number: String,
-            neighborhood: string,
-            city: string,
-            federal_unit: string
-        }
+            street_number: String
+        },
+        description: String
     }
 }
 
