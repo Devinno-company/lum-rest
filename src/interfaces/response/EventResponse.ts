@@ -31,6 +31,7 @@ interface EventResponse {
         description: string
     },
     category: {
+        sg: string,
         name: string,
         description: string
     },

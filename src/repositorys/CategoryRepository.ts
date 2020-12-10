@@ -3,7 +3,7 @@ import Category from "../models/Category";
 
 class CategoryRepository {
     
-    public static findCategoryByName(category: string): Promise<Category> {
+    public static async findCategoryByName(category: string): Promise<Category> {
 
         return new Promise(async (resolve) => {
             const searchCategory = await db('tb_category as c')
@@ -14,7 +14,7 @@ class CategoryRepository {
         });
     }
 
-    public static findCategoryById(idCategory: string): Promise<Category> {
+    public static async findCategoryById(idCategory: string): Promise<Category> {
 
         return new Promise(async (resolve) => {
             const searchCategory = await db('tb_category as c')

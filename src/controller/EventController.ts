@@ -399,6 +399,7 @@ class EventController {
                         description: privacy.ds_privacy
                     },
                     category: {
+                        sg: category.sg_category,
                         name: category.nm_category,
                         description: category.ds_category
                     },
@@ -549,6 +550,7 @@ class EventController {
                             description: privacy.ds_privacy
                         },
                         category: {
+                            sg: category.sg_category,
                             name: category.nm_category,
                             description: category.ds_category
                         },
@@ -980,6 +982,7 @@ class EventController {
                         description: privacy.ds_privacy
                     },
                     category: {
+                        sg: category.sg_category, 
                         name: category.nm_category,
                         description: category.ds_category
                     },
