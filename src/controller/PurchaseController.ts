@@ -252,7 +252,7 @@ class PurchaseController {
                         Authorization: `Bearer ${link.cd_access_token}`
                     }
                 }
-
+                    console.log(paymentData);
                 await Axios.post('https://api.mercadopago.com/v1/payments', paymentData, config)
                     .then(async (result) => {
                         const paymentResponse = (result.data as any);
