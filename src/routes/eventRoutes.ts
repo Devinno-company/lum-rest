@@ -835,4 +835,19 @@ eventRoutes.get('/events/:idEvent/checkin', verifyToken, (request, response) => 
         .catch((err) => response.status(err.status || 400).json(err));
 });
 
+eventRoutes.get('/events/:idEvent/allCheckins', verifyToken, (request, response) => {
+    const idEvent = request.params['idEvent'];
+
+    if (!Number(idEvent))
+        response.status(400).json({ status: 400, message: 'Event id invalid' });
+
+    getUserByRequest(request)
+        .then((user) => {
+            controller.readEventCheckins(Number(idEvent), user)
+                .then((result) => response.status(200).json(result))
+                .catch((err) => response.status(err.status || 400).json(err));
+        })
+        .catch((err) => response.status(err.status || 400).json(err));
+});
+
 export default eventRoutes;

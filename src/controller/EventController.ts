@@ -35,6 +35,7 @@ import jwt from 'jsonwebtoken';
 import CheckinRepository from "../repositorys/CheckinRepository";
 import TicketResponse from "../interfaces/response/TicketResponse";
 import TimeResponse from "../interfaces/response/TimeResponse";
+import PurchaseTicketResponse from "../interfaces/response/PurchaseTicketResponse";
 
 class EventController {
 
@@ -1035,6 +1036,54 @@ class EventController {
                 }
             }
         })
+    }
+
+    public readEventCheckins(idEvent: number, user: User): Promise<Array<PurchaseTicketResponse>> {
+
+        return new Promise(async (resolve, reject) => {
+            const event = await EventRepository.findEventById(idEvent);
+
+            const checkinsResponse: Array<PurchaseTicketResponse> = [];
+            if (!event) {
+                reject({ status: 404, message: "This event doesn't exists" });
+            } else {
+
+                const isAllowed = havePermission(user.cd_user, idEvent, 'EQP')
+                    .catch((err) => reject({ status: 401, message: 'You are not allowed to do so', err }))
+
+                if (!isAllowed)
+                    reject({ status: 401, message: 'You are not allowed to do so' })
+                else {
+                    
+                    const tickets = await TicketRepository.findTicketsByEventId(idEvent);
+                    for (let i = 0; i < tickets.length; i++) {
+                        const checkins = await CheckinRepository.findCheckinsByTicketId(tickets[i].cd_ticket);
+
+                        for (let j = 0; j < checkins.length; j++) {
+                            checkinsResponse.push({
+                                idTicket: tickets[i].cd_ticket,
+                                TicketName: tickets[i].nm_ticket,
+                                idEvent: event.cd_event,
+                                TicketEvent: event.nm_event,
+                                EventBanner: event.im_banner,
+                                TicketValue: tickets[i].vl_ticket,
+                                idValid: checkins[j].id_valid,
+                                QRCode: checkins[j].cd_qr_code,
+                                payer: {
+                                    name: checkins[j].nm_buyer, 
+                                    cpf: checkins[j].cd_cpf_buyer
+                                }
+                            })
+                            
+                        }
+                        
+                    }
+                    
+
+                    resolve(checkinsResponse);
+                }
+            }
+        });
     }
 }
 
