@@ -3,7 +3,7 @@ interface PaymentBillet {
     payment_method_id: String, 
     transaction_amount: Number,
     processing_mode: String,
-    date_of_expiration: String,
+    date_of_expiration: string,
 }
 
 export default PaymentBillet;
