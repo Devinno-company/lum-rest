@@ -18,14 +18,12 @@ import pdf from 'html-pdf';
 import ItemTicketPurchaseRepository from "../repositorys/ItemTicketPurchaseRepository";
 import PurchaseTicketResponse from "../interfaces/response/PurchaseTicketResponse";
 import Ticket from "../models/Ticket";
-import DisbursementsMercadoPago from "../interfaces/externals/DisbursementsMercadoPago";
-import SellerSplit from "../interfaces/request/SellerSplitRequest";
-import PaymentData from "../interfaces/externals/PaymentData";
-import PaymentBillet from "../interfaces/externals/PaymentBillet";
-import PaymentCreditCard from "../interfaces/externals/PaymentCreditCard";
+import PaymentData from "../interfaces/externals/PaymentDataCreditCard";
 import PayerPayment from "../interfaces/externals/PayerPayment";
 import CheckinRepository from "../repositorys/CheckinRepository";
 import DownloadRequest from "../interfaces/request/DownloadRequest";
+import PaymentDataBillet from "../interfaces/externals/PaymentDataBillet";
+import PaymentDataCreditCard from "../interfaces/externals/PaymentDataCreditCard";
 
 class PurchaseController {
 
@@ -41,10 +39,7 @@ class PurchaseController {
 
                 let payer: PayerPayment;
 
-                const sellerSplits: Array<SellerSplit> = [];
                 const ticketsPurchase: Array<Ticket> = [];
-                const disbursements: Array<DisbursementsMercadoPago> = [];
-                const payments: Array<PaymentBillet | PaymentCreditCard> = [];
 
                 for (let i = 0; i < purchase.tickets.length; i++) {
 
@@ -100,35 +95,7 @@ class PurchaseController {
                                     return reject({ status: 400, message: 'To make a ticket purchase you must have at least 3 days difference between today and the start date of the event' })
                             }
 
-                            if (!sellerSplits.some(e => e.code == linkMercadoPago.cd_link_mercado_pago)) {
-                                sellerSplits.push({
-                                    code: Number(linkMercadoPago.cd_link_mercado_pago),
-                                    identification: Number(linkMercadoPago.cd_identification),
-                                    split: Number(ticket.vl_ticket * purchase.tickets[i].quantity),
-                                    user_id_mercado_pago: linkMercadoPago.cd_user_mercado_pago
-                                });
-                            }
-                            else {
-                                const sellerIndex = sellerSplits.findIndex(e => e.code == linkMercadoPago.cd_link_mercado_pago);
-                                sellerSplits[sellerIndex].split += Number(ticket.vl_ticket * purchase.tickets[i].quantity);
-                            };
                             transaction_amount += ticket.vl_ticket * purchase.tickets[i].quantity;
-
-                            for (let j = 0; j < sellerSplits.length; j++) {
-                                if (!disbursements.some(e => e.id == sellerSplits[j].user_id_mercado_pago)) {
-                                    disbursements.push({
-                                        id: sellerSplits[j].user_id_mercado_pago,
-                                        amount: Number(sellerSplits[j].split.toFixed(2)),
-                                        external_reference: `${event.cd_event}`,
-                                        collector_id: sellerSplits[j].user_id_mercado_pago,
-                                        application_fee: Number(((valueAmount) * 0.03).toFixed(2)),
-                                        money_release_days: 30
-                                    });
-                                } else {
-                                    const disbursementIndex = disbursements.findIndex(e => e.id == sellerSplits[j].user_id_mercado_pago);
-                                    disbursements[disbursementIndex].amount = sellerSplits[j].split;
-                                }
-                            }
 
                             ticketsPurchase.push(ticket);
                         }
@@ -204,10 +171,9 @@ class PurchaseController {
                                 .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err }) });
                 }
 
+                let paymentData: PaymentDataBillet | PaymentDataCreditCard;
+
                 if (purchase.billet || !purchase.credit_card) {
-
-console.log("Entrou no Billet");
-
 
                     payer = {
                         first_name: user.nm_user,
@@ -217,7 +183,6 @@ console.log("Entrou no Billet");
                             type: 'CPF',
                             number: purchase.cpf_payer
                         },
-                        address: purchase.billet.address,
                         id: user.cd_user
                     }
 
@@ -233,18 +198,25 @@ console.log("Entrou no Billet");
                     }
                     const expirationDate = new Date(earliestEvent.setDate(earliestEvent.getDate() - 3))
 
-                    const paymentBillet: PaymentBillet = {
-                        payment_type_id: 'ticket',
+                    const paymentDataBillet: PaymentDataBillet = {
+                        payer: payer,
+                        transaction_amount: transaction_amount,
+                        description: 'Service Charge',
                         payment_method_id: 'bolbradesco',
                         date_of_expiration: expirationDate.toISOString(),
-                        transaction_amount,
-                        processing_mode: 'aggregator'
+                        address: {
+                            zip_code: purchase.billet.address.zip_code,
+                            street_name: purchase.billet.address.street_name,
+                            street_number: purchase.billet.address.street_number,
+                            neighborhood: purchase.billet.address.neighborhood,
+                            city: purchase.billet.address.city,
+                            federal_unit: purchase.billet.address.federal_unit
+                        },
+                        application_fee: Number(((transaction_amount / 100) * 3).toFixed(2))
                     }
 
-                    payments.push(paymentBillet);
+                    paymentData = paymentDataBillet;
                 } else {
-
-console.log("Entrou no Credit Card");
 
                     payer = {
                         first_name: user.nm_user,
@@ -257,42 +229,32 @@ console.log("Entrou no Credit Card");
                         id: user.cd_user
                     }
 
-                    const expiration =  new Date(purchase.credit_card.date_of_expiration);
-
-                    const paymentCreditCard: PaymentCreditCard = {
-                        payment_type_id: 'credit_card',
-                        payment_method_id: purchase.credit_card.payment_method_id,
-                        token: purchase.credit_card.token,
-                        date_of_expiration: expiration.toISOString(),
+                    const paymentDataCreditCard: PaymentDataCreditCard = {
+                        payer: payer,
                         transaction_amount: Number(transaction_amount.toFixed(2)),
+                        token: purchase.credit_card.token,
                         description: "Service charge",
                         installments: purchase.credit_card.installments,
-                        issuer_id: purchase.credit_card.issuer_id,
-                        processing_mode: 'aggregator'
+                        payment_method_id: purchase.credit_card.payment_method_id,
+                        application_fee: Number(((transaction_amount / 100) * 3).toFixed(2))
                     }
 
-                    payments.push(paymentCreditCard);
+                    paymentData = paymentDataCreditCard;
                 }
+
+                const ticket = await TicketRepository.findTicketById(purchase.tickets[0].id)
+                const event = await EventRepository.findEventById(ticket.cd_event)
+                const link = await LinkMercadoPagoRepository.findLinkMercadoPagoByEventId(event.cd_event);
 
                 const config = {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${process.env.ACCESS_TOKEN_MP}`
+                        Authorization: `Bearer ${link.cd_access_token}`
                     }
                 }
 
-                const payment_data: PaymentData = {
-                    payer,
-                    payments,
-                    application_id: Number(process.env.APP_ID_MP),
-                    disbursements,
-                    external_reference: 'ref-transaction-1'
-                }
-
-console.log(payment_data);
-
-                await Axios.post('https://api.mercadopago.com/v1/advanced_payments', payment_data, config)
+                await Axios.post('https://api.mercadopago.com/v1/payments', paymentData, config)
                     .then(async (result) => {
                         const paymentResponse = (result.data as any);
                         
@@ -316,7 +278,6 @@ console.log(payment_data);
                                 payment_method: paymentResponse.payments[0].payment_method_id
                             })
                             .then((purchaseCreditCardResponse) => {
-console.log('Entrou no then do Credit Card Response');
                                 creditcardResponse = {
                                     idCreditCard: purchaseCreditCardResponse.cd_purchase_credit_card,
                                     CreditCardApprovedDate: purchaseCreditCardResponse.dt_approved,
@@ -334,7 +295,6 @@ console.log('Entrou no then do Credit Card Response');
                                 dt_expiration: paymentResponse.payments[0].date_of_expiration
                             })
                             .then((purchaseBilletResponse) => {
-console.log('Entrou no then do Billet Response');
                                 billetResponse = {
                                     idBillet: purchaseBilletResponse.cd_purchase_billet,
                                     BilletImage: purchaseBilletResponse.im_billet,
@@ -346,7 +306,6 @@ console.log('Entrou no then do Billet Response');
                             })
                             .catch((err) => { reject({ status: 400, message: 'Unknown error. Try again later.', err: err.response.data }) });
                         }
-console.log('idBoleto:'+idBillet+' . idCredito:'+idCreditCard);
 
                             PurchaseRepository.insertPurchase(paymentResponse.id, paymentResponse.status, user.cd_user, idBillet, idCreditCard)
                             .then(async (result) => {
