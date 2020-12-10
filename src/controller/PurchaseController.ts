@@ -257,13 +257,13 @@ console.log("Entrou no Credit Card");
                         id: user.cd_user
                     }
 
-                    const expiration =  new Date(purchase.credit_card.date_of_expiration)
+                    const expiration =  new Date(purchase.credit_card.date_of_expiration);
 
                     const paymentCreditCard: PaymentCreditCard = {
                         payment_type_id: 'credit_card',
                         payment_method_id: purchase.credit_card.payment_method_id,
                         token: purchase.credit_card.token,
-                        date_of_expiration: String(expiration),
+                        date_of_expiration: expiration.toISOString(),
                         transaction_amount: Number(transaction_amount.toFixed(2)),
                         description: "Service charge",
                         installments: purchase.credit_card.installments,
