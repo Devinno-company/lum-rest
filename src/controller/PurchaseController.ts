@@ -183,8 +183,7 @@ class PurchaseController {
                             type: 'CPF',
                             number: purchase.cpf_payer
                         },
-                        id: user.cd_user,
-                        type: 'guest'
+                        id: null
                     }
 
                     //Sets the expiration date to 3 days before the earliest event.
@@ -227,8 +226,7 @@ class PurchaseController {
                             type: 'CPF',
                             number: purchase.cpf_payer
                         },
-                        id: user.cd_user,
-                        type: 'guest'
+                        id: null
                     }
 
                     const paymentDataCreditCard: PaymentDataCreditCard = {
