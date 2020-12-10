@@ -234,7 +234,7 @@ class PurchaseController {
                     const paymentBillet: PaymentBillet = {
                         payment_type_id: 'ticket',
                         payment_method_id: 'bolbradesco',
-                        date_of_expiration: '2020-12-20',
+                        date_of_expiration: (new Date('2020-12-20').toISOString()),
                         transaction_amount,
                         processing_mode: 'aggregator'
                     }
