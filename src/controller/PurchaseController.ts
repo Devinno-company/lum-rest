@@ -248,8 +248,7 @@ class PurchaseController {
 
                 const config = {
                     headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
+                        "Access-Control-Allow-Origin": "*",
                         Authorization: `Bearer ${link.cd_access_token}`
                     }
                 }
