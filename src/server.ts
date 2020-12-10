@@ -46,19 +46,9 @@ app.get('/', (request, response) => {
         });
 });
 
-app.use(function (req, res, next) {
-
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:7070');
-
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-    res.setHeader('Access-Control-Allow-Headers', '*');
-
-    next();
-});
 
 
-app.use(cors({ origin: '*' }));
+app.use(cors());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(userRoutes);
