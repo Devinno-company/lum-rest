@@ -6,7 +6,8 @@ interface PayerPayment {
     identification: {
         type: String,
         number: string
-    }
+    },
+    type: string
 }
 
 export default PayerPayment;
